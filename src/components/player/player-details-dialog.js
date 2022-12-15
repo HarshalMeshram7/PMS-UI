@@ -59,7 +59,7 @@ import { DataModel, initialValues } from "./PlayerDetailsData.js";
 import { getFullName } from "src/utils/getFullName.js";
 import { updatePlayers } from "src/services/playersRequest.js";
 
-export const PlayerDetailsDialog = ({ open, handleClose ,player ,initValue}) => {
+export const PlayerDetailsDialog = ({ open, handleClose ,player ,initValue, mutate}) => {
 
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
@@ -94,6 +94,7 @@ export const PlayerDetailsDialog = ({ open, handleClose ,player ,initValue}) => 
             handleClose();
             enqueueSnackbar("Player Updated Succesfully", { variant: "success" });
             setLoading(false);
+            mutate();
           })
         })
       } catch (error) {

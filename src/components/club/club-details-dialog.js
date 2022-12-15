@@ -629,7 +629,7 @@ export const ClubDetailsDialog = ({ open, handleClose, club, mutate }) => {
                             variant="contained"
                             style={{ backgroundColor: "red" }}
                             onClick={() => {
-                              handleDelete(club.email);
+                              handleDelete(club.ID);
                             }}
                           >
                             Delete

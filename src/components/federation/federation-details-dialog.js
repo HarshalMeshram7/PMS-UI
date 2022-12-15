@@ -212,20 +212,20 @@ export const FederationDetailsDialog = ({ open, handleClose, federation, mutate 
   const handleDelete = (data) => {
     setLoading(true);
     try {
-      // let finalData = {Federation:data}
-      // deleteFederation(finalData).then((response) => {
-      //     if (response.status == "success") {
+      let finalData = {Federation:data}
+      deleteFederation(finalData).then((response) => {
+          if (response.status == "SUCCESS") {
       handleClose();
-      enqueueSnackbar("federation Deleted Succesfully", { variant: "success" });
+      enqueueSnackbar("Federation Deleted Succesfully", { variant: "success" });
       mutate();
       setLoading(false);
-      // }
-      // else {
-      //     handleClose();
-      //     enqueueSnackbar(`Error : ${response.message}`, { variant: "error" });
-      //     setLoading(false);
-      // }
-      // });
+      }
+      else {
+          handleClose();
+          enqueueSnackbar(`Error : ${response.message}`, { variant: "error" });
+          setLoading(false);
+      }
+      });
     } catch (error) {
       console.log(error);
       setLoading(false);

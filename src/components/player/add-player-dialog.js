@@ -43,32 +43,44 @@ const sportsList = [
 
 const Gender = [
   {
-      value: "Male",
-      label: "Male"
+    value: "Male",
+    label: "Male"
   },
   {
-      value: "Female",
-      label: "Female"
+    value: "Female",
+    label: "Female"
   },
   {
-      value: "Other",
-      label: "Other"
+    value: "Other",
+    label: "Other"
   }
+];
+
+const TMSITMSApplicable = [
+  {
+    value: 1,
+    label: "Yes"
+  },
+  {
+    value: 0,
+    label: "No"
+  },
+
 ];
 
 
 const TypeOfPlayerID = [
   {
-      value: "1",
-      label: "Professional"
+    value: 1,
+    label: "Professional"
   },
   {
-      value: "2",
-      label: "Non-Professional"
+    value: 2,
+    label: "Non-Professional"
   },
   {
-      value: "0",
-      label: "Loan-Player"
+    value: 0,
+    label: "Loan-Player"
   }
 ];
 
@@ -176,21 +188,36 @@ export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
     initialValues: {
       FirstName: "",
       LastName: "",
-      AcademyClub: "",
-      TypeOfPlayerID: "",
       Gender: "",
       DateOfBirth: "",
-      Address: "",
       Phone: "",
-      EducationQualification: "",
-      documents: "",
-      photo: "",
-      PlayerTeam: "",
       Email: "",
+      TypeOfPlayerID: "",
+      EducationQualification: "",
+      edudocuments: "",
+      photo: "",
       BasePrice: "",
       PlayingPosition: "",
+      documents: "",
+
+
+
       TMSITMSApplicable: "",
-      edudocuments: "",
+
+
+      Password: "",
+      RecoveryEMail: "",
+      LongDescription: "",
+      Facebook: "",
+      Twitter: "",
+      Linkedin: "",
+
+
+
+
+      AcademyClub: "",
+      Address: "",
+      PlayerTeam: "",
     },
     validationSchema: Yup.object({
       FirstName: Yup.string().max(100).required("Player's First Name is required"),
@@ -225,7 +252,7 @@ export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
 
       BasePrice: Yup.string().max(100),
       PlayingPosition: Yup.string().max(100),
-      TMSITMSApplicable: Yup.string().max(100),
+      // TMSITMSApplicable: Yup.string().max(100),
     }),
     onSubmit: async (data) => {
       setLoading(true);
@@ -238,7 +265,7 @@ export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
           edudocuments: handlePriview(uploadedEduDocumentName),
         };
         console.log(finalData);
-        
+
         await addPlayers(finalData);
         handleClose();
         enqueueSnackbar("Player Added Succesfully", { variant: "success" });
@@ -307,47 +334,6 @@ export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
               />
             </Grid>
 
-            <Grid item md={6} xs={12}>
-              <TextField
-                error={Boolean(formik.touched.AcademyClub && formik.errors.AcademyClub)}
-                fullWidth
-                helperText={formik.touched.AcademyClub && formik.errors.AcademyClub}
-                label="Academy / Club"
-                margin="dense"
-                name="AcademyClub"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="text"
-                value={formik.values.AcademyClub}
-                variant="outlined"
-              />
-            </Grid>
-
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-helper-label">Type Of Player</InputLabel>
-                <Select
-                  labelId="TypeOfPlayerID"
-                  id="TypeOfPlayerID"
-                  value={formik.values.TypeOfPlayerID}
-                  name="TypeOfPlayerID"
-                  label="Type Of Player"
-                  onChange={formik.handleChange}
-                >
-                  {TypeOfPlayerID?.map((option, key) => (
-                    <MenuItem key={key}
-                      value={option.value}>
-                      {option.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-
             <Grid
               item
               md={6}
@@ -392,20 +378,37 @@ export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
 
             <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.Address && formik.errors.Address)}
+                error={Boolean(formik.touched.Email && formik.errors.Email)}
                 fullWidth
-                helperText={formik.touched.Address && formik.errors.Address}
-                label="Address"
+                helperText={formik.touched.Email && formik.errors.Email}
+                label="Email"
                 margin="dense"
-                name="Address"
+                name="Email"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                type="text"
-                value={formik.values.Address}
+                type="email"
+                value={formik.values.Email}
                 variant="outlined"
               />
             </Grid>
 
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.RecoveryEMail && formik.errors.RecoveryEMail)}
+                fullWidth
+                helperText={formik.touched.RecoveryEMail && formik.errors.RecoveryEMail}
+                label="Recovery Email"
+                margin="dense"
+                name="RecoveryEMail"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.RecoveryEMail}
+                variant="outlined"
+              />
+            </Grid>
+
+            
             <Grid item md={6} xs={12}>
               <TextField
                 error={Boolean(formik.touched.Phone && formik.errors.Phone)}
@@ -418,6 +421,81 @@ export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
                 onChange={formik.handleChange}
                 type="number"
                 value={formik.values.Phone}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Password && formik.errors.Password)}
+                fullWidth
+                helperText={formik.touched.Password && formik.errors.Password}
+                label="Password"
+                margin="dense"
+                name="Password"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="password"
+                value={formik.values.Password}
+                variant="outlined"
+              />
+            </Grid>
+
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.AcademyClub && formik.errors.AcademyClub)}
+                fullWidth
+                helperText={formik.touched.AcademyClub && formik.errors.AcademyClub}
+                label="Academy / Club"
+                margin="dense"
+                name="AcademyClub"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.AcademyClub}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid
+              item
+              md={6}
+              xs={12}
+            >
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-helper-label">Type Of Player</InputLabel>
+                <Select
+                  labelId="TypeOfPlayerID"
+                  id="TypeOfPlayerID"
+                  value={formik.values.TypeOfPlayerID}
+                  name="TypeOfPlayerID"
+                  label="Type Of Player"
+                  onChange={formik.handleChange}
+                >
+                  {TypeOfPlayerID?.map((option, key) => (
+                    <MenuItem key={key}
+                      value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Address && formik.errors.Address)}
+                fullWidth
+                helperText={formik.touched.Address && formik.errors.Address}
+                label="Address"
+                margin="dense"
+                name="Address"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.Address}
                 variant="outlined"
               />
             </Grid>
@@ -437,6 +515,172 @@ export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
                 variant="outlined"
               />
             </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.PlayerTeam && formik.errors.PlayerTeam)}
+                fullWidth
+                helperText={formik.touched.PlayerTeam && formik.errors.PlayerTeam}
+                label="Player Team"
+                margin="dense"
+                name="PlayerTeam"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.PlayerTeam}
+                variant="outlined"
+              />
+            </Grid>
+
+            
+           
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.BasePrice && formik.errors.BasePrice)}
+                fullWidth
+                helperText={formik.touched.BasePrice && formik.errors.BasePrice}
+                label="Base Price"
+                margin="dense"
+                name="BasePrice"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="number"
+                value={formik.values.BasePrice}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.PlayingPosition && formik.errors.PlayingPosition)}
+                fullWidth
+                helperText={formik.touched.PlayingPosition && formik.errors.PlayingPosition}
+                label="Playing Position"
+                margin="dense"
+                name="PlayingPosition"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.PlayingPosition}
+                variant="outlined"
+              />
+            </Grid>
+
+            {/* <Grid
+                            item
+                            md={6}
+                            xs={12}
+                        >
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-helper-label">Sports List</InputLabel>
+                                <Select
+                                    multiple
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
+                                    value={formik.values.sportsList}
+                                    label="Sports List"
+                                    name="sportsList"
+                                    onChange={formik.handleChange}
+                                >
+                                    {sportsList?.map((option, key) => (
+                                        <MenuItem key={key}
+                                            value={option.label}>
+                                            {option.label}
+                                        </MenuItem>
+                                    ))}
+                                </Select>
+                            </FormControl>
+             </Grid> */}
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.LongDescription && formik.errors.LongDescription)}
+                fullWidth
+                helperText={formik.touched.LongDescription && formik.errors.LongDescription}
+                label="Long Description"
+                margin="dense"
+                name="LongDescription"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.LongDescription}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Facebook && formik.errors.Facebook)}
+                fullWidth
+                helperText={formik.touched.Facebook && formik.errors.Facebook}
+                label="Facebook"
+                margin="dense"
+                name="Facebook"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.Facebook}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Twitter && formik.errors.Twitter)}
+                fullWidth
+                helperText={formik.touched.Twitter && formik.errors.Twitter}
+                label="Twitter"
+                margin="dense"
+                name="Twitter"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.Twitter}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Linkedin && formik.errors.Linkedin)}
+                fullWidth
+                helperText={formik.touched.Linkedin && formik.errors.Linkedin}
+                label="LinkedIn"
+                margin="dense"
+                name="Linkedin"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.Linkedin}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid
+              item
+              md={6}
+              xs={12}
+            >
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-helper-label">TMSITMSApplicable</InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  value={formik.values.TMSITMSApplicable}
+                  name="TMSITMSApplicable"
+                  label="TMSITMSApplicable"
+                  onChange={formik.handleChange}
+                >
+                  {TMSITMSApplicable?.map((option, key) => (
+                    <MenuItem key={key}
+                      value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
 
             <Grid item md={6} xs={12}>
 
@@ -499,117 +743,10 @@ export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
               ) : (
                 ""
               )}
-
-
-
             </Grid>
 
-            <Grid item md={6} xs={12}>
-              <TextField
-                error={Boolean(formik.touched.PlayerTeam && formik.errors.PlayerTeam)}
-                fullWidth
-                helperText={formik.touched.PlayerTeam && formik.errors.PlayerTeam}
-                label="Player Team"
-                margin="dense"
-                name="PlayerTeam"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="text"
-                value={formik.values.PlayerTeam}
-                variant="outlined"
-              />
-            </Grid>
 
-            <Grid item md={6} xs={12}>
-              <TextField
-                error={Boolean(formik.touched.Email && formik.errors.Email)}
-                fullWidth
-                helperText={formik.touched.Email && formik.errors.Email}
-                label="Email"
-                margin="dense"
-                name="Email"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="email"
-                value={formik.values.Email}
-                variant="outlined"
-              />
-            </Grid>
 
-            <Grid item md={6} xs={12}>
-              <TextField
-                error={Boolean(formik.touched.BasePrice && formik.errors.BasePrice)}
-                fullWidth
-                helperText={formik.touched.BasePrice && formik.errors.BasePrice}
-                label="Base Price"
-                margin="dense"
-                name="BasePrice"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="number"
-                value={formik.values.BasePrice}
-                variant="outlined"
-              />
-            </Grid>
-
-            <Grid item md={6} xs={12}>
-              <TextField
-                error={Boolean(formik.touched.PlayingPosition && formik.errors.PlayingPosition)}
-                fullWidth
-                helperText={formik.touched.PlayingPosition && formik.errors.PlayingPosition}
-                label="Playing Position"
-                margin="dense"
-                name="PlayingPosition"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="text"
-                value={formik.values.PlayingPosition}
-                variant="outlined"
-              />
-            </Grid>
-
-            {/* <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-helper-label">Sports List</InputLabel>
-                                <Select
-                                    multiple
-                                    labelId="demo-simple-select-helper-label"
-                                    id="demo-simple-select-helper"
-                                    value={formik.values.sportsList}
-                                    label="Sports List"
-                                    name="sportsList"
-                                    onChange={formik.handleChange}
-                                >
-                                    {sportsList?.map((option, key) => (
-                                        <MenuItem key={key}
-                                            value={option.label}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid> */}
-
-            <Grid item md={6} xs={12}>
-              <TextField
-                error={Boolean(formik.touched.TMSITMSApplicable && formik.errors.TMSITMSApplicable)}
-                fullWidth
-                helperText={formik.touched.TMSITMSApplicable && formik.errors.TMSITMSApplicable}
-                label=" TMS / ITMS Applicable"
-                margin="dense"
-                name="TMSITMSApplicable"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="text"
-                value={formik.values.TMSITMSApplicable}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid item md={6} xs={12}></Grid>
             <Grid item md={6} xs={12}>
               <TextField
                 style={{ display: "none" }}

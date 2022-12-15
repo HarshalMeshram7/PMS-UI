@@ -86,6 +86,7 @@ const Players = () => {
           ID={player.ID}
           open={openDeleteDialogue}
           handleClose={handleCloseDeleteDialogue}
+          mutate={mutate}
         />
 
         <PlayerDetailsDialog
@@ -93,6 +94,7 @@ const Players = () => {
           player={player}
           open={showPlayerDetailsDialog}
           handleClose={handleClosePlayerDetails}
+          mutate={mutate}
         />
         <AddPlayerDialog
           open={showAddPlayerDialog}
