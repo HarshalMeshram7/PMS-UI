@@ -95,3 +95,24 @@ export const updateClub = async (data) => {
         throw error;
     }
 };
+
+
+// Get Club Detailsgit 
+export const getClubFinanceById = async (params) => {
+    const { token } = useStorage();
+    if (!token) {
+        throw "No Token";
+    }
+    try {
+        const res = await axios.get(`${MAIN_URL2}/getclubfinancebyid`, {
+            params: params,
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
+        return res?.data?.result;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};

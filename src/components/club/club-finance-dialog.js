@@ -18,7 +18,7 @@ import ClubExpenses from "./finance-component/club-expenses";
 import ClubEcommerce from "./finance-component/club-ecommerce";
 
 
-export const ClubFinanceDialog = ({ open, handleClose, club, mutate }) => {
+export const ClubFinanceDialog = ({ open, handleClose, clubFinance, club, mutate }) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const [loading, setLoading] = useState();
@@ -86,7 +86,7 @@ export const ClubFinanceDialog = ({ open, handleClose, club, mutate }) => {
                     </Box>
                 </Grid>
                 <Container maxWidth="md">
-                    {value == "0" && <ClubFinance />}
+                    {value == "0" && <ClubFinance clubFinance={clubFinance} />}
                     {value == "1" && <ClubEcommerce />}
                     {value == "2" && <ClubEarning />}
                     {value == "3" && <ClubExpenses />}

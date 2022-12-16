@@ -98,3 +98,26 @@ export const deleteAcademy = async (ID) => {
         throw error;
     }
 };
+
+
+
+// Get Academy Detailsgit 
+export const getAcademyFinanceById = async (params) => {
+    const { token } = useStorage();
+    if (!token) {
+        throw "No Token";
+    }
+    try {
+        const res = await axios.get(`${MAIN_URL2}/getacademyfinancebyid`, {
+            params: params,
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
+        return res?.data?.result;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
