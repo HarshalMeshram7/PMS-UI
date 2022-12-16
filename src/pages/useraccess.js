@@ -7,9 +7,8 @@ import { DashboardLayout } from "../components/dashboard-layout";
 import { useState } from "react";
 import { useAllUser2 } from "src/adapters/usersAdapters";
 import { UserAccessDetailsDialog } from "src/components/user-access/useraccess-details-dialog";
-import { getUserDetails, deleteUser ,getUserTypeList} from "src/services/userRequests";
+import { getUserDetails, deleteUser, getUserTypeList } from "src/services/userRequests";
 import DeleteDialog from "src/components/common/deleteDialog";
-
 
 const Useraccess = () => {
   const [showAddUserAccessDialog, setShowAddUserAccessDialog] = useState(false);
@@ -24,10 +23,9 @@ const Useraccess = () => {
         if (res?.status === "SUCCESS") {
           setUser(res.result);
         }
-        setShowAddUserAccessDialog(true)
-      })
-    }
-    catch (error) {
+        setShowAddUserAccessDialog(true);
+      });
+    } catch (error) {
       console.log(error);
     }
   };
@@ -36,35 +34,85 @@ const Useraccess = () => {
   const handleCloseUserAccessDetails = () => setShowUserAccessDetailsDialog(false);
   const handleOpenUserAccessDetails = (user) => {
     try {
-      getUserDetails({ id: user.ID }).then((res) => {
+      getUserDetails({ id: user.ID }).then(async (res) => {
         if (res?.status === "SUCCESS") {
-          let Senduser = { ...res.result, fullName: user.FullName }
+          let userAccessForTable = [];
+
+          if (res.result?.userFederations?.length != 0) {
+            let tempData = {
+              userRole: res.result?.userFederations[0]?.Description,
+              userAccess: [],
+            }
+            await res.result?.userFederations?.map((item) => {
+              tempData.userAccess.push(item.Federation);
+            })
+            userAccessForTable.push(tempData);
+          }
+
+
+          if (res.result?.userClubs?.length != 0) {
+            let tempData = {
+              userRole: res.result?.userClubs[0]?.Description,
+              userAccess: [],
+            }
+            await res.result?.userClubs?.map((item) => {
+              tempData.userAccess.push(item.Club);
+            })
+            userAccessForTable.push(tempData);
+          }
+
+          
+          if (res.result?.userAcademy?.length != 0) {
+            let tempData = {
+              userRole: res.result?.userAcademy[0]?.Description,
+              userAccess: [],
+            }
+            await res.result?.userAcademy?.map((item) => {
+              tempData.userAccess.push(item.Academy);
+            })
+            userAccessForTable.push(tempData);
+          }
+
+
+          if (res.result?.userTeams?.length != 0) {
+            let tempData = {
+              userRole: res.result?.userTeams[0]?.Description,
+              userAccess: [],
+            }
+            await res.result?.userTeams?.map((item) => {
+              tempData.userAccess.push(item.Team);
+            })
+            userAccessForTable.push(tempData);
+          }
+
+          let Senduser = {
+            ...res.result,
+            fullName: user.FullName,
+            userAccessForTable: userAccessForTable,
+          };
           setUser(Senduser);
           setShowUserAccessDetailsDialog(true)
         }
-      })
-    }
-    catch (error) {
+      });
+    } catch (error) {
       console.log(error);
     }
   };
   const handleDeleteUser = (id) => {
     try {
-      deleteUser({ "Id": id }).then((res) => {
+      deleteUser({ Id: id }).then((res) => {
         if (res?.status === "success") {
-          setOpenDeleteDialogue(false)
+          setOpenDeleteDialogue(false);
           mutate();
         }
-      })
-    }
-    catch (error) {
+      });
+    } catch (error) {
       console.log(error);
     }
   };
 
-
   const handleOpenDeleteDialogue = (user) => {
-    setUser(user)
+    setUser(user);
     setOpenDeleteDialogue(true);
   };
 
@@ -72,10 +120,8 @@ const Useraccess = () => {
     setOpenDeleteDialogue(false);
   };
   const handleSearch = (value) => {
-    setParams((p) => ({ ...p, searchpattern: value }))
+    setParams((p) => ({ ...p, searchpattern: value }));
   };
-
-
 
   const { loading, users, mutate } = useAllUser2({ ...params });
 
@@ -116,9 +162,11 @@ const Useraccess = () => {
             open={showAddUserAccessDialog}
           />
           <Box sx={{ mt: 3 }}>
-            <UserAccessListResults userAccess={users || []}
+            <UserAccessListResults
+              userAccess={users || []}
               handleOpenUserAccessDetails={handleOpenUserAccessDetails}
-              handleOpenDeleteDialogue={handleOpenDeleteDialogue} />
+              handleOpenDeleteDialogue={handleOpenDeleteDialogue}
+            />
           </Box>
         </Container>
       </Box>

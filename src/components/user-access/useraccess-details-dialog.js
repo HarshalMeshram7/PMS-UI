@@ -30,14 +30,17 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import LoadingBox from "src/components/common/loading-box";
 
-export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
-  console.log(user);
+export const UserAccessDetailsDialog = ({ open, handleClose, user  }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
   const [access, setAccess] = useState([]);
   const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [finalAccessForTable, setFinalAccessForTable] = useState([]);
+
+  if(user?.userAccessForTable != undefined){
+    finalAccessForTable = user?.userAccessForTable
+  }
 
   const [finalroles, setFinalroles] = useState({
     userFed: {
@@ -59,7 +62,7 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
   });
 
   let userRoles = finalroles;
-
+ 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -331,7 +334,7 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
           <Grid container spacing={3}>
             {/* from here */}
             <Grid item md={12} xs={12}>
-              {finalAccessForTable.length !== 0 && (
+              {finalAccessForTable?.length !== 0 && (
                 <Table aria-label="caption table">
                   <TableHead>
                     <TableRow>
