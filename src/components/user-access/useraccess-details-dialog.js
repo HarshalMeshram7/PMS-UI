@@ -18,21 +18,48 @@ import {
   Divider,
   Container,
   Autocomplete,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import LoadingBox from "src/components/common/loading-box";
 
-
 export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
+  console.log(user);
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState();
+  const [access, setAccess] = useState([]);
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
-    const { enqueueSnackbar } = useSnackbar();
-    const [loading, setLoading] = useState();
-    const [access, setAccess] = useState([]);
+  const [finalAccessForTable, setFinalAccessForTable] = useState([]);
 
-  
+  const [finalroles, setFinalroles] = useState({
+    userFed: {
+      userRole: "",
+      userAccess: [],
+    },
+    userClub: {
+      userRole: "",
+      userAccess: [],
+    },
+    userTeam: {
+      userRole: "",
+      userAccess: [],
+    },
+    userAcademy: {
+      userRole: "",
+      userAccess: [],
+    },
+  });
+
+  let userRoles = finalroles;
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -48,25 +75,24 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
     },
 
     validationSchema: Yup.object({
-      userName: Yup.string().max(100).required("User Name is required"),
-      password: Yup.string().max(255).required("Password is required"),
-      cnfpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
-      fullName: Yup.string().max(100).required("User Name is required"),
-      address: Yup.string(),
-      // .required('Required')
-      email: Yup.string().email("Must be a valid Email").max(255).required("Email is required"),
-      phone: Yup.string()
-        .length(10)
-        .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, "Phone number is not valid")
-        .required("Phone number is required"),
-
+      // userName: Yup.string().max(100).required("User Name is required"),
+      // password: Yup.string().max(255).required("Password is required"),
+      // cnfpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
+      // fullName: Yup.string().max(100).required("User Name is required"),
+      // address: Yup.string(),
+      // // .required('Required')
+      // email: Yup.string().email("Must be a valid Email").max(255).required("Email is required"),
+      // phone: Yup.string()
+      //   .length(10)
+      //   .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, "Phone number is not valid")
+      //   .required("Phone number is required"),
     }),
 
     onSubmit: async (data) => {
       setLoading(true);
       try {
-        console.log("**********");
-        console.log(data);
+        let finalData = { ...data, userRoles: finalroles, userRole: "", userAccess: "" };
+        console.log(finalData);
         // await addAcademy(data);
         // handleClose();
         // enqueueSnackbar("User Updated Succesfully", { variant: "success" });
@@ -77,38 +103,91 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
     },
   });
 
- const handleRoleChange = (e , value) =>{
+  const handleRoleChange = (e, value) => {
+    let AccessID = e.target.value?.AccessID;
 
-    if(!e.target.value){
-        setAccess([]);
+    if (!e.target.value) {
+      setAccess([]);
     }
-    if(e.target.value === 1 ){
-        setAccess([{"ID":0,"name":"All Access"}]);
+    if (AccessID === 0) {
+      setAccess([{ ID: 0, name: "All Access" }]);
     }
-    if(e.target.value === 2 || e.target.value === 3){
-        setAccess(user?.federation_list);
+    if (AccessID === 1) {
+      setAccess(user?.federation_list);
     }
-    
-    if(e.target.value === 4 || e.target.value === 5){
-        setAccess(user?.club_list);
+    if (AccessID === 2) {
+      setAccess(user?.club_list);
     }
-    
-    if(e.target.value === 6 || e.target.value === 7){
-        setAccess(user?.team_list);
+    if (AccessID === 3) {
+      setAccess(user?.academy_list);
     }
-    
-    if(e.target.value === 8){
-        setAccess(user?.federation_list);
+    if (AccessID === 4) {
+      setAccess(user?.team_list);
     }
-    if(e.target.value === 9){
-        setAccess(user?.federation_list);
+    if (AccessID === 5) {
+      setAccess(user?.federation_list); // player
     }
-    if(e.target.value === 10){
-        setAccess(user?.federation_list);
+    if (AccessID === 6) {
+      setAccess(user?.federation_list); //report admin
     }
-    
+    if (AccessID === 7) {
+      setAccess(user?.federation_list); //controller
+    }
+  };
+  const handleAddRole = async () => {
+    let AccessID = formik.values.userRole.AccessID,
+      ID = formik.values.userRole.ID,
+      Description = formik.values.userRole.Description;
 
- }
+    // for UI
+    let newNameArray = [];
+    let newIDArray = [];
+    formik.values.userAccess?.map((item) => {
+      if (item.name == null || item.name == undefined) {
+      } else {
+        newNameArray.push(item.name);
+        newIDArray.push(item.ID);
+      }
+    });
+    let newValue = finalAccessForTable;
+    newValue.push({
+      userRole: Description,
+      userAccess: newNameArray,
+    });
+    setFinalAccessForTable(newValue);
+    forceUpdate();
+
+    // for final payload
+    if (AccessID == 1 || AccessID == 5 || AccessID == 6 || AccessID == 7) {
+      userRoles.userFed.userRole = ID;
+      userRoles.userFed.userAccess = newIDArray;
+      setFinalroles(userRoles);
+    }
+    if (AccessID == 2) {
+      userRoles.userClub.userRole = ID;
+      userRoles.userClub.userAccess = newIDArray;
+      setFinalroles(userRoles);
+    }
+    if (AccessID == 3) {
+      userRoles.userAcademy.userRole = ID;
+      userRoles.userAcademy.userAccess = newIDArray;
+      setFinalroles(userRoles);
+    }
+    if (AccessID == 4) {
+      userRoles.userTeam.userRole = ID;
+      userRoles.userTeam.userAccess = newIDArray;
+      setFinalroles(userRoles);
+    }
+    formik.values.userRole = [];
+    formik.values.userAccess = [];
+  };
+
+  const handleRoleRemove = (row, index) => {
+    let newValue = finalAccessForTable;
+    newValue.splice(index, 1);
+    setFinalAccessForTable(newValue);
+    forceUpdate();
+  };
 
   useEffect(() => {
     if (!open) {
@@ -250,80 +329,100 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
 
         <DialogContent>
           <Grid container spacing={3}>
-            <Grid item md={6} xs={12}>
-              {/* <Autocomplete
-                disablePortal
-                name="userRole"
-                id="userRole"
-                onChange={handleRoleChange}
-                options={formik.values.userRole || []}
-                getOptionLabel={(option) => option.Description}
-                renderInput={(params) => <TextField {...params} label="User Role" />}
-              /> */}
-              <FormControl fullWidth>
-                  <InputLabel id="userRole">User Role</InputLabel>
-                  <Select
-                    labelId="userRole"
-                    id="userRole"
-                    value={formik.values.userRole}
-                    name="userRole"
-                    label="userRole"
-                    onChange={
-                      (e , value)=>{
-                        handleRoleChange(e , value);
-                        formik.handleChange(e);
-                      }
-                    }
-                  >
-                    {user?.userTypes_list?.map((item , key)=>(
-                    
-                    <MenuItem key={key} value={item.ID}>{item.Description}</MenuItem>
-                    
-                    ))}
-                  </Select>
-                </FormControl>
+            {/* from here */}
+            <Grid item md={12} xs={12}>
+              {finalAccessForTable.length !== 0 && (
+                <Table aria-label="caption table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Roles</TableCell>
+                      <TableCell>Access</TableCell>
+                      <TableCell align="right">Action</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {finalAccessForTable?.map((row, rowkey) => {
+                      return (
+                        <TableRow key={rowkey}>
+                          <TableCell>{row.userRole}</TableCell>
+                          <TableCell>
+                            {row.userAccess?.map((item, key) => {
+                              return (
+                                <p style={{ display: "inline" }} key={key}>
+                                  {item},
+                                </p>
+                              );
+                            })}
+                          </TableCell>
+                          <TableCell
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                              handleRoleRemove(row, rowkey);
+                            }}
+                            align="right"
+                          >
+                            X
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              )}
             </Grid>
 
-            <Grid item md={6} xs={12}>
-              {/* <Autocomplete
-                multiple
-                value={formik.values.userAccess}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                id="userAccess"
-                name="userAccess"
-                options={access || []}
-                getOptionLabel={(option) => option?.name}
-                filterSelectedOptions
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Access"
-                    placeholder="Access"
-                  />
-                )}
-              /> */}
+            <Grid item md={4} xs={12}>
               <FormControl fullWidth>
-                  <InputLabel id="userAccess">User Access</InputLabel>
-                  <Select
-                    multiple
-                    labelId="userAccess"
-                    id="userAccess"
-                    value={formik.values.userAccess}
-                    name="userAccess"
-                    label="userAccess"
-                    onChange={
-                      (e , value)=>{
-                        formik.handleChange(e);
-                      }
-                    }
-                  >
-                    {access?.map((item , key)=>(
-                    <MenuItem key={key} value={item.ID}>{item.name}</MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+                <InputLabel id="userRole">User Role</InputLabel>
+                <Select
+                  labelId="userRole"
+                  id="userRole"
+                  value={formik.values.userRole}
+                  name="userRole"
+                  label="userRole"
+                  onChange={(e, value) => {
+                    handleRoleChange(e, value);
+                    formik.handleChange(e);
+                  }}
+                >
+                  {user?.userTypes_list?.map((item, key) => (
+                    <MenuItem key={key} value={item}>
+                      {item.Description}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
+
+            <Grid item md={4} xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="userAccess">User Access</InputLabel>
+                <Select
+                  multiple
+                  labelId="userAccess"
+                  id="userAccess"
+                  value={formik.values.userAccess}
+                  name="userAccess"
+                  label="userAccess"
+                  onChange={(e, value) => {
+                    formik.handleChange(e);
+                  }}
+                >
+                  {access?.map((item, key) => (
+                    <MenuItem key={key} value={item}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <Button onClick={handleAddRole} variant="contained">
+                Save Role
+              </Button>
+            </Grid>
+
+            {/* to here */}
           </Grid>
         </DialogContent>
 
