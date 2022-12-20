@@ -54,22 +54,30 @@ export const AddUserAccessDialog = ({ open, handleClose, user, mutate }) => {
   const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [finalroles, setFinalroles] = useState({
-    userFed: {
-      userRole: "",
-      userAccess: [],
-    },
-    userClub: {
-      userRole: "",
-      userAccess: [],
-    },
-    userTeam: {
-      userRole: "",
-      userAccess: [],
-    },
-    userAcademy: {
-      userRole: "",
-      userAccess: [],
-    },
+    userFed: [
+    //   {
+    //   userRole: "",
+    //   userAccess: [],
+    // }
+    ],
+    userClub: [
+    //   {
+    //   userRole: "",
+    //   userAccess: [],
+    // }
+  ],
+    userTeam: [
+    //   {
+    //   userRole: "",
+    //   userAccess: [],
+    // }
+  ],
+    userAcademy: [
+    //   {
+    //   userRole: "",
+    //   userAccess: [],
+    // }
+  ],
   });
 
   let userRoles = finalroles;
@@ -186,23 +194,43 @@ export const AddUserAccessDialog = ({ open, handleClose, user, mutate }) => {
 
     // for final payload
     if (AccessID == 1 || AccessID == 5 || AccessID == 6 || AccessID == 7) {
-      userRoles.userFed.userRole = ID;
-      userRoles.userFed.userAccess = newIDArray;
+      userRoles.userFed.push({ 
+        userRole:ID,
+        userAccess:newIDArray
+      })
+      // userRoles.userFed.userRole = ID;
+      // userRoles.userFed.userAccess = newIDArray;
       setFinalroles(userRoles);
     }
     if (AccessID == 2) {
-      userRoles.userClub.userRole = ID;
-      userRoles.userClub.userAccess = newIDArray;
+      userRoles.userClub.push({ 
+        userRole:ID,
+        userAccess:newIDArray
+      })
+      // userRoles.userClub.userRole = ID;
+      // userRoles.userClub.userAccess = newIDArray;
       setFinalroles(userRoles);
     }
     if (AccessID == 3) {
-      userRoles.userAcademy.userRole = ID;
-      userRoles.userAcademy.userAccess = newIDArray;
+      
+      userRoles.userAcademy.push({ 
+        userRole:ID,
+        userAccess:newIDArray
+      })
+
+      // userRoles.userAcademy.userRole = ID;
+      // userRoles.userAcademy.userAccess = newIDArray;
       setFinalroles(userRoles);
     }
     if (AccessID == 4) {
-      userRoles.userTeam.userRole = ID;
-      userRoles.userTeam.userAccess = newIDArray;
+
+      userRoles.userTeam.push({ 
+        userRole:ID,
+        userAccess:newIDArray
+      })
+
+      // userRoles.userTeam.userRole = ID;
+      // userRoles.userTeam.userAccess = newIDArray;
       setFinalroles(userRoles);
     }
     formik.values.userRole = [];

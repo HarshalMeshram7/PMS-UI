@@ -29,8 +29,9 @@ import { useEffect, useState, useReducer } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import LoadingBox from "src/components/common/loading-box";
+import { updateUser } from "src/services/userRequests";
 
-export const UserAccessDetailsDialog = ({ open, handleClose, user  }) => {
+export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
   const [access, setAccess] = useState([]);
@@ -38,39 +39,23 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user  }) => {
 
   const [finalAccessForTable, setFinalAccessForTable] = useState([]);
 
-  if(user?.userAccessForTable != undefined){
-    finalAccessForTable = user?.userAccessForTable
-  }
-
   const [finalroles, setFinalroles] = useState({
-    userFed: {
-      userRole: "",
-      userAccess: [],
-    },
-    userClub: {
-      userRole: "",
-      userAccess: [],
-    },
-    userTeam: {
-      userRole: "",
-      userAccess: [],
-    },
-    userAcademy: {
-      userRole: "",
-      userAccess: [],
-    },
+    userFed: [],
+    userClub: [],
+    userTeam: [],
+    userAcademy: [],
   });
 
   let userRoles = finalroles;
- 
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
       userName: user?.user_info?.userName,
-      password: "Monish@1995",
-      cnfpassword: "Monish@1995",
+      password: "Monish",
+      cnfpassword: "Monish",
       fullName: user?.fullName,
-      address: user?.user_info?.address || "asda",
+      address: user?.user_info?.address || "Address",
       email: user?.user_info?.eMail,
       phone: user?.user_info?.mobileNo,
       userRole: [],
@@ -78,29 +63,44 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user  }) => {
     },
 
     validationSchema: Yup.object({
-      // userName: Yup.string().max(100).required("User Name is required"),
-      // password: Yup.string().max(255).required("Password is required"),
-      // cnfpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
-      // fullName: Yup.string().max(100).required("User Name is required"),
-      // address: Yup.string(),
-      // // .required('Required')
-      // email: Yup.string().email("Must be a valid Email").max(255).required("Email is required"),
-      // phone: Yup.string()
-      //   .length(10)
-      //   .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, "Phone number is not valid")
-      //   .required("Phone number is required"),
+      userName: Yup.string().max(100).required("User Name is required"),
+      password: Yup.string().max(255).required("Password is required"),
+      cnfpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
+      fullName: Yup.string().max(100).required("User Name is required"),
+      address: Yup.string(),
+      // .required('Required')
+      email: Yup.string().email("Must be a valid Email").max(255).required("Email is required"),
+      phone: Yup.string()
+        .length(10)
+        .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, "Phone number is not valid")
+        .required("Phone number is required"),
     }),
 
     onSubmit: async (data) => {
       setLoading(true);
       try {
-        let finalData = { ...data, userRoles: finalroles, userRole: "", userAccess: "" };
-        console.log(finalData);
-        // await addAcademy(data);
-        // handleClose();
-        // enqueueSnackbar("User Updated Succesfully", { variant: "success" });
-        setLoading(false);
+        let finalData = {
+          ...data,
+          ID: user?.user_info.userId,
+          userRoles: finalroles,
+          userRole: "",
+          userAccess: "",
+        };
+        await updateUser(finalData).then((resp) => {
+          if (resp.status === "success") {
+            handleClose();
+            enqueueSnackbar("user Updated Succesfully", { variant: "success" });
+            mutate();
+            setLoading(false);
+          }
+          if (resp.status === "failed") {
+            handleClose();
+            enqueueSnackbar("user not updated", { variant: "failed" });
+            setLoading(false);
+          }
+        });
       } catch (error) {
+        alert("failed");
         setLoading(false);
       }
     },
@@ -162,23 +162,33 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user  }) => {
 
     // for final payload
     if (AccessID == 1 || AccessID == 5 || AccessID == 6 || AccessID == 7) {
-      userRoles.userFed.userRole = ID;
-      userRoles.userFed.userAccess = newIDArray;
+      userRoles.userFed.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
       setFinalroles(userRoles);
     }
     if (AccessID == 2) {
-      userRoles.userClub.userRole = ID;
-      userRoles.userClub.userAccess = newIDArray;
+      userRoles.userClub.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
       setFinalroles(userRoles);
     }
     if (AccessID == 3) {
-      userRoles.userAcademy.userRole = ID;
-      userRoles.userAcademy.userAccess = newIDArray;
+      userRoles.userAcademy.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
+
       setFinalroles(userRoles);
     }
     if (AccessID == 4) {
-      userRoles.userTeam.userRole = ID;
-      userRoles.userTeam.userAccess = newIDArray;
+      userRoles.userTeam.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
+
       setFinalroles(userRoles);
     }
     formik.values.userRole = [];
@@ -192,11 +202,9 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user  }) => {
     forceUpdate();
   };
 
-  useEffect(() => {
-    if (!open) {
-      formik.resetForm();
-    }
-  }, [open]);
+  if(user?.userAccessForTable != undefined && user?.userAccessForTable.length > 0){
+    finalAccessForTable = user?.userAccessForTable
+  }
 
   return (
     <Dialog
@@ -334,7 +342,7 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user  }) => {
           <Grid container spacing={3}>
             {/* from here */}
             <Grid item md={12} xs={12}>
-              {finalAccessForTable?.length !== 0 && (
+              {finalAccessForTable?.length > 0 && (
                 <Table aria-label="caption table">
                   <TableHead>
                     <TableRow>

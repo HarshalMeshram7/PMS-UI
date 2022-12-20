@@ -5,12 +5,14 @@ const LoadingBox = ({ children }) => {
   return (
     <Box
       sx={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
+        // width: "100vw",
+        // height: "100vh",
+        // display: "flex",
+        // flexDirection: "row",
+        // justifyContent: "center",
+        // alignItems: "center",
+        top:"50vh",
+        left:"50vw",
         position: "absolute",
         zIndex: 2,
         background: "#ffffff80",

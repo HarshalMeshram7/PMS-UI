@@ -9,6 +9,7 @@ import { useAllUser2 } from "src/adapters/usersAdapters";
 import { UserAccessDetailsDialog } from "src/components/user-access/useraccess-details-dialog";
 import { getUserDetails, deleteUser, getUserTypeList } from "src/services/userRequests";
 import DeleteDialog from "src/components/common/deleteDialog";
+import LoadingBox from "src/components/common/loading-box";
 
 const Useraccess = () => {
   const [showAddUserAccessDialog, setShowAddUserAccessDialog] = useState(false);
@@ -16,14 +17,18 @@ const Useraccess = () => {
   const [openDeleteDialogue, setOpenDeleteDialogue] = useState(false);
   const [user, setUser] = useState({});
   const [params, setParams] = useState({});
+  const [loading , setLoading] = useState(false)
 
   const handleOpenAddUserAccess = () => {
     try {
+      setLoading(true)
       getUserTypeList().then((res) => {
         if (res?.status === "SUCCESS") {
           setUser(res.result);
         }
+
         setShowAddUserAccessDialog(true);
+        setLoading(false)
       });
     } catch (error) {
       console.log(error);
@@ -34,64 +39,128 @@ const Useraccess = () => {
   const handleCloseUserAccessDetails = () => setShowUserAccessDetailsDialog(false);
   const handleOpenUserAccessDetails = (user) => {
     try {
+      setLoading(true)
       getUserDetails({ id: user.ID }).then(async (res) => {
         if (res?.status === "SUCCESS") {
           let userAccessForTable = [];
 
+          // for modeling userFederation from api for ui
           if (res.result?.userFederations?.length != 0) {
-            let tempData = {
-              userRole: res.result?.userFederations[0]?.Description,
-              userAccess: [],
-            }
-            await res.result?.userFederations?.map((item) => {
-              tempData.userAccess.push(item.Federation);
-            })
-            userAccessForTable.push(tempData);
+            let userFederations = res.result?.userFederations;
+            let oldID = 0;
+            userFederations?.map(async (item) => {
+              let userTypeID = item.UserTypeID;
+
+              if (oldID != userTypeID) {
+                oldID = userTypeID;
+                let tempData = {
+                  userRole: item.Description,
+                  userAccess: [],
+                };
+                await res.result?.userFederations
+                  ?.filter((a) => {
+                    if (a.UserTypeID == userTypeID) {
+                      return a;
+                    }
+                  })
+                  .map((item) => {
+                    tempData.userAccess.push(item.Federation);
+                  });
+                userAccessForTable.push(tempData);
+              }
+            });
           }
 
+          // for modeling userClub from api for ui
 
           if (res.result?.userClubs?.length != 0) {
-            let tempData = {
-              userRole: res.result?.userClubs[0]?.Description,
-              userAccess: [],
-            }
-            await res.result?.userClubs?.map((item) => {
-              tempData.userAccess.push(item.Club);
-            })
-            userAccessForTable.push(tempData);
+            let userClubs = res.result?.userClubs;
+            let oldID = 0;
+            userClubs?.map(async (item) => {
+              let userTypeID = item.UserTypeID;
+
+              if (oldID != userTypeID) {
+                oldID = userTypeID;
+                let tempData = {
+                  userRole: item.Description,
+                  userAccess: [],
+                };
+                await res.result?.userClubs
+                  ?.filter((a) => {
+                    if (a.UserTypeID == userTypeID) {
+                      return a;
+                    }
+                  })
+                  .map((item) => {
+                    tempData.userAccess.push(item.Club);
+                  });
+                userAccessForTable.push(tempData);
+              }
+            });
           }
 
-          
+          // for modeling userAcademy from api for ui
           if (res.result?.userAcademy?.length != 0) {
-            let tempData = {
-              userRole: res.result?.userAcademy[0]?.Description,
-              userAccess: [],
-            }
-            await res.result?.userAcademy?.map((item) => {
-              tempData.userAccess.push(item.Academy);
-            })
-            userAccessForTable.push(tempData);
+            let userAcademy = res.result?.userAcademy;
+            let oldID = 0;
+            userAcademy?.map(async (item) => {
+              let userTypeID = item.UserTypeID;
+              
+              if(oldID != userTypeID ){
+                oldID = userTypeID
+                let tempData = {
+                userRole: item.Description,
+                userAccess: [],
+              };
+              await res.result?.userAcademy
+                ?.filter((a) => {
+                  if (a.UserTypeID == userTypeID) {
+                    return a;
+                  }
+                })
+                .map((item) => {
+                  tempData.userAccess.push(item.Academy);
+                });
+                userAccessForTable.push(tempData);
+              }
+            });
           }
 
-
+          // for modeling userTeam from api for ui
           if (res.result?.userTeams?.length != 0) {
-            let tempData = {
-              userRole: res.result?.userTeams[0]?.Description,
-              userAccess: [],
-            }
-            await res.result?.userTeams?.map((item) => {
-              tempData.userAccess.push(item.Team);
-            })
-            userAccessForTable.push(tempData);
+            let userTeams = res.result?.userTeams;
+            let oldID = 0;
+            userTeams?.map(async (item) => {
+              let userTypeID = item.UserTypeID;
+              
+              if(oldID != userTypeID ){
+                oldID = userTypeID
+                let tempData = {
+                userRole: item.Description,
+                userAccess: [],
+              };
+              await res.result?.userTeams
+                ?.filter((a) => {
+                  if (a.UserTypeID == userTypeID) {
+                    return a;
+                  }
+                })
+                .map((item) => {
+                  tempData.userAccess.push(item.Team);
+                });
+                userAccessForTable.push(tempData);
+              }
+            });
           }
-
+          
           let Senduser = {
             ...res.result,
             fullName: user.FullName,
             userAccessForTable: userAccessForTable,
           };
           setUser(Senduser);
-          setShowUserAccessDetailsDialog(true)
+          setLoading(false)
+          setShowUserAccessDetailsDialog(true);
         }
       });
     } catch (error) {
@@ -123,7 +192,7 @@ const Useraccess = () => {
     setParams((p) => ({ ...p, searchpattern: value }));
   };
 
-  const { loading, users, mutate } = useAllUser2({ ...params });
+  const { users, mutate } = useAllUser2({ ...params });
 
   return (
     <>
@@ -137,6 +206,7 @@ const Useraccess = () => {
           py: 8,
         }}
       >
+        {loading && <LoadingBox/>}
         <DeleteDialog
           handleDelete={handleDeleteUser}
           name={user.FullName}
