@@ -17,18 +17,18 @@ const Useraccess = () => {
   const [openDeleteDialogue, setOpenDeleteDialogue] = useState(false);
   const [user, setUser] = useState({});
   const [params, setParams] = useState({});
-  const [loading , setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleOpenAddUserAccess = () => {
     try {
-      setLoading(true)
+      setLoading(true);
       getUserTypeList().then((res) => {
         if (res?.status === "SUCCESS") {
           setUser(res.result);
         }
 
         setShowAddUserAccessDialog(true);
-        setLoading(false)
+        setLoading(false);
       });
     } catch (error) {
       console.log(error);
@@ -39,10 +39,16 @@ const Useraccess = () => {
   const handleCloseUserAccessDetails = () => setShowUserAccessDetailsDialog(false);
   const handleOpenUserAccessDetails = (user) => {
     try {
-      setLoading(true)
+      setLoading(true);
       getUserDetails({ id: user.ID }).then(async (res) => {
         if (res?.status === "SUCCESS") {
           let userAccessForTable = [];
+          let userRole = {
+            userFed: [],
+            userClub: [],
+            userTeam: [],
+            userAcademy: [],
+          };
 
           // for modeling userFederation from api for ui
           if (res.result?.userFederations?.length != 0) {
@@ -50,11 +56,14 @@ const Useraccess = () => {
             let oldID = 0;
             userFederations?.map(async (item) => {
               let userTypeID = item.UserTypeID;
-
               if (oldID != userTypeID) {
                 oldID = userTypeID;
                 let tempData = {
                   userRole: item.Description,
+                  userAccess: [],
+                };
+                let tempDataPayload = {
+                  userRole: item.UserTypeID,
                   userAccess: [],
                 };
                 await res.result?.userFederations
@@ -65,8 +74,11 @@ const Useraccess = () => {
                   })
                   .map((item) => {
                     tempData.userAccess.push(item.Federation);
+                    tempDataPayload.userAccess.push(item.FederationID);
                   });
+
                 userAccessForTable.push(tempData);
+                userRole.userFed.push(tempDataPayload);
               }
             });
           }
@@ -85,6 +97,10 @@ const Useraccess = () => {
                   userRole: item.Description,
                   userAccess: [],
                 };
+                let tempDataPayload = {
+                  userRole: item.UserTypeID,
+                  userAccess: [],
+                };
                 await res.result?.userClubs
                   ?.filter((a) => {
                     if (a.UserTypeID == userTypeID) {
@@ -93,8 +109,10 @@ const Useraccess = () => {
                   })
                   .map((item) => {
                     tempData.userAccess.push(item.Club);
+                    tempDataPayload.userAccess.push(item.ClubID);
                   });
                 userAccessForTable.push(tempData);
+                userRole.userClub.push(tempDataPayload);
               }
             });
           }
@@ -105,23 +123,29 @@ const Useraccess = () => {
             let oldID = 0;
             userAcademy?.map(async (item) => {
               let userTypeID = item.UserTypeID;
-              
-              if(oldID != userTypeID ){
-                oldID = userTypeID
+
+              if (oldID != userTypeID) {
+                oldID = userTypeID;
                 let tempData = {
-                userRole: item.Description,
-                userAccess: [],
-              };
-              await res.result?.userAcademy
-                ?.filter((a) => {
-                  if (a.UserTypeID == userTypeID) {
-                    return a;
-                  }
-                })
-                .map((item) => {
-                  tempData.userAccess.push(item.Academy);
-                });
+                  userRole: item.Description,
+                  userAccess: [],
+                };
+                let tempDataPayload = {
+                  userRole: item.UserTypeID,
+                  userAccess: [],
+                };
+                await res.result?.userAcademy
+                  ?.filter((a) => {
+                    if (a.UserTypeID == userTypeID) {
+                      return a;
+                    }
+                  })
+                  .map((item) => {
+                    tempData.userAccess.push(item.Academy);
+                    tempDataPayload.userAccess.push(item.AcademyID);
+                  });
                 userAccessForTable.push(tempData);
+                userRole.userTeam.push(tempDataPayload);
               }
             });
           }
@@ -132,34 +156,40 @@ const Useraccess = () => {
             let oldID = 0;
             userTeams?.map(async (item) => {
               let userTypeID = item.UserTypeID;
-              
-              if(oldID != userTypeID ){
-                oldID = userTypeID
+
+              if (oldID != userTypeID) {
+                oldID = userTypeID;
                 let tempData = {
-                userRole: item.Description,
-                userAccess: [],
-              };
-              await res.result?.userTeams
-                ?.filter((a) => {
-                  if (a.UserTypeID == userTypeID) {
-                    return a;
-                  }
-                })
-                .map((item) => {
-                  tempData.userAccess.push(item.Team);
-                });
+                  userRole: item.Description,
+                  userAccess: [],
+                };
+                let tempDataPayload = {
+                  userRole: item.UserTypeID,
+                  userAccess: [],
+                };
+                await res.result?.userTeams
+                  ?.filter((a) => {
+                    if (a.UserTypeID == userTypeID) {
+                      return a;
+                    }
+                  })
+                  .map((item) => {
+                    tempData.userAccess.push(item.Team);
+                    tempDataPayload.userAccess.push(item.ClubTeamID);
+                  });
                 userAccessForTable.push(tempData);
+                userRole.userAcademy.push(tempDataPayload);
               }
             });
           }
-          
           let Senduser = {
             ...res.result,
             fullName: user.FullName,
             userAccessForTable: userAccessForTable,
+            userRole: userRole,
           };
           setUser(Senduser);
-          setLoading(false)
+          setLoading(false);
           setShowUserAccessDetailsDialog(true);
         }
       });
@@ -206,7 +236,7 @@ const Useraccess = () => {
           py: 8,
         }}
       >
-        {loading && <LoadingBox/>}
+        {loading && <LoadingBox />}
         <DeleteDialog
           handleDelete={handleDeleteUser}
           name={user.FullName}
@@ -219,11 +249,13 @@ const Useraccess = () => {
           open={showAddUserAccessDialog}
           handleClose={handleCloseAddUserAccess}
           mutate={mutate}
-        />
+          />
         <UserAccessDetailsDialog
+          mutate={mutate}
           user={user}
           open={showUserAccessDetailsDialog}
           handleClose={handleCloseUserAccessDetails}
+
         />
         <Container maxWidth={false}>
           <UserAccessListToolbar

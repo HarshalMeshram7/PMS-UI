@@ -31,7 +31,7 @@ import * as Yup from "yup";
 import LoadingBox from "src/components/common/loading-box";
 import { updateUser } from "src/services/userRequests";
 
-export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
+export const UserAccessDetailsDialog = ({ open, handleClose, user ,mutate }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
   const [access, setAccess] = useState([]);
@@ -55,6 +55,8 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
       password: "Monish",
       cnfpassword: "Monish",
       fullName: user?.fullName,
+      firstName: user?.user_info?.firstName,
+      lastName: user?.user_info?.lastName,
       address: user?.user_info?.address || "Address",
       email: user?.user_info?.eMail,
       phone: user?.user_info?.mobileNo,
@@ -66,7 +68,7 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
       userName: Yup.string().max(100).required("User Name is required"),
       password: Yup.string().max(255).required("Password is required"),
       cnfpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
-      fullName: Yup.string().max(100).required("User Name is required"),
+      // fullName: Yup.string().max(100).required("User Name is required"),
       address: Yup.string(),
       // .required('Required')
       email: Yup.string().email("Must be a valid Email").max(255).required("Email is required"),
@@ -81,7 +83,7 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
       try {
         let finalData = {
           ...data,
-          ID: user?.user_info.userId,
+          Id: user?.user_info.userId,
           userRoles: finalroles,
           userRole: "",
           userAccess: "",
@@ -100,7 +102,7 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
           }
         });
       } catch (error) {
-        alert("failed");
+        console.log(error);
         setLoading(false);
       }
     },
@@ -205,6 +207,9 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
   if(user?.userAccessForTable != undefined && user?.userAccessForTable.length > 0){
     finalAccessForTable = user?.userAccessForTable
   }
+  if(user?.userRole != undefined){
+    finalroles = user?.userRole
+  }
 
   return (
     <Dialog
@@ -272,16 +277,31 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user }) => {
 
             <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.fullName && formik.errors.fullName)}
+                error={Boolean(formik.touched.firstName && formik.errors.firstName)}
                 fullWidth
-                helperText={formik.touched.fullName && formik.errors.fullName}
-                label="Full Name"
+                helperText={formik.touched.firstName && formik.errors.firstName}
+                label="First Name"
                 margin="dense"
-                name="fullName"
+                name="firstName"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
-                value={formik.values.fullName}
+                value={formik.values.firstName}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.lastName && formik.errors.lastName)}
+                fullWidth
+                helperText={formik.touched.lastName && formik.errors.lastName}
+                label="Last Name"
+                margin="dense"
+                name="lastName"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.lastName}
                 variant="outlined"
               />
             </Grid>
