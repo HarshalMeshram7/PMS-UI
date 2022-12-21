@@ -28,11 +28,13 @@ import uploadFileToBlob, { deleteBlob, handlePriview, getFileName } from "src/ut
 import { addClub } from "src/services/clubRequest";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getAllFederations } from "src/services/federationRequest";
+import { getAllSports } from "src/services/commonRequest";
 
 export const AddClubDialog = ({ open, handleClose, mutate }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
   const [federationList, setFederationList] = useState(null);
+  const [sportsList, setSportsList] = useState(null);
 
   //   logo upload
   const [selectedLogo, setSelectedLogo] = useState(null);
@@ -107,6 +109,9 @@ export const AddClubDialog = ({ open, handleClose, mutate }) => {
     getAllFederations().then((res) => {
       setFederationList(res);
     });
+    getAllSports({ searchpattern:"" }).then((res) => {
+      setSportsList(res);
+    });
   }, []);
 
   const formik = useFormik({
@@ -126,6 +131,7 @@ export const AddClubDialog = ({ open, handleClose, mutate }) => {
       facebook: "Facebook",
       twitter: "Twitter",
       instagram: "Instagram",
+      sportsID: [],
     },
     validationSchema: Yup.object({
       club: Yup.string().max(30, "Not more than 30 characters").required("Club Name is required"),
@@ -347,15 +353,35 @@ export const AddClubDialog = ({ open, handleClose, mutate }) => {
                   onChange={formik.handleChange}
                   required
                 >
-                  {
-                  federationList?.map((item , key)=>(
-                    <MenuItem key={key} value={item.ID}>{item.name}</MenuItem>
-                  ))
-                  }
+                  {federationList?.map((item, key) => (
+                    <MenuItem key={key} value={item.ID}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item md={6} xs={12}></Grid>
+            <Grid item md={6} xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-helper-label">Sports</InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  value={formik.values.sportsID}
+                  label="Sports"
+                  name="sportsID"
+                  onChange={formik.handleChange}
+                  required
+                  multiple
+                >
+                  {sportsList?.map((item, key) => (
+                    <MenuItem key={key} value={item.ID}>
+                      {item.Sports}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
             <Grid item md={6} xs={12}>
               <TextField
                 style={{ display: "none" }}

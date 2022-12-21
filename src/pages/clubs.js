@@ -6,7 +6,6 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import { AddClubDialog } from 'src/components/club/add-club-dialog';
 import { useState, useEffect } from 'react';
 import { ClubDetailsDialog } from 'src/components/club/club-details-dialog';
-import { useAllAcademies } from 'src/adapters/academyAdapter';
 import { useAllClubs } from 'src/adapters/clubAdapter';
 import { ClubFinanceDialog } from 'src/components/club/club-finance-dialog';
 import { getClub, getClubFinanceById } from 'src/services/clubRequest';
@@ -35,10 +34,6 @@ const Clubs = () => {
 
     const handleOpenClubFinance = (club) => {
 
-        // getClub({id:club.ID}).then((res)=>{
-        //     setClub(club)
-        //     setShowClubFinanceDialog(true)
-        // })
 
         try {
             getClub({ id: club.ID }).then((res) => {
@@ -59,24 +54,7 @@ const Clubs = () => {
         setParams((p) => ({ ...p, searchpattern: value }))
     };
 
-    // const { academies, loading, error, mutate } = useAllAcademies({ ...params });
     const { clubs, loading, error, mutate } = useAllClubs({ ...params });
-
-    let clubsLocal = [{
-        "_id": "62de8df69fda862707152867",
-        "Club": "club2",
-        "Address": "Address",
-        "Phone": 8208793805,
-        "Email": "club2@pixonix.tech",
-        "ContactPersonName": "Person name",
-        "Logo": "/static/images/products/product_2.png",
-        "Banner": "../../../public/static/images/background/register.jpg",
-        "Accreditation": "accreditation",
-        "Facebook": "fb",
-        "Twitter": "tw",
-        "Instagram": "ins",
-        "sportsList": ["Football", "Cricket", "Tennis"], "__v": 0
-    }]
 
     return (
         <>
