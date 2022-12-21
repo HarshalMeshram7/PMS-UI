@@ -9,7 +9,7 @@ export const addTeam = async (data) => {
         throw "No Token";
     }
     try {
-        const res = await axios.post(`${MAIN_URL2}/api/team/addTeam/`, data, {
+        const res = await axios.post(`${MAIN_URL2}/saveclubteam`, data, {
             headers: {
                 Authorization: "Bearer " + token,
             },

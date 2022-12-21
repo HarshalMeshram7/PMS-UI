@@ -25,22 +25,24 @@ import LoadingBox from "src/components/common/loading-box";
 import DeleteIcon from '@mui/icons-material/Delete';
 import uploadFileToBlob, { deleteBlob, handlePriview, getFileName } from "src/utils/azureBlob";
 import { addTeam } from "src/services/teamRequest";
+import { useAllClubs } from "src/adapters/clubAdapter";
+import { getClubSportsByClubID } from "src/services/clubRequest";
 
 
-const sportsList = [
-    {
-        value: "football",
-        label: "Football"
-    },
-    {
-        value: "cricket",
-        label: "Cricket"
-    },
-    {
-        value: "tennis",
-        label: "Tennis"
-    }
-];
+// const clubsportsID = [
+//     {
+//         value: "football",
+//         label: "Football"
+//     },
+//     {
+//         value: "cricket",
+//         label: "Cricket"
+//     },
+//     {
+//         value: "tennis",
+//         label: "Tennis"
+//     }
+// ];
 
 export const AddTeamDialog = ({ open, handleClose }) => {
     const { enqueueSnackbar } = useSnackbar();
@@ -59,6 +61,8 @@ export const AddTeamDialog = ({ open, handleClose }) => {
 
     const [uploadedBanner, setUploadedBanner] = useState(false);
     const [uploadedBannerName, setUploadedBannerName] = useState("");
+
+    const [clubSports, setClubSports] = useState([])
 
     const onFileChnage = (e) => {
         if (e.target.name == "logo") {
@@ -99,7 +103,6 @@ export const AddTeamDialog = ({ open, handleClose }) => {
 
         });
 
-
         setLoading(false)
     };
 
@@ -123,30 +126,40 @@ export const AddTeamDialog = ({ open, handleClose }) => {
 
     }
 
+    const onClubChange = (e) => {
+        getClubSportsByClubID({ Id: e.target.value }).then((res) => {
+            console.log(res);
+            setClubSports(res)
+        })
+
+    }
+
 
     const formik = useFormik({
         initialValues: {
-            teamName: "Sultan 11",
-            address: "Nagpur",
-            phone: "9876543210",
-            email: "team@gmail.com",
-            personName: "Contact person",
+            team: "Sultan 11",
+            address: "not in db",
+            phone: "000000000",
+            email: "notindb@gmail.com",
+            personName: "not in db",
             logo: "",
             banner: "",
-            accreditation: "Accreditation",
+            accreditation: "not in db",
             facebook: "Face",
             twitter: "Twitt",
-            instagram: "Insta",
-            sportsList: [],
+            instagram: "not in db",
+            clubsportsID: [],
+            club: "",
             password: "Wasif@1234",
             cnfpassword: "Wasif@1234"
         },
         validationSchema: Yup.object({
-            teamName:
+            team:
                 Yup.string().max(30, "Not more than 30 characters").required("Federation Name is required"),
 
             address: Yup.string().max(50, "Not more than 50 characters")
-                .required('Address required'),
+            // .required('Address required')
+            ,
 
             phone: Yup.string()
                 .length(10)
@@ -227,6 +240,9 @@ export const AddTeamDialog = ({ open, handleClose }) => {
         }
     }, [open]);
 
+    const { clubs } = useAllClubs()
+
+
     return (
         <Dialog
             open={open}
@@ -248,6 +264,65 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                         container
                         spacing={3}
                     >
+                        <Grid
+                            item
+                            md={6}
+                            xs={12}
+                        >
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-helper-label">Select Club</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
+                                    value={formik.values.club}
+                                    label="Select Club"
+                                    name="club"
+                                    onChange={(e) => {
+                                        formik.handleChange(e)
+                                        onClubChange(e)
+                                    }}
+                                >
+                                    {clubs?.map((option, key) => {
+                                        return (
+                                            <MenuItem key={key}
+                                                value={option.ID}>
+                                                {option.name}
+                                            </MenuItem>
+                                        )
+                                    }
+                                    )}
+                                </Select>
+                            </FormControl>
+                        </Grid>
+
+
+                        <Grid
+                            item
+                            md={6}
+                            xs={12}
+                        >
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-helper-label">Select Club Sports</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
+                                    value={formik.values.clubsportsID}
+                                    label="Select Club Sports"
+                                    name="clubsportsID"
+                                    onChange={formik.handleChange}
+                                >
+                                    {clubSports?.map((option, key) => {
+                                        return (
+                                            <MenuItem key={key}
+                                                value={option.ID}>
+                                                {option.Sports}
+                                            </MenuItem>
+                                        )
+                                    }
+                                    )}
+                                </Select>
+                            </FormControl>
+                        </Grid>
 
                         <Grid
                             item
@@ -255,16 +330,16 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                             xs={12}
                         >
                             <TextField
-                                error={Boolean(formik.touched.teamName && formik.errors.teamName)}
+                                error={Boolean(formik.touched.team && formik.errors.team)}
                                 fullWidth
-                                helperText={formik.touched.teamName && formik.errors.teamName}
+                                helperText={formik.touched.team && formik.errors.team}
                                 label="Name"
                                 margin="dense"
-                                name="teamName"
+                                name="team"
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                                 type="text"
-                                value={formik.values.teamName}
+                                value={formik.values.team}
                                 variant="outlined"
                             />
                         </Grid>
@@ -444,7 +519,7 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                         required
                     /> */}
 
-                        <Grid
+                        {/* <Grid
                             item
                             md={6}
                             xs={12}
@@ -459,7 +534,7 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                                     name="sportsList"
                                     onChange={formik.handleChange}
                                 >
-                                    {sportsList?.map((option, key) => (
+                                    {clubsportsID?.map((option, key) => (
                                         <MenuItem key={key}
                                             value={option.label}>
                                             {option.label}
@@ -467,7 +542,7 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                                     ))}
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Grid> */}
 
                         <Grid
                             item
@@ -596,6 +671,6 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                     <Button type="submit" variant="contained">Add</Button>
                 </DialogActions>
             </form>
-        </Dialog>
+        </Dialog >
     );
 };
