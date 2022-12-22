@@ -131,17 +131,14 @@ export const AddTeamDialog = ({ open, handleClose }) => {
             console.log(res);
             setClubSports(res)
         })
-
     }
-
 
     const formik = useFormik({
         initialValues: {
-            team: "Sultan 11",
-            address: "not in db",
-            phone: "000000000",
-            email: "notindb@gmail.com",
-            personName: "not in db",
+            teamName: "Sultan 11",
+            managerPhoneNo: "0000000000",
+            managerEmail: "notindb@gmail.com",
+            managerName: "not in db",
             logo: "",
             banner: "",
             accreditation: "not in db",
@@ -150,65 +147,65 @@ export const AddTeamDialog = ({ open, handleClose }) => {
             instagram: "not in db",
             clubsportsID: [],
             club: "",
-            password: "Wasif@1234",
-            cnfpassword: "Wasif@1234"
+
         },
-        validationSchema: Yup.object({
-            team:
-                Yup.string().max(30, "Not more than 30 characters").required("Federation Name is required"),
+        // validationSchema: Yup.object({
+        //     teamName:
+        //         Yup.string().max(30, "Not more than 30 characters").required("Federation Name is required"),
 
-            address: Yup.string().max(50, "Not more than 50 characters")
-            // .required('Address required')
-            ,
+        //     // address: Yup.string().max(50, "Not more than 50 characters")
+        //     // .required('Address required')
+        //     // ,
 
-            phone: Yup.string()
-                .length(10)
-                // .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, 'Phone number is not valid')
-                .required("Phone number is required")
-            ,
-            email: Yup
-                .string()
-                .email("Must be a valid Email")
-                .max(35, "Not more than 35 characters")
-                .required("Email is required")
-            ,
-            personName: Yup
-                .string()
-                .max(30, "Not more than 30 characters")
-                .required("Contact Person Name is required"),
+        //     managerPhoneNo: Yup.string()
+        //         .length(10)
+        //         // .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, 'Phone number is not valid')
+        //         .required("Phone number is required")
+        //     ,
+        //     managerEmail: Yup
+        //         .string()
+        //         .email("Must be a valid Email")
+        //         .max(35, "Not more than 35 characters")
+        //         .required("Email is required")
+        //     ,
+        //     managerName: Yup
+        //         .string()
+        //         .max(30, "Not more than 30 characters")
+        //         .required("Contact Person Name is required"),
 
-            accreditation: Yup
-                .string()
-                .max(30, "Not more than 30 characters"),
-            accreditation: Yup
-                .string()
-                .max(30, "Not more than 30 characters"),
-            facebook: Yup
-                .string()
-                .max(30, "Not more than 30 characters"),
-            twitter: Yup
-                .string()
-                .max(30, "Not more than 30 characters"),
-            instagram: Yup
-                .string()
-                .max(30, "Not more than 30 characters"),
-            // sportsList: Yup
-            //     .string()
-            //     .max(100)
-            //     // .required("Sport List is required")
-            //     ,
-            password: Yup
-                .string()
-                .max(20, "Maximum 20 characters")
-                .required('Password is required')
-                .min(8, "Minimum 8 characters")
-                .matches(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,20}$/, " Must have uppercase, lowecase, special character and no space allowed")
-            ,
-            cnfpassword: Yup
-                .string()
-                .oneOf([Yup.ref('password'), null], 'Passwords must match')
+        //     accreditation: Yup
+        //         .string()
+        //         .max(30, "Not more than 30 characters"),
+        //     accreditation: Yup
+        //         .string()
+        //         .max(30, "Not more than 30 characters"),
+        //     facebook: Yup
+        //         .string()
+        //         .max(30, "Not more than 30 characters"),
+        //     twitter: Yup
+        //         .string()
+        //         .max(30, "Not more than 30 characters"),
+        //     instagram: Yup
+        //         .string()
+        //         .max(30, "Not more than 30 characters"),
+        //     // sportsList: Yup
+        //     //     .string()
+        //     //     .max(100)
+        //     //     // .required("Sport List is required")
+        //     //     ,
+        //     // password: Yup
+        //     //     .string()
+        //     //     .max(20, "Maximum 20 characters")
+        //     //     .required('Password is required')
+        //     //     .min(8, "Minimum 8 characters")
+        //     //     .matches(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,20}$/, " Must have uppercase, lowecase, special character and no space allowed")
+        //     // ,
+        //     // cnfpassword: Yup
+        //     //     .string()
+        //     //     .oneOf([Yup.ref('password'), null], 'Passwords must match')
 
-        }),
+        // }),
+
         onSubmit: async (data) => {
             setLoading(true);
 
@@ -264,65 +261,6 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                         container
                         spacing={3}
                     >
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-helper-label">Select Club</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-helper-label"
-                                    id="demo-simple-select-helper"
-                                    value={formik.values.club}
-                                    label="Select Club"
-                                    name="club"
-                                    onChange={(e) => {
-                                        formik.handleChange(e)
-                                        onClubChange(e)
-                                    }}
-                                >
-                                    {clubs?.map((option, key) => {
-                                        return (
-                                            <MenuItem key={key}
-                                                value={option.ID}>
-                                                {option.name}
-                                            </MenuItem>
-                                        )
-                                    }
-                                    )}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-helper-label">Select Club Sports</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-helper-label"
-                                    id="demo-simple-select-helper"
-                                    value={formik.values.clubsportsID}
-                                    label="Select Club Sports"
-                                    name="clubsportsID"
-                                    onChange={formik.handleChange}
-                                >
-                                    {clubSports?.map((option, key) => {
-                                        return (
-                                            <MenuItem key={key}
-                                                value={option.ID}>
-                                                {option.Sports}
-                                            </MenuItem>
-                                        )
-                                    }
-                                    )}
-                                </Select>
-                            </FormControl>
-                        </Grid>
 
                         <Grid
                             item
@@ -330,16 +268,16 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                             xs={12}
                         >
                             <TextField
-                                error={Boolean(formik.touched.team && formik.errors.team)}
+                                error={Boolean(formik.touched.teamName && formik.errors.teamName)}
                                 fullWidth
-                                helperText={formik.touched.team && formik.errors.team}
-                                label="Name"
+                                helperText={formik.touched.teamName && formik.errors.teamName}
+                                label="Team Name"
                                 margin="dense"
-                                name="team"
+                                name="teamName"
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                                 type="text"
-                                value={formik.values.team}
+                                value={formik.values.teamName}
                                 variant="outlined"
                             />
                         </Grid>
@@ -350,16 +288,16 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                             xs={12}
                         >
                             <TextField
-                                error={Boolean(formik.touched.address && formik.errors.address)}
+                                error={Boolean(formik.touched.managerName && formik.errors.managerName)}
                                 fullWidth
-                                helperText={formik.touched.address && formik.errors.address}
-                                label="Address"
+                                helperText={formik.touched.managerName && formik.errors.managerName}
+                                label="Manager's Name"
                                 margin="dense"
-                                name="address"
+                                name="managerName"
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
-                                type="address"
-                                value={formik.values.address}
+                                type="text"
+                                value={formik.values.managerName}
                                 variant="outlined"
                             />
                         </Grid>
@@ -370,16 +308,16 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                             xs={12}
                         >
                             <TextField
-                                error={Boolean(formik.touched.phone && formik.errors.phone)}
+                                error={Boolean(formik.touched.managerPhoneNo && formik.errors.managerPhoneNo)}
                                 fullWidth
-                                helperText={formik.touched.phone && formik.errors.phone}
-                                label="Phone Number"
+                                helperText={formik.touched.managerPhoneNo && formik.errors.managerPhoneNo}
+                                label="Manager's Phone Number"
                                 margin="dense"
-                                name="phone"
+                                name="managerPhoneNo"
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
-                                type="phone"
-                                value={formik.values.phone}
+                                type="number"
+                                value={formik.values.managerPhoneNo}
                                 variant="outlined"
                             />
                         </Grid>
@@ -390,36 +328,16 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                             xs={12}
                         >
                             <TextField
-                                error={Boolean(formik.touched.email && formik.errors.email)}
+                                error={Boolean(formik.touched.managerEmail && formik.errors.managerEmail)}
                                 fullWidth
-                                helperText={formik.touched.email && formik.errors.email}
-                                label="Email"
+                                helperText={formik.touched.managerEmail && formik.errors.managerEmail}
+                                label="Manager's Email"
                                 margin="dense"
-                                name="email"
+                                name="managerEmail"
                                 onBlur={formik.handleBlur}
                                 onChange={formik.handleChange}
                                 type="email"
-                                value={formik.values.email}
-                                variant="outlined"
-                            />
-                        </Grid>
-
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.personName && formik.errors.personName)}
-                                fullWidth
-                                helperText={formik.touched.personName && formik.errors.personName}
-                                label="Person Name"
-                                margin="dense"
-                                name="personName"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.personName}
+                                value={formik.values.managerEmail}
                                 variant="outlined"
                             />
                         </Grid>
@@ -504,65 +422,35 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                             />
                         </Grid>
 
-                        {/* <TextField
-                        error={Boolean(formik.touched.sportsList && formik.errors.sportsList)}
-                        fullWidth
-                        helperText={formik.touched.sportsList && formik.errors.sportsList}
-                        label="Sports List"
-                        margin="dense"
-                        name="sportsList"
-                        onBlur={formik.handleBlur}
-                        onChange={formik.handleChange}
-                        type="text"
-                        value={formik.values.sportsList}
-                        variant="outlined"
-                        required
-                    /> */}
-
-                        {/* <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <FormControl fullWidth>
-                                <InputLabel id="demo-simple-select-helper-label">Sports List</InputLabel>
-                                <Select
-                                    labelId="demo-simple-select-helper-label"
-                                    id="demo-simple-select-helper"
-                                    value={formik.values.sportsList}
-                                    label="Sports List"
-                                    name="sportsList"
-                                    onChange={formik.handleChange}
-                                >
-                                    {clubsportsID?.map((option, key) => (
-                                        <MenuItem key={key}
-                                            value={option.label}>
-                                            {option.label}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid> */}
-
                         <Grid
                             item
                             md={6}
                             xs={12}
                         >
-                            <TextField
-                                error={Boolean(formik.touched.password && formik.errors.password)}
-                                fullWidth
-                                helperText={formik.touched.password && formik.errors.password}
-                                label="Create Password"
-                                margin="dense"
-                                name="password"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="password"
-                                value={formik.values.password}
-                                variant="outlined"
-                                required
-                            />
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-helper-label">Select Club</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
+                                    value={formik.values.club}
+                                    label="Select Club"
+                                    name="club"
+                                    onChange={(e) => {
+                                        formik.handleChange(e)
+                                        onClubChange(e)
+                                    }}
+                                >
+                                    {clubs?.map((option, key) => {
+                                        return (
+                                            <MenuItem key={key}
+                                                value={option.ID}>
+                                                {option.name}
+                                            </MenuItem>
+                                        )
+                                    }
+                                    )}
+                                </Select>
+                            </FormControl>
                         </Grid>
 
                         <Grid
@@ -570,19 +458,27 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                             md={6}
                             xs={12}
                         >
-                            <TextField
-                                error={Boolean(formik.touched.cnfpassword && formik.errors.cnfpassword)}
-                                fullWidth
-                                helperText={formik.touched.cnfpassword && formik.errors.cnfpassword}
-                                label="Confirm Password"
-                                margin="dense"
-                                name="cnfpassword"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="password"
-                                value={formik.values.cnfpassword}
-                                variant="outlined"
-                            />
+                            <FormControl fullWidth>
+                                <InputLabel id="demo-simple-select-helper-label">Select Club Sports</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-helper-label"
+                                    id="demo-simple-select-helper"
+                                    value={formik.values.clubsportsID}
+                                    label="Select Club Sports"
+                                    name="clubsportsID"
+                                    onChange={formik.handleChange}
+                                >
+                                    {clubSports?.map((option, key) => {
+                                        return (
+                                            <MenuItem key={key}
+                                                value={option.ID}>
+                                                {option.Sports}
+                                            </MenuItem>
+                                        )
+                                    }
+                                    )}
+                                </Select>
+                            </FormControl>
                         </Grid>
 
                         <Grid
@@ -621,7 +517,6 @@ export const AddTeamDialog = ({ open, handleClose }) => {
                                 }} aria-label="delete" size="large">
                                     <DeleteIcon />
                                 </IconButton></> : ""}
-
                         </Grid>
 
                         <Grid

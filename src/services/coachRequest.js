@@ -7,7 +7,7 @@ import { MAIN_URL2 } from "./apiConfig";
 export const getAllCoach = async ( params) => {
   const { token } = useStorage();
   try {
-    let res = await axios.get(`${MAIN_URL2}/getCoachList/`, {
+    let res = await axios.get(`${MAIN_URL2}/getcoachbypattern/`, {
       params: params,
       headers: {
         Authorization: "Bearer " + token,
