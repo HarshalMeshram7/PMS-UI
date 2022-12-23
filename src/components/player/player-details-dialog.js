@@ -56,7 +56,7 @@ import PlayerCommunicationTab from "./playersdetailtabs/player-communication.js"
 import PlayerProfileTab from "./playersdetailtabs/player-profile.js";
 import PlayerTMSITMSTab from "./playersdetailtabs/player-TMSITMS-tab.js";
 import { DataModel, initialValues } from "./PlayerDetailsData.js";
-import { getFullName } from "src/utils/getFullName.js";
+import { getFullName } from "src/utils/commonFunctions.js";
 import { updatePlayers } from "src/services/playersRequest.js";
 
 export const PlayerDetailsDialog = ({ open, handleClose ,player ,initValue, mutate}) => {

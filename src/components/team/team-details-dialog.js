@@ -17,9 +17,10 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Avatar
+    Avatar,
+
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import LoadingBox from "src/components/common/loading-box";
 import { PlayerListResults } from "src/components/player/player-list-results";
 import { useFormik } from "formik";
@@ -34,7 +35,23 @@ import { getClubSportsByClubID } from "src/services/clubRequest";
 import { useAllPlayers } from "src/adapters/playersAdapter";
 import { useAllStaff } from "src/adapters/staffAdapter";
 import { useAllCoach } from "src/adapters/coachAdapter";
-import { getFullName } from "src/utils/getFullName";
+import { getFullName, removeItemFromArray } from "src/utils/commonFunctions";
+import TeamTable from "./table";
+
+const TypeofPlayer = [
+    {
+        value: "1",
+        label: "Professional"
+    },
+    {
+        value: "2",
+        label: "Non-Professional"
+    },
+    {
+        value: "0",
+        label: "Other"
+    }
+];
 
 export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
     const { enqueueSnackbar } = useSnackbar();
@@ -55,6 +72,24 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
     const [uploadedBannerName, setUploadedBannerName] = useState("");
 
     const [clubSports, setClubSports] = useState([])
+
+
+    const [playersArrayTable, setPlayersArrayTable] = useState([])
+    const [teamplayersTypes, setTeamplayersTypes] = useState([])
+
+    const [coachArrayTable, setCoachArrayTable] = useState([])
+    const [teamcoachesTypes, setteamcoachesTypes] = useState([])
+
+    const [staffArrayTable, setStaffArrayTable] = useState([])
+    const [teamstaffsTypes, setTeamstaffsTypes] = useState([])
+
+    const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+
+    const { clubs } = useAllClubs()
+    const { players } = useAllPlayers()
+    const { staffs } = useAllStaff()
+    const { coaches } = useAllCoach()
+
 
     useEffect(() => {
         if (team?.Logo !== "") {
@@ -152,7 +187,6 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
 
     const onClubChange = (e) => {
         getClubSportsByClubID({ Id: e.target.value }).then((res) => {
-            console.log(res);
             setClubSports(res)
         })
     }
@@ -174,10 +208,12 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
             instagram: "not in db",
             clubsportsID: "",
             club: "",
-            teamplayersID: [],
-            teamstaffID: [],
-            teamcoachID: [],
-            player: "",
+            teamplayerID: "",
+            TypeofPlayer: "",
+            teamstaffID: "",
+            Typesofstaff: [],
+            teamcoachID: "",
+            Typesofcoach: [],
             // sportsList: [],
         },
 
@@ -242,11 +278,17 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
         onSubmit: async (data) => {
             setLoading(true);
             try {
-                console.log(data);
+                console.log({
+                    ...data, teamplayersTypes, teamstaffsTypes, teamcoachesTypes, teamplayerID: "",
+                    TypeofPlayer: "",
+                    teamstaffID: "",
+                    Typesofstaff: "",
+                    teamcoachID: "",
+                });
                 // await updateAcademy(data);
-                handleClose();
+                // handleClose();
                 enqueueSnackbar("Team Updated Succesfully", { variant: "success" });
-                mutate();
+                // mutate();
                 setLoading(false);
             } catch (error) {
                 console.log(error);
@@ -281,10 +323,125 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
         }
     }
 
-    const { clubs } = useAllClubs()
-    const { players } = useAllPlayers()
-    const { staffs } = useAllStaff()
-    const { coaches } = useAllCoach()
+
+    const savePlayers = () => {
+        let
+            playerID = formik.values.teamplayerID.ID,
+            playerName = formik.values.teamplayerID.FullName,
+            playerTypeID = formik.values.TypeofPlayer.value,
+            playerTypeName = formik.values.TypeofPlayer.label;
+
+        //for UI
+        let newTempNameArray = playersArrayTable;
+        newTempNameArray.push({
+            name: playerName,
+            type: playerTypeName
+        })
+
+        // for payload
+        let newTempMainIDArray = teamplayersTypes;
+        newTempMainIDArray.push({
+            playerID,
+            playerTypeID
+        })
+
+        setTeamplayersTypes(newTempMainIDArray)
+        setPlayersArrayTable(newTempNameArray)
+        forceUpdate()
+
+    };
+    const saveStaffs = async () => {
+        let
+            staffID = formik.values.teamstaffID.ID,
+            staffName = getFullName(formik.values.teamstaffID.FirstName, formik.values.teamstaffID.LastName),
+            staffTypes = formik.values.Typesofstaff,
+            newTempNameArray = [], newTempIDArray = [],
+            newTempArray = staffArrayTable,
+            newTempMainIDArray = teamstaffsTypes
+
+        staffTypes?.map((item) => {
+            newTempNameArray.push(item.label)
+            newTempIDArray.push(item.value)
+        })
+        //for UI
+        newTempArray.push({
+            name: staffName,
+            types: newTempNameArray
+        })
+        // for payload
+        newTempMainIDArray.push({
+            staffID,
+            staffTypeIDs: newTempIDArray
+        })
+        setTeamstaffsTypes(newTempMainIDArray)
+        setStaffArrayTable(newTempArray)
+        forceUpdate()
+
+    };
+    const saveCoachs = () => {
+        let
+            coachID = formik.values.teamcoachID.ID,
+            coachName = getFullName(formik.values.teamcoachID.FirstName, formik.values.teamcoachID.LastName),
+            coachTypes = formik.values.Typesofcoach,
+            newTempNameArray = [], newTempIDArray = [],
+            newTempArray = coachArrayTable,
+            newTempMainIDArray = teamcoachesTypes
+
+        coachTypes?.map((item) => {
+            newTempNameArray.push(item.label)
+            newTempIDArray.push(item.value)
+        })
+        //for UI
+        newTempArray.push({
+            name: coachName,
+            types: newTempNameArray
+        })
+        // for payload
+        newTempMainIDArray.push({
+            coachID: coachID,
+            coachTypeIDs: newTempIDArray
+        })
+        setteamcoachesTypes(newTempMainIDArray)
+        setCoachArrayTable(newTempArray)
+        forceUpdate()
+    };
+    const handleRemove = (item, index, from) => {
+        let selectName = {
+            players: {
+                tableArray: playersArrayTable,
+                setTableArray: setPlayersArrayTable,
+                payLoadArray: playersArrayTable,
+                payLoadArray: setPlayersArrayTable,
+            },
+            staffs: {
+                tableArray: staffArrayTable,
+                setTableArray: setStaffArrayTable,
+                payLoadArray: teamstaffsTypes,
+                payLoadArray: setTeamstaffsTypes,
+
+            },
+            Coaches: {
+                tableArray: coachArrayTable,
+                setTableArray: setCoachArrayTable,
+                payLoadArray: teamcoachesTypes,
+                payLoadArray: setteamcoachesTypes,
+
+            },
+        }
+
+        //   for UI
+        let
+            tableArray = selectName[`${from}`].tableArray,
+            setTableArray = selectName[`${from}`].setTableArray,
+            payLoadArray = selectName[`${from}`].payLoadArray,
+            setPayLoadArray = selectName[`${from}`].setPayLoadArray;
+
+        setTableArray(removeItemFromArray(tableArray, index));
+        setPayLoadArray(removeItemFromArray(payLoadArray, index));
+
+        forceUpdate();
+
+    }
 
     return (
         <Dialog
@@ -348,24 +505,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                 >
                                                     {team?.Team}
                                                 </Typography>
-                                                {/* <Typography
-                                                    color="textSecondary"
-                                                    variant="body2"
-                                                >
-                                                    {team?.email}
-                                                </Typography> */}
-                                                {/* <Typography
-                                                    color="textSecondary"
-                                                    variant="body2"
-                                                >
-                                                    {team.address}
-                                                </Typography> */}
-                                                {/* <Typography
-                                                    color="textSecondary"
-                                                    variant="body2"
-                                                >
-                                                    {user.timezone}
-                                                </Typography> */}
+
                                             </Box>
                                         </CardContent>
                                         <Divider />
@@ -737,10 +877,16 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                         </Select>
                                                     </FormControl>
                                                 </Grid>
-
+                                                {/* select team players */}
+                                                {playersArrayTable?.length !== 0 && <TeamTable
+                                                    array={playersArrayTable}
+                                                    handleRemove={handleRemove}
+                                                    type="players"
+                                                    tableTitle="Players"
+                                                ></TeamTable>}
                                                 <Grid
                                                     item
-                                                    md={6}
+                                                    md={4}
                                                     xs={12}
                                                 >
                                                     <FormControl fullWidth>
@@ -748,19 +894,18 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                         <Select
                                                             labelId="demo-simple-select-helper-label"
                                                             id="demo-simple-select-helper"
-                                                            value={formik.values.teamplayersID}
+                                                            value={formik.values.teamplayerID}
                                                             label="Select Players"
-                                                            multiple
-                                                            name="teamplayersID"
+                                                            name="teamplayerID"
                                                             onChange={(e) => {
                                                                 formik.handleChange(e)
-                                                                onClubChange(e)
+
                                                             }}
                                                         >
                                                             {players?.map((option, key) => {
                                                                 return (
                                                                     <MenuItem key={key}
-                                                                        value={option.ID}>
+                                                                        value={option}>
                                                                         {option.FullName}
                                                                     </MenuItem>
                                                                 )
@@ -770,43 +915,54 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                     </FormControl>
                                                 </Grid>
 
-                                                
+
                                                 <Grid
                                                     item
-                                                    md={6}
+                                                    md={4}
                                                     xs={12}
                                                 >
                                                     <FormControl fullWidth>
-                                                        <InputLabel id="demo-simple-select-helper-label">Select Coach</InputLabel>
+                                                        <InputLabel id="demo-simple-select-helper-label">Type of Player</InputLabel>
                                                         <Select
                                                             labelId="demo-simple-select-helper-label"
                                                             id="demo-simple-select-helper"
-                                                            value={formik.values.teamcoachID}
-                                                            label="Select Coach"
-                                                            multiple
-                                                            name="teamcoachID"
-                                                            onChange={(e) => {
-                                                                formik.handleChange(e)
-                                                                onClubChange(e)
-                                                            }}
+                                                            value={formik.values.TypeofPlayer}
+                                                            name="TypeofPlayer"
+                                                            label="TypeofPlayer"
+                                                            onChange={formik.handleChange}
                                                         >
-                                                            {coaches?.map((option, key) => {
-                                                                console.log(option);
-                                                                return (
-                                                                    <MenuItem key={key}
-                                                                        value={option.ID}>
-                                                                        {getFullName(option.FirstName, option.LastName)}
-                                                                    </MenuItem>
-                                                                )
-                                                            }
-                                                            )}
+                                                            {TypeofPlayer?.map((option, key) => (
+                                                                <MenuItem key={key}
+                                                                    value={option}>
+                                                                    {option.label}
+                                                                </MenuItem>
+                                                            ))}
                                                         </Select>
                                                     </FormControl>
                                                 </Grid>
 
+
                                                 <Grid
                                                     item
-                                                    md={6}
+                                                    md={4}
+                                                    xs={12}>
+                                                    <Button
+                                                        onClick={savePlayers}
+                                                        variant="contained">
+                                                        Save Player
+                                                    </Button>
+                                                </Grid>
+
+                                                {staffArrayTable?.length !== 0 && <TeamTable
+                                                    array={staffArrayTable}
+                                                    handleRemove={handleRemove}
+                                                    type="staffs"
+                                                    tableTitle="Staffs"
+                                                ></TeamTable>}
+
+                                                <Grid
+                                                    item
+                                                    md={4}
                                                     xs={12}
                                                 >
                                                     <FormControl fullWidth>
@@ -816,18 +972,17 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                             id="demo-simple-select-helper"
                                                             value={formik.values.teamstaffID}
                                                             label="Select Staff"
-                                                            multiple
                                                             name="teamstaffID"
                                                             onChange={(e) => {
                                                                 formik.handleChange(e)
-                                                                onClubChange(e)
+
                                                             }}
                                                         >
                                                             {staffs?.map((option, key) => {
 
                                                                 return (
                                                                     <MenuItem key={key}
-                                                                        value={option.ID}>
+                                                                        value={option}>
                                                                         {getFullName(option.FirstName, option.LastName)}
                                                                     </MenuItem>
                                                                 )
@@ -835,6 +990,120 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                             )}
                                                         </Select>
                                                     </FormControl>
+                                                </Grid>
+
+
+                                                <Grid
+                                                    item
+                                                    md={4}
+                                                    xs={12}
+                                                >
+                                                    <FormControl fullWidth>
+                                                        <InputLabel id="demo-simple-select-helper-label">Types of Staff</InputLabel>
+                                                        <Select
+                                                            labelId="demo-simple-select-helper-label"
+                                                            id="demo-simple-select-helper"
+                                                            value={formik.values.Typesofstaff}
+                                                            name="Typesofstaff"
+                                                            label="Typesofstaff"
+                                                            onChange={formik.handleChange}
+                                                            multiple
+                                                        >
+                                                            {TypeofPlayer?.map((option, key) => (
+                                                                <MenuItem key={key}
+                                                                    value={option}>
+                                                                    {option.label}
+                                                                </MenuItem>
+                                                            ))}
+                                                        </Select>
+                                                    </FormControl>
+                                                </Grid>
+
+                                                <Grid
+                                                    item
+                                                    md={4}
+                                                    xs={12}>
+                                                    <Button
+                                                        onClick={saveStaffs}
+                                                        variant="contained">
+                                                        Save Staff
+                                                    </Button>
+                                                </Grid>
+                                                {coachArrayTable?.length !== 0 && <TeamTable
+                                                    array={coachArrayTable}
+                                                    handleRemove={handleRemove}
+                                                    type="Coaches"
+                                                    tableTitle="Coaches"
+                                                ></TeamTable>}
+
+                                                <Grid
+                                                    item
+                                                    md={4}
+                                                    xs={12}
+                                                >
+                                                    <FormControl fullWidth>
+                                                        <InputLabel id="demo-simple-select-helper-label">Select Coach</InputLabel>
+                                                        <Select
+                                                            labelId="demo-simple-select-helper-label"
+                                                            id="demo-simple-select-helper"
+                                                            value={formik.values.teamcoachID}
+                                                            label="Select Coach"
+                                                            name="teamcoachID"
+                                                            onChange={(e) => {
+                                                                formik.handleChange(e)
+
+                                                            }}
+                                                        >
+                                                            {coaches?.map((option, key) => {
+                                                                return (
+                                                                    <MenuItem key={key}
+                                                                        value={option}>
+                                                                        {getFullName(option.FirstName, option.LastName)}
+                                                                    </MenuItem>
+                                                                )
+                                                            }
+                                                            )}
+                                                        </Select>
+                                                    </FormControl>
+                                                </Grid>
+
+
+                                                <Grid
+                                                    item
+                                                    md={4}
+                                                    xs={12}
+                                                >
+                                                    <FormControl fullWidth>
+                                                        <InputLabel id="demo-simple-select-helper-label">Types of Coach</InputLabel>
+                                                        <Select
+                                                            labelId="demo-simple-select-helper-label"
+                                                            id="demo-simple-select-helper"
+                                                            value={formik.values.Typesofcoach}
+                                                            name="Typesofcoach"
+                                                            label="Types of coach"
+                                                            onChange={formik.handleChange}
+                                                            multiple
+                                                        >
+                                                            {TypeofPlayer?.map((option, key) => (
+                                                                <MenuItem key={key}
+                                                                    value={option}>
+                                                                    {option.label}
+                                                                </MenuItem>
+                                                            ))}
+                                                        </Select>
+                                                    </FormControl>
+                                                </Grid>
+
+                                                <Grid
+                                                    item
+                                                    md={4}
+                                                    xs={12}>
+                                                    <Button
+                                                        textAlign="right"
+                                                        onClick={saveCoachs}
+                                                        variant="contained">
+                                                        Save Coach
+                                                    </Button>
                                                 </Grid>
 
                                             </Grid>
@@ -855,7 +1124,6 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                         variant="contained"
                                                         style={{ backgroundColor: 'red' }}
                                                         onClick={() => {
-
                                                             handleDelete(team.email)
                                                         }}>Delete</Button>
                                                 </Grid>
@@ -868,6 +1136,37 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                     <Button type="submit"
                                                         variant="contained">Save Details</Button>
                                                 </Grid>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                                             </Grid>
                                         </CardActions>
                                     </Card>
@@ -875,11 +1174,6 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                     {/* Details */}
                                 </Grid>
                             </Grid>
-                            {/* Teams List */}
-                            {/* <Typography>Teams - Teams </Typography>
-                            <Box sx={{ mt: 3 }}>
-                                <PlayerListResults players={players} />
-                            </Box> */}
 
                         </Container>
                     </Box>
