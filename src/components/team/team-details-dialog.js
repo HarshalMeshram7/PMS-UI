@@ -410,21 +410,21 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
             players: {
                 tableArray: playersArrayTable,
                 setTableArray: setPlayersArrayTable,
-                payLoadArray: playersArrayTable,
-                payLoadArray: setPlayersArrayTable,
+                payLoadArray: teamplayersTypes,
+                setPayLoadArray: setTeamplayersTypes,
             },
             staffs: {
                 tableArray: staffArrayTable,
                 setTableArray: setStaffArrayTable,
                 payLoadArray: teamstaffsTypes,
-                payLoadArray: setTeamstaffsTypes,
+                setPayLoadArray: setTeamstaffsTypes,
 
             },
             Coaches: {
                 tableArray: coachArrayTable,
                 setTableArray: setCoachArrayTable,
                 payLoadArray: teamcoachesTypes,
-                payLoadArray: setteamcoachesTypes,
+                setPayLoadArray: setteamcoachesTypes,
 
             },
         }
