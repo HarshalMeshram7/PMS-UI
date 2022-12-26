@@ -877,6 +877,26 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                         </Select>
                                                     </FormControl>
                                                 </Grid>
+                                                                                                                    
+
+                                            </Grid>
+                                        </CardContent>
+
+                                    </Card>
+
+                                    {/* Details */}
+                                </Grid>
+
+                                <Grid
+                                    item
+                                    lg={12}
+                                    md={12}
+                                    xs={12}
+                                >
+                                    <Card>
+                                        <CardContent>
+                                            <Grid container
+                                                spacing={8} >
                                                 {/* select team players */}
                                                 {playersArrayTable?.length !== 0 && <TeamTable
                                                     array={playersArrayTable}
@@ -915,7 +935,6 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                     </FormControl>
                                                 </Grid>
 
-
                                                 <Grid
                                                     item
                                                     md={4}
@@ -941,7 +960,6 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                     </FormControl>
                                                 </Grid>
 
-
                                                 <Grid
                                                     item
                                                     md={4}
@@ -949,7 +967,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                     <Button
                                                         onClick={savePlayers}
                                                         variant="contained">
-                                                        Save Player
+                                                        Add Player
                                                     </Button>
                                                 </Grid>
 
@@ -1026,7 +1044,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                     <Button
                                                         onClick={saveStaffs}
                                                         variant="contained">
-                                                        Save Staff
+                                                        Add Staff
                                                     </Button>
                                                 </Grid>
                                                 {coachArrayTable?.length !== 0 && <TeamTable
@@ -1102,12 +1120,12 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                         textAlign="right"
                                                         onClick={saveCoachs}
                                                         variant="contained">
-                                                        Save Coach
+                                                        Add Coach
                                                     </Button>
                                                 </Grid>
-
                                             </Grid>
                                         </CardContent>
+
                                         <Divider />
 
                                         <CardActions>
@@ -1137,45 +1155,15 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                         variant="contained">Save Details</Button>
                                                 </Grid>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                             </Grid>
                                         </CardActions>
                                     </Card>
 
-                                    {/* Details */}
                                 </Grid>
                             </Grid>
 
                         </Container>
+
                     </Box>
                 </form>
             </DialogContent>
