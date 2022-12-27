@@ -77,3 +77,24 @@ export const deleteTeam = async (email) => {
         throw error;
     }
 };
+
+
+// Get All Type List for team details
+export const getAllTypeList = async (params) => {
+    const { token } = useStorage();
+    if (!token) {
+        throw "No Token";
+    }
+    try {
+        const res = await axios.get(`${MAIN_URL2}/getTypesList`, {
+            params: params,
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
+        return res?.data?.result;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};

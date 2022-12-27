@@ -37,6 +37,7 @@ import { useAllStaff } from "src/adapters/staffAdapter";
 import { useAllCoach } from "src/adapters/coachAdapter";
 import { getFullName, removeItemFromArray } from "src/utils/commonFunctions";
 import TeamTable from "./table";
+import { getAllTypeList } from "src/services/teamRequest.js";
 
 const TypeofPlayer = [
     {
@@ -83,6 +84,8 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
     const [staffArrayTable, setStaffArrayTable] = useState([])
     const [teamstaffsTypes, setTeamstaffsTypes] = useState([])
 
+    const [typeList, setTypeList] = useState({})
+
     const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
     const { clubs } = useAllClubs()
@@ -128,6 +131,17 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
             setUploadedBanner(false);
         }
     }, [team]);
+
+    useEffect(()=>{
+        try {
+            getAllTypeList().then((res)=>{
+                setTypeList(res)
+            })
+        } catch (error) {
+            console.log(error);
+        }
+        
+    },[])
 
     const onFileChnage = (e) => {
         if (e.target.name == "logo") {
@@ -328,8 +342,8 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
         let
             playerID = formik.values.teamplayerID.ID,
             playerName = formik.values.teamplayerID.FullName,
-            playerTypeID = formik.values.TypeofPlayer.value,
-            playerTypeName = formik.values.TypeofPlayer.label;
+            playerTypeID = formik.values.TypeofPlayer.ID,
+            playerTypeName = formik.values.TypeofPlayer.Description;
 
         //for UI
         let newTempNameArray = playersArrayTable;
@@ -347,6 +361,8 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
 
         setTeamplayersTypes(newTempMainIDArray)
         setPlayersArrayTable(newTempNameArray)
+        formik.values.teamplayerID = ''
+        formik.values.TypeofPlayer = ''
         forceUpdate()
 
     };
@@ -360,8 +376,8 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
             newTempMainIDArray = teamstaffsTypes
 
         staffTypes?.map((item) => {
-            newTempNameArray.push(item.label)
-            newTempIDArray.push(item.value)
+            newTempNameArray.push(item.Description)
+            newTempIDArray.push(item.ID)
         })
         //for UI
         newTempArray.push({
@@ -375,9 +391,12 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
         })
         setTeamstaffsTypes(newTempMainIDArray)
         setStaffArrayTable(newTempArray)
+        formik.values.teamstaffID = ''
+        formik.values.Typesofstaff = []
         forceUpdate()
 
     };
+
     const saveCoachs = () => {
         let
             coachID = formik.values.teamcoachID.ID,
@@ -388,8 +407,8 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
             newTempMainIDArray = teamcoachesTypes
 
         coachTypes?.map((item) => {
-            newTempNameArray.push(item.label)
-            newTempIDArray.push(item.value)
+            newTempNameArray.push(item.Description)
+            newTempIDArray.push(item.ID)
         })
         //for UI
         newTempArray.push({
@@ -403,8 +422,11 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
         })
         setteamcoachesTypes(newTempMainIDArray)
         setCoachArrayTable(newTempArray)
+        formik.values.teamcoachID = ''
+        formik.values.Typesofcoach = []
         forceUpdate()
     };
+
     const handleRemove = (item, index, from) => {
         let selectName = {
             players: {
@@ -950,10 +972,10 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                             label="TypeofPlayer"
                                                             onChange={formik.handleChange}
                                                         >
-                                                            {TypeofPlayer?.map((option, key) => (
+                                                            {typeList?.playerTypesList?.map((option, key) => (
                                                                 <MenuItem key={key}
                                                                     value={option}>
-                                                                    {option.label}
+                                                                    {option.Description}
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
@@ -1027,10 +1049,10 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                             onChange={formik.handleChange}
                                                             multiple
                                                         >
-                                                            {TypeofPlayer?.map((option, key) => (
+                                                            {typeList?.staffTypesList?.map((option, key) => (
                                                                 <MenuItem key={key}
                                                                     value={option}>
-                                                                    {option.label}
+                                                                    {option.Description}
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
@@ -1102,10 +1124,10 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                             onChange={formik.handleChange}
                                                             multiple
                                                         >
-                                                            {TypeofPlayer?.map((option, key) => (
+                                                            {typeList?.coachTypesList?.map((option, key) => (
                                                                 <MenuItem key={key}
                                                                     value={option}>
-                                                                    {option.label}
+                                                                    {option.Description}
                                                                 </MenuItem>
                                                             ))}
                                                         </Select>
