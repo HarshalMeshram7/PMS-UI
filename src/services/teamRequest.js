@@ -98,3 +98,43 @@ export const getAllTypeList = async (params) => {
         throw error;
     }
 };
+
+
+// Update Club Team 
+export const updateClubTeam = async (data) => {
+    const { token } = useStorage();
+    if (!token) {
+        throw "No Token";
+    }
+    try {
+        const res = await axios.post(`${MAIN_URL2}/updateClubteam`, data, {
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+//DELETE CLUB TEAM
+export const deleteClubTeam = async (data) => {
+    const { token } = useStorage();
+    if (!token) {
+      return;
+    }
+    try {
+      const res = await axios.post(`${MAIN_URL2}/deleteclubteam`,data, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+        
+      });
+      return res.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };

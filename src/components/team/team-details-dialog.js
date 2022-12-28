@@ -29,7 +29,7 @@ import uploadFileToBlob, { deleteBlob, handlePriview, getFileName } from "src/ut
 import * as Yup from "yup";
 import { useSnackbar } from "notistack";
 import banner from '../../../public/static/images/background/register.jpg';
-import { deleteTeam } from "src/services/teamRequest.js";
+import { deleteTeam, updateClubTeam } from "src/services/teamRequest.js";
 import { useAllClubs } from "src/adapters/clubAdapter";
 import { getClubSportsByClubID } from "src/services/clubRequest";
 import { useAllPlayers } from "src/adapters/playersAdapter";
@@ -39,22 +39,8 @@ import { getFullName, removeItemFromArray } from "src/utils/commonFunctions";
 import TeamTable from "./table";
 import { getAllTypeList } from "src/services/teamRequest.js";
 
-const TypeofPlayer = [
-    {
-        value: "1",
-        label: "Professional"
-    },
-    {
-        value: "2",
-        label: "Non-Professional"
-    },
-    {
-        value: "0",
-        label: "Other"
-    }
-];
-
-export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
+export const TeamDetailsDialog = ({ open, handleClose, team, mutate ,handleOpenDeleteDialogue }) => {
+   
     const { enqueueSnackbar } = useSnackbar();
 
     const [loading, setLoading] = useState();
@@ -132,16 +118,16 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
         }
     }, [team]);
 
-    useEffect(()=>{
+    useEffect(() => {
         try {
-            getAllTypeList().then((res)=>{
+            getAllTypeList().then((res) => {
                 setTypeList(res)
             })
         } catch (error) {
             console.log(error);
         }
-        
-    },[])
+
+    }, [])
 
     const onFileChnage = (e) => {
         if (e.target.name == "logo") {
@@ -291,6 +277,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
 
         onSubmit: async (data) => {
             setLoading(true);
+
             try {
                 console.log({
                     ...data, teamplayersTypes, teamstaffsTypes, teamcoachesTypes, teamplayerID: "",
@@ -299,44 +286,34 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                     Typesofstaff: "",
                     teamcoachID: "",
                 });
-                // await updateAcademy(data);
-                // handleClose();
-                enqueueSnackbar("Team Updated Succesfully", { variant: "success" });
-                // mutate();
-                setLoading(false);
+                await updateClubTeam({
+                    ...data, ID: team.ID, teamplayersTypes, teamstaffsTypes, teamcoachesTypes, teamplayerID: "",
+                    TypeofPlayer: "",
+                    teamstaffID: "",
+                    Typesofstaff: "",
+                    teamcoachID: "",
+                }).then((res) => {
+                    if (res.status == "success") {
+                        handleClose();
+                        enqueueSnackbar("Team Updated Succesfully", { variant: "success" });
+                        mutate();
+                        setLoading(false);
+                    }
+                    else {
+                        handleClose();
+                        enqueueSnackbar("Team Update FAILED", { variant: "failed" });
+                        setLoading(false);
+                    }
+                })
+
             } catch (error) {
                 console.log(error);
                 setLoading(false);
+            } finally {
+                setLoading(false)
             }
         },
     });
-
-    const handleDelete = (data) => {
-
-        setLoading(true);
-        try {
-            let finalData = { team: data }
-            deleteTeam(finalData).then((response) => {
-                if (response.status == "success") {
-                    handleClose();
-                    enqueueSnackbar("Team Deleted Succesfully", { variant: "success" });
-                    mutate();
-                    setLoading(false);
-                }
-                else {
-                    handleClose();
-                    enqueueSnackbar(`Error : ${response.message}`, { variant: "error" });
-                    setLoading(false);
-                }
-            });
-        } catch (error) {
-            console.log(error);
-            setLoading(false);
-        } finally {
-            setLoading(false);
-        }
-    }
-
 
     const savePlayers = () => {
         let
@@ -899,7 +876,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                         </Select>
                                                     </FormControl>
                                                 </Grid>
-                                                                                                                    
+
 
                                             </Grid>
                                         </CardContent>
@@ -1164,7 +1141,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate }) => {
                                                         variant="contained"
                                                         style={{ backgroundColor: 'red' }}
                                                         onClick={() => {
-                                                            handleDelete(team.email)
+                                                            handleOpenDeleteDialogue(team)
                                                         }}>Delete</Button>
                                                 </Grid>
                                                 <Grid

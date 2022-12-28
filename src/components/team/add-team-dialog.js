@@ -44,7 +44,7 @@ import { getClubSportsByClubID } from "src/services/clubRequest";
 //     }
 // ];
 
-export const AddTeamDialog = ({ open, handleClose }) => {
+export const AddTeamDialog = ({ open, handleClose, mutate }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState();
 

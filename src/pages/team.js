@@ -9,20 +9,28 @@ import { useAllTeams } from "src/adapters/teamAdapter";
 import { AddTeamDialog } from "src/components/team/add-team-dialog";
 import { TeamDetailsDialog } from "src/components/team/team-details-dialog";
 import { TeamFinanceDialog } from "src/components/team/team-finance-dialog";
-import { getTeam } from "src/services/teamRequest";
+import { deleteClubTeam, getTeam } from "src/services/teamRequest";
+import DeleteDialog from "src/components/common/deleteDialog";
+import { useSnackbar } from "notistack";
 
 const Team = () => {
   const [showAddTeamDialog, setShowAddTeamDialog] = useState(false);
   const [showTeamDetailsDialog, setShowTeamDetailsDialog] = useState(false);
   const [showTeamFinanceDialog, setShowTeamFinanceDialog] = useState(false);
   const [team, setTeam] = useState([])
-  const [params, setParams] = useState({searchpattern: ""})
+  const [params, setParams] = useState({ searchpattern: "" })
+  const { enqueueSnackbar } = useSnackbar();
+
+
+  const [openDeleteDialogue, setOpenDeleteDialogue] = useState(false);
 
   const handleOpenAddTeam = () => setShowAddTeamDialog(true);
   const handleCloseAddTeam = () => setShowAddTeamDialog(false);
+  const { teams, loading, error, mutate } = useAllTeams({ ...params });
+
 
   const handleOpenTeamDetails = (team) => {
-    getTeam({id:team.ID}).then((res)=>{
+    getTeam({ id: team.ID }).then((res) => {
       setTeam(res)
       setShowTeamDetailsDialog(true)
 
@@ -32,7 +40,7 @@ const Team = () => {
 
   const handleOpenTeamFinance = (team) => {
 
-    getTeam({id:team.ID}).then((res)=>{
+    getTeam({ id: team.ID }).then((res) => {
       setTeam(res)
       setShowTeamFinanceDialog(true)
     })
@@ -44,9 +52,33 @@ const Team = () => {
     setParams((p) => ({ ...p, searchpattern: value }))
   };
 
-  const { teams, loading, error, mutate } = useAllTeams({ ...params });
 
-  let teamLocal = [{ "_id": "62de8df69fda862707152867", "academyName": "Team 1", "address": "Address", "phone": 8208793805, "email": "club2@pixonix.tech", "personName": "Person name", "logo": "/static/images/products/product_2.png", "banner": "../../../public/static/images/background/register.jpg", "accreditation": "accreditation", "facebook": "fb", "twitter": "tw", "instagram": "ins", "sportsList": ["Football", "Cricket", "Tennis"], "__v": 0 }, { "_id": "62de96aeba11e272e5e1db81", "academyName": "Team 2", "address": "Address", "phone": 8208793805, "email": "Federation3@pixonix.tech", "personName": "Person name", "logo": "/static/images/products/product_3.png", "banner": "../../../public/static/images/background/register.jpg", "accreditation": "accreditation", "facebook": "fb", "twitter": "tw", "instagram": "ins", "sportsList": ["Football", "Cricket", "Tennis"], "__v": 0 }, { "_id": "62de978fba11e272e5e1db93", "academyName": "Team 3", "address": "Address", "phone": 8208793805, "email": "Federation4@pixonix.tech", "personName": "Person name", "logo": "/static/images/products/product_4.png", "banner": "../../../public/static/images/background/register.jpg", "accreditation": "accreditation", "facebook": "fb", "twitter": "tw", "instagram": "ins", "sportsList": ["Cricket"], "__v": 0 }, { "_id": "62ea72328d25391153e4cfe7", "academyName": "Team 4", "address": "Address", "phone": 8208793805, "email": "Federation@pixonix.tech", "personName": "Person name", "logo": "/static/images/products/product_1.png", "banner": "../../../public/static/images/background/register.jpg", "accreditation": "accreditation", "facebook": "fb", "twitter": "tw", "instagram": "ins", "sportsList": [], "__v": 0 }]
+  const handleDeleteClubTeam = (ID) => {
+    try {
+      deleteClubTeam({ ID }).then((res) => {
+        console.log(res);
+        if (res?.status === "success") {
+          mutate();
+          enqueueSnackbar("Team Deleted Succesfully", { variant: "success" });         
+          setOpenDeleteDialogue(false);
+          setShowTeamDetailsDialog(false)
+        }else{
+          
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleOpenDeleteDialogue = (team) => {
+    setTeam(team);
+    setOpenDeleteDialogue(true);
+  };
+
+  const handleCloseDeleteDialogue = () => {
+    setOpenDeleteDialogue(false);
+  };
 
   return (
     <>
@@ -65,12 +97,21 @@ const Team = () => {
         <AddTeamDialog
           open={showAddTeamDialog}
           handleClose={handleCloseAddTeam}
+          mutate = {mutate}
+        />
+        <DeleteDialog
+          handleDelete={handleDeleteClubTeam}
+          name={team.Team}
+          ID={team.ID}
+          open={openDeleteDialogue}
+          handleClose={handleCloseDeleteDialogue}
         />
         <TeamDetailsDialog team={team}
           mutate={mutate}
           open={showTeamDetailsDialog}
-          handleClose={handleCloseTeamDetails} />
-
+          handleClose={handleCloseTeamDetails}
+          handleOpenDeleteDialogue={handleOpenDeleteDialogue}
+        />
         <TeamFinanceDialog
           team={team}
           mutate={mutate}
