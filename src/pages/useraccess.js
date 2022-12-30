@@ -245,6 +245,7 @@ const Useraccess = () => {
           handleClose={handleCloseDeleteDialogue}
         />
         <AddUserAccessDialog
+          users={users}
           user={user}
           open={showAddUserAccessDialog}
           handleClose={handleCloseAddUserAccess}

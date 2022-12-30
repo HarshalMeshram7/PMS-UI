@@ -46,38 +46,40 @@ const gender = [
   },
 ];
 
-export const AddUserAccessDialog = ({ open, handleClose, user, mutate }) => {
+export const AddUserAccessDialog = ({ open, handleClose, user, mutate, users }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
   const [access, setAccess] = useState([]);
   const [finalAccessForTable, setFinalAccessForTable] = useState([]);
+  const [isUniqueUserName, setIsUniqueUserName] = useState(true);
+
   const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const [finalroles, setFinalroles] = useState({
     userFed: [
-    //   {
-    //   userRole: "",
-    //   userAccess: [],
-    // }
+      //   {
+      //   userRole: "",
+      //   userAccess: [],
+      // }
     ],
     userClub: [
-    //   {
-    //   userRole: "",
-    //   userAccess: [],
-    // }
-  ],
+      //   {
+      //   userRole: "",
+      //   userAccess: [],
+      // }
+    ],
     userTeam: [
-    //   {
-    //   userRole: "",
-    //   userAccess: [],
-    // }
-  ],
+      //   {
+      //   userRole: "",
+      //   userAccess: [],
+      // }
+    ],
     userAcademy: [
-    //   {
-    //   userRole: "",
-    //   userAccess: [],
-    // }
-  ],
+      //   {
+      //   userRole: "",
+      //   userAccess: [],
+      // }
+    ],
   });
 
   let userRoles = finalroles;
@@ -194,40 +196,38 @@ export const AddUserAccessDialog = ({ open, handleClose, user, mutate }) => {
 
     // for final payload
     if (AccessID == 1 || AccessID == 5 || AccessID == 6 || AccessID == 7) {
-      userRoles.userFed.push({ 
-        userRole:ID,
-        userAccess:newIDArray
-      })
+      userRoles.userFed.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
       // userRoles.userFed.userRole = ID;
       // userRoles.userFed.userAccess = newIDArray;
       setFinalroles(userRoles);
     }
     if (AccessID == 2) {
-      userRoles.userClub.push({ 
-        userRole:ID,
-        userAccess:newIDArray
-      })
+      userRoles.userClub.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
       // userRoles.userClub.userRole = ID;
       // userRoles.userClub.userAccess = newIDArray;
       setFinalroles(userRoles);
     }
     if (AccessID == 3) {
-      
-      userRoles.userAcademy.push({ 
-        userRole:ID,
-        userAccess:newIDArray
-      })
+      userRoles.userAcademy.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
 
       // userRoles.userAcademy.userRole = ID;
       // userRoles.userAcademy.userAccess = newIDArray;
       setFinalroles(userRoles);
     }
     if (AccessID == 4) {
-
-      userRoles.userTeam.push({ 
-        userRole:ID,
-        userAccess:newIDArray
-      })
+      userRoles.userTeam.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
 
       // userRoles.userTeam.userRole = ID;
       // userRoles.userTeam.userAccess = newIDArray;
@@ -242,6 +242,14 @@ export const AddUserAccessDialog = ({ open, handleClose, user, mutate }) => {
     newValue.splice(index, 1);
     setFinalAccessForTable(newValue);
     forceUpdate();
+  };
+
+  const CheckUserName = (e) => {
+    if (users?.find((user) => user.UserName === e.target.value) === undefined) {
+      setIsUniqueUserName(true);
+    } else {
+      setIsUniqueUserName(false);
+    }
   };
 
   useEffect(() => {
@@ -272,18 +280,31 @@ export const AddUserAccessDialog = ({ open, handleClose, user, mutate }) => {
           <Grid container spacing={3}>
             <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.userName && formik.errors.userName)}
+                error={
+                  Boolean(formik.touched.userName && formik.errors.userName) || !isUniqueUserName
+                }
                 fullWidth
                 helperText={formik.touched.userName && formik.errors.userName}
                 label="User Name"
                 margin="dense"
                 name="userName"
                 onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  CheckUserName(e);
+                }}
                 type="text"
                 value={formik.values.userName}
                 variant="outlined"
               />
+              {!isUniqueUserName && (
+                <p
+                  class="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained css-1j5m5yj-MuiFormHelperText-root"
+                  id="mui-17-helper-text"
+                >
+                  UserName Already Exist
+                </p>
+              )}{" "}
             </Grid>
             <Grid item md={6} xs={12}>
               <TextField
@@ -416,7 +437,7 @@ export const AddUserAccessDialog = ({ open, handleClose, user, mutate }) => {
                 variant="outlined"
               />
             </Grid>
-            
+
             <Grid item md={6} xs={12}>
               <TextField
                 error={Boolean(formik.touched.phone && formik.errors.phone)}
