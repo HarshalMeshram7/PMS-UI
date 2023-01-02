@@ -4,7 +4,7 @@ import { DashboardLayout } from "src/components/dashboard-layout";
 import { Box, Container, Grid, keyframes, Pagination } from '@mui/material';
 import { TeamListToolbar } from "src/components/team/team-list-toolbar";
 import { TeamCard } from "src/components/team/team-card";
-import { useState } from 'react';
+import { useState ,useEffect } from 'react';
 import { useAllTeams } from "src/adapters/teamAdapter";
 import { AddTeamDialog } from "src/components/team/add-team-dialog";
 import { TeamDetailsDialog } from "src/components/team/team-details-dialog";
@@ -12,12 +12,15 @@ import { TeamFinanceDialog } from "src/components/team/team-finance-dialog";
 import { deleteClubTeam, getTeam } from "src/services/teamRequest";
 import DeleteDialog from "src/components/common/deleteDialog";
 import { useSnackbar } from "notistack";
+import useStorage from "src/hooks/useStorage";
+import { filterArrayByArrayIDs } from "src/utils/commonFunctions";
 
 const Team = () => {
   const [showAddTeamDialog, setShowAddTeamDialog] = useState(false);
   const [showTeamDetailsDialog, setShowTeamDetailsDialog] = useState(false);
   const [showTeamFinanceDialog, setShowTeamFinanceDialog] = useState(false);
   const [team, setTeam] = useState([])
+  const [filteredClubTeams, setFilteredClubTeams] = useState([])
   const [params, setParams] = useState({ searchpattern: "" })
   const { enqueueSnackbar } = useSnackbar();
 
@@ -53,6 +56,7 @@ const Team = () => {
   };
 
 
+
   const handleDeleteClubTeam = (ID) => {
     try {
       deleteClubTeam({ ID }).then((res) => {
@@ -79,6 +83,15 @@ const Team = () => {
   const handleCloseDeleteDialogue = () => {
     setOpenDeleteDialogue(false);
   };
+  const {clubTeamFilter ,loggedInUserName} = useStorage()
+    
+  useEffect(() => {
+    filterArrayByArrayIDs(teams, clubTeamFilter,loggedInUserName).then((filtered) => {
+      setFilteredClubTeams(filtered);
+    });
+  }, [teams]);
+
+
 
   return (
     <>
@@ -130,7 +143,7 @@ const Team = () => {
               container
               spacing={3}
             >
-              {teams?.map((product, key) => (
+              {filteredClubTeams?.map((product, key) => (
                 <Grid
                   item
                   key={key}

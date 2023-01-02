@@ -9,6 +9,8 @@ import { AcademyDetailsDialog } from 'src/components/academy/academy-details-dia
 import { useAllAcademies } from 'src/adapters/academyAdapter';
 import { AcademyFinanceDialog } from 'src/components/academy/academy-finance-dialog';
 import { getAcademy, getAcademyFinanceById } from 'src/services/academyRequest';
+import useStorage from 'src/hooks/useStorage';
+import { filterArrayByArrayIDs } from 'src/utils/commonFunctions';
 
 const Academy = () => {
   const [showAddAcademyDialog, setShowAddAcademyDialog] = useState(false);
@@ -18,11 +20,14 @@ const Academy = () => {
   const [showAcademyFinanceDialog, setShowAcademyFinanceDialog] = useState(false);
 
   const [academyFinance, setAcademyFinance] = useState({})
-
+  
   const [academy, setAcademy] = useState([])
-
+  
+  const [filteredAcademies, setFilteredAcademies] = useState([])
+  
   const [params, setParams] = useState({ searchpattern: "" })
-
+  
+  const { academies, loading, error, mutate } = useAllAcademies({ ...params });
   const handleOpenAddAcademy = () => setShowAddAcademyDialog(true);
   const handleCloseAddAcademy = () => setShowAddAcademyDialog(false);
 
@@ -37,8 +42,8 @@ const Academy = () => {
     } catch (error) {
       console.log(error);
     }
-
-
+    
+    
   };
   const handleCloseAcademyDetails = () => setShowAcademyDetailsDialog(false);
 
@@ -58,7 +63,15 @@ const Academy = () => {
     setParams((p) => ({ ...p, searchpattern: value }))
   };
 
-  const { academies, loading, error, mutate } = useAllAcademies({ ...params });
+  const {academyFilter ,loggedInUserName} =useStorage()
+  
+  useEffect(() => {
+    filterArrayByArrayIDs(academies, academyFilter,loggedInUserName).then((filtered) => {
+      setFilteredAcademies(filtered);
+    });
+  }, [academies]);
+
+
   return (
     <>
       <Head>
@@ -102,7 +115,7 @@ const Academy = () => {
               container
               spacing={3}
             >
-              {academies?.map((product, key) => (
+              {filteredAcademies?.map((product, key) => (
                 <Grid
                   item
                   key={key}

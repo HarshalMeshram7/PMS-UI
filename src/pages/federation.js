@@ -13,25 +13,24 @@ import { filterArrayByArrayIDs } from "src/utils/commonFunctions";
 import useStorage from "src/hooks/useStorage";
 
 const Federation = () => {
-    
-    //to show hide add federation dialog
-    const [showAddFederationDialog, setShowAddFederationDialog] = useState(false);
-    
-    // to show hide details federation dialogue
-    const [showFederationDetailsDialog, setShowFederationDetailsDialog] = useState(false);
-    
-    //to show hide federation finance dialogue
-    const [showFederationFinanceDialog, setShowFederationFinanceDialog] = useState(false);
-    
-    //to store single federation data which is clicked from detail detail or finance button
-    const [filteredFederations, setFilteredFederations] = useState([]);
-    const [federation, setFederation] = useState([]);
-    const [federationFinance, setFederationFinance] = useState({});
-    
-    //to store parameters required to send with get req
-    const [params, setParams] = useState({ searchpattern: "" });
-    
-    const { federations, loading, error, mutate } = useAllFederations({ ...params });
+  //to show hide add federation dialog
+  const [showAddFederationDialog, setShowAddFederationDialog] = useState(false);
+
+  // to show hide details federation dialogue
+  const [showFederationDetailsDialog, setShowFederationDetailsDialog] = useState(false);
+
+  //to show hide federation finance dialogue
+  const [showFederationFinanceDialog, setShowFederationFinanceDialog] = useState(false);
+
+  //to store single federation data which is clicked from detail detail or finance button
+  const [filteredFederations, setFilteredFederations] = useState([]);
+  const [federation, setFederation] = useState([]);
+  const [federationFinance, setFederationFinance] = useState({});
+
+  //to store parameters required to send with get req
+  const [params, setParams] = useState({ searchpattern: "" });
+
+  const { federations, loading, error, mutate } = useAllFederations({ ...params });
   //to show hide add federation dialog
   const handleOpenAddFederation = () => setShowAddFederationDialog(true);
   const handleCloseAddFederation = () => setShowAddFederationDialog(false);
@@ -61,10 +60,9 @@ const Federation = () => {
   const handleSearch = (value) => {
     setParams((p) => ({ ...p, searchpattern: value }));
   };
-  const {fedFilter} =useStorage()
-
+  const { fedFilter, loggedInUserName } = useStorage();
   useEffect(() => {
-    filterArrayByArrayIDs(federations, fedFilter).then((filteredFed) => {
+    filterArrayByArrayIDs(federations, fedFilter, loggedInUserName).then((filteredFed) => {
       setFilteredFederations(filteredFed);
     });
   }, [federations]);

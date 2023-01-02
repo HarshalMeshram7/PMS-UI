@@ -9,6 +9,8 @@ import { ClubDetailsDialog } from 'src/components/club/club-details-dialog';
 import { useAllClubs } from 'src/adapters/clubAdapter';
 import { ClubFinanceDialog } from 'src/components/club/club-finance-dialog';
 import { getClub, getClubFinanceById } from 'src/services/clubRequest';
+import useStorage from 'src/hooks/useStorage';
+import { filterArrayByArrayIDs } from 'src/utils/commonFunctions';
 
 const Clubs = () => {
     const [showAddClubDialog, setShowAddClubDialog] = useState(false);
@@ -17,6 +19,7 @@ const Clubs = () => {
     const [clubFinance, setClubFinance] = useState({});
 
     const [club, setClub] = useState([])
+    const [filteredClubs, setFilteredClubs] = useState([])
     const [params, setParams] = useState({ searchpattern: "" })
 
     const handleOpenAddClub = () => setShowAddClubDialog(true);
@@ -55,6 +58,16 @@ const Clubs = () => {
     };
 
     const { clubs, loading, error, mutate } = useAllClubs({ ...params });
+
+    const {clubFilter ,loggedInUserName} = useStorage()
+  
+  useEffect(() => {
+    filterArrayByArrayIDs(clubs, clubFilter,loggedInUserName).then((filtered) => {
+      setFilteredClubs(filtered);
+    });
+  }, [clubs]);
+
+
 
     return (
         <>
@@ -100,7 +113,7 @@ const Clubs = () => {
                             container
                             spacing={3}
                         >
-                            {clubs?.map((product, key) => (
+                            {filteredClubs?.map((product, key) => (
                                 <Grid
                                     item
                                     key={key}
