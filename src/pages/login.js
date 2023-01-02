@@ -51,21 +51,20 @@ const Login = () => {
             await getLoginUser({ id: Id }).then((response) => {
               const { filterByAcademyID, filterByClubsID, filterByFederationsID, filterByTeamsID } =
                 response?.result;
-              setFedFilter(filterByAcademyID);
-              setAcademyFilter(filterByClubsID);
-              setClubFilter(filterByFederationsID);
+              setFedFilter(filterByFederationsID);
+              setAcademyFilter(filterByAcademyID);
+              setClubFilter(filterByClubsID);
               setClubTeamFilter(filterByTeamsID);
               router.push("/")
+              setLoading(false);
             });
           } else {
             if (res.status === "FAILED") {
               setError(res.message);
+              setLoading(false);
             }
           }
         });
-        setTimeout(() => {
-          setLoading(false);
-        }, 3000);
       } catch (error) {
         setLoading(false);
         setError("Login Failed !");
