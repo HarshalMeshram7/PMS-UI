@@ -1,16 +1,18 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import useSWR from "swr";
-import { getUser } from "src/services/authRequests";
+import { getLoginUser } from "src/services/authRequests";
 import { swrConfigs } from "./swrConfigs";
+import useStorage from "src/hooks/useStorage";
 
 export default function useAuth({ redirectTo = "", redirectIfFound = false } = {}) {
+  const { userID } = useStorage()
   const {
     data: user,
     mutate: mutateUser,
     isValidating,
     error,
-  } = useSWR("auth_user", getUser, swrConfigs);
+  } = useSWR("auth_user", getLoginUser({ id: userID }), swrConfigs);
 
   const router = useRouter();
 

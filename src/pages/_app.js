@@ -15,14 +15,14 @@ const clientSideEmotionCache = createEmotionCache();
 
 const App = (props) => {
   const router = useRouter();
-  const { role } = useStorage();
+  const { loggedInUserName } = useStorage();
   useEffect(() => {
-    if (!role) {
+    if (!loggedInUserName) {
       if (router.pathname !== "/register") {
         router.push("/login")
       }
     }
-  }, [role])
+  }, [loggedInUserName])
 
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 

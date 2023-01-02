@@ -17,7 +17,6 @@ import { Logo } from './logo';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import htp_logo from "../../public/static/PMS/htp_transparent_logo.png"
-
 import AssessmentIcon from '@mui/icons-material/Assessment';
 import SchoolIcon from '@mui/icons-material/School';
 import SettingsAccessibilityIcon from '@mui/icons-material/SettingsAccessibility';
@@ -28,124 +27,99 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import SecurityIcon from '@mui/icons-material/Security';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import SportsScoreIcon from '@mui/icons-material/SportsScore';
-
-
 import { NavItem } from './nav-item';
-import { useState } from 'react';
-import useStorage from 'src/hooks/useStorage';
 
-const access = [{
-  Federation: "5",
-  Club: "4",
-  Team: "3",
-  Player: "2",
-}]
 
 const items = [
   
   {
     href: '/',
     icon: (<ChartBarIcon fontSize="small" />),
-    title: 'Dashboard',
-    role: '1'
+    title: 'Dashboard'
   },
 
   {
     href: '/useraccess',
     icon: (<ManageAccountsIcon fontSize="small" />),
-    title: 'User Access',
-    role: '1',
+    title: 'User Access'
   },
 
   {
     href: '/federation',
     icon: (<SportsScoreIcon fontSize="small" />),
-    title: 'Federation',
-    role: '1',
+    title: 'Federation'
   },
 
   {
     href: '/academy',
     icon: (<SchoolIcon fontSize="small" />),
-    title: 'Academies',
-    role: '1',
+    title: 'Academies'
   },
 
   {
     href: '/clubs',
     icon: (<SecurityIcon fontSize="small" />),
-    title: 'Clubs',
-    role: '3'
+    title: 'Clubs'
   },
 
   {
     href: '/team',
     icon: (<GroupsIcon fontSize="small" />),
-    title: 'Team',
-    role: '1'
+    title: 'Team'
   },
 
   {
     href: '/players',
     icon: (<UsersIcon fontSize="small" />),
-    title: 'Players',
-    role: '2'
+    title: 'Players'
   },
 
   {
     href: '/contract-management',
     icon: (<GroupsIcon fontSize="small" />),
-    title: 'Contract Management',
-    role: '3'
+    title: 'Contract Management'
   },
 
   {
     href: '/administrative-template',
     icon: (<GroupsIcon fontSize="small" />),
-    title: 'Administrative Template',
-    role: '3'
+    title: 'Administrative Template'
   },
 
   {
     href: '/staff-registration',
     icon: (<HowToRegIcon fontSize="small" />),
-    title: 'Staff Registration',
-    role: '3'
+    title: 'Staff Registration'
   },
   
   {
     href: '/referee',
     icon: (<SportsIcon fontSize="small" />),
-    title: 'Referee Registration',
-    role: '3'
+    title: 'Referee Registration'
   },
 
   {
     href: '/coach-registration',
     icon: (<SettingsAccessibilityIcon fontSize="small" />),
-    title: 'Coaches Registration',
-    role: '3'
+    title: 'Coaches Registration'
   },
 
 
   {
     href: '/tournament-matches',
     icon: (<TourIcon fontSize="small" />),
-    title: 'Tournaments and Matches',
-    role: '3'
+    title: 'Tournaments and Matches'
   },
   {
     href: '/scorecard',
     icon: (<AssignmentIcon fontSize="small" />),
-    title: 'Scorecard',
-    role: '3'
+    title: 'Scorecard'
   },
 
   {
     href: '/reports',
     icon: (<AssessmentIcon fontSize="small" />),
-    title: 'Reports',
-    role: '3'
+    title: 'Reports'
   },
 
   // {
@@ -184,9 +158,7 @@ export const DashboardSidebar = (props) => {
     defaultMatches: true,
     noSsr: false
   });
-  // const [role, setRole] = useState("Player")
-  const { role } = useStorage();
-
+  
 
   useEffect(
     () => {
@@ -278,9 +250,6 @@ export const DashboardSidebar = (props) => {
         />
         <Box sx={{ flexGrow: 1 }}>
           {items
-          // .filter(item =>
-          //   item.role <= access[0][role]
-          // )
           .map((item) => (
             <NavItem
               key={item.title}
