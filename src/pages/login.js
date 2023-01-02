@@ -34,11 +34,11 @@ const Login = () => {
 
   const formik = useFormik({
     initialValues: {
-      email: "Federation@pixonix.tech",
+      email: "SuperAdmin",
       password: "m",
     },
     validationSchema: Yup.object({
-      email: Yup.string().email("Must be a valid email").max(255).required("Email is required"),
+      email: Yup.string().min(6).max(255).required("Username is required"),
       password: Yup.string().max(255).required("Password is required"),
     }),
     onSubmit: async ({ email, password }) => {
@@ -144,12 +144,11 @@ const Login = () => {
               error={Boolean(formik.touched.email && formik.errors.email)}
               fullWidth
               helperText={formik.touched.email && formik.errors.email}
-              label="Email Address"
+              label="Username"
               margin="normal"
               name="email"
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
-              type="email"
               value={formik.values.email}
               variant="outlined"
             />

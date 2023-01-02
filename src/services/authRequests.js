@@ -64,8 +64,6 @@ export const loginNew = async ({ userName, password }) => {
 
 //GET LoginUser DETAILS
 export const getLoginUser = async (params) => {
-  console.log("called",params);
-
   const { token } = useStorage();
   if (params.id) {
     try {
@@ -78,7 +76,6 @@ export const getLoginUser = async (params) => {
       return res.data;
     } catch (error) {
       console.log(error);
-
       throw error;
     }
   }
