@@ -10,10 +10,10 @@ const useStorage = () => {
   const userProfile = getCookie("userProfile");
   const loggedInUserName = getCookie("userName");
 
-  const fedFilter = JSON.parse(getCookie("fed"));
-  const academyFilter = JSON.parse(getCookie("academy"));
-  const clubFilter = JSON.parse(getCookie("club"));
-  const clubTeamFilter = JSON.parse(getCookie("clubTeam"))
+  const fedFilter = getCookie("fed");
+  const academyFilter = getCookie("academy");
+  const clubFilter = getCookie("club");
+  const clubTeamFilter = getCookie("clubTeam")
 
   const setFedFilter = (FedIDs) => {
     setCookie("fed", FedIDs);
