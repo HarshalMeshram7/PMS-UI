@@ -86,7 +86,7 @@ export const deleteAcademy = async (ID) => {
     }
     try {
 
-        const res = await axios.post(`${MAIN_URL2}/Deleteacademy/`,{academy:ID}, {
+        const res = await axios.post(`${MAIN_URL2}/Deleteacademy/`,{ID}, {
             headers: {
                 Authorization: "Bearer " + token,
             },

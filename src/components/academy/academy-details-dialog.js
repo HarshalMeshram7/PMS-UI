@@ -265,7 +265,6 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
 
         setLoading(true);
         try {
-            let finalData = { academy: data }
             deleteAcademy(data).then((response) => {
                 if (response.status == "SUCCESS") {
                     handleClose();

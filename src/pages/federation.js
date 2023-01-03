@@ -107,7 +107,7 @@ const Federation = () => {
           />
           <Box sx={{ pt: 3 }}>
             <Grid container spacing={3}>
-              {filteredFederations?.map((product, key) => (
+              {filteredFederations && filteredFederations?.map((product, key) => (
                 <Grid item key={key} lg={4} md={6} xs={12}>
                   <FederationCard
                     handleOpenFederationFinance={handleOpenFederationFinance}

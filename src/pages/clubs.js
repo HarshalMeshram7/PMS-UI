@@ -113,7 +113,7 @@ const Clubs = () => {
                             container
                             spacing={3}
                         >
-                            {filteredClubs?.map((product, key) => (
+                            {filteredClubs && filteredClubs?.map((product, key) => (
                                 <Grid
                                     item
                                     key={key}

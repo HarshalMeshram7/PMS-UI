@@ -87,6 +87,7 @@ const Team = () => {
     
   useEffect(() => {
     filterArrayByArrayIDs(teams, clubTeamFilter,loggedInUserName).then((filtered) => {
+      console.log(filtered)
       setFilteredClubTeams(filtered);
     });
   }, [teams]);
@@ -143,7 +144,7 @@ const Team = () => {
               container
               spacing={3}
             >
-              {filteredClubTeams?.map((product, key) => (
+              {filteredClubTeams && filteredClubTeams?.map((product, key) => (
                 <Grid
                   item
                   key={key}

@@ -115,7 +115,7 @@ const Academy = () => {
               container
               spacing={3}
             >
-              {filteredAcademies?.map((product, key) => (
+              {filteredAcademies && filteredAcademies?.map((product, key) => (
                 <Grid
                   item
                   key={key}
