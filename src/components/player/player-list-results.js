@@ -70,7 +70,7 @@ export const PlayerListResults = ({ players, handleOpenPlayerDetails, handleOpen
     <Card {...rest}>
       <PerfectScrollbar>
         <Box sx={{ minWidth: 1050 }}>
-          <Table>
+          {players && <Table>
             <TableHead>
               <TableRow>
                 {/* <TableCell padding="checkbox">
@@ -99,7 +99,7 @@ export const PlayerListResults = ({ players, handleOpenPlayerDetails, handleOpen
               </TableRow>
             </TableHead>
             <TableBody>
-              {players?.slice(0, limit).map((players, key) => (
+              {players && players?.slice(0, limit).map((players, key) => (
                 <TableRow
                   hover
                   style={{ cursor: "pointer" }}
@@ -169,7 +169,7 @@ export const PlayerListResults = ({ players, handleOpenPlayerDetails, handleOpen
 
               ))}
             </TableBody>
-          </Table>
+          </Table>}
         </Box>
       </PerfectScrollbar>
       {/* <TablePagination

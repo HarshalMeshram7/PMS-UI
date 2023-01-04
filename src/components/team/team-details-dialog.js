@@ -836,7 +836,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate ,handleOpenD
                                                                 onClubChange(e)
                                                             }}
                                                         >
-                                                            {clubs?.map((option, key) => {
+                                                            {clubs && clubs?.map((option, key) => {
                                                                 return (
                                                                     <MenuItem key={key}
                                                                         value={option.ID}>
@@ -864,7 +864,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate ,handleOpenD
                                                             name="clubsportsID"
                                                             onChange={formik.handleChange}
                                                         >
-                                                            {clubSports?.map((option, key) => {
+                                                            {clubSports && clubSports?.map((option, key) => {
                                                                 return (
                                                                     <MenuItem key={key}
                                                                         value={option.ID}>
@@ -897,7 +897,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate ,handleOpenD
                                             <Grid container
                                                 spacing={8} >
                                                 {/* select team players */}
-                                                {playersArrayTable?.length !== 0 && <TeamTable
+                                                {playersArrayTable && playersArrayTable?.length !== 0 && <TeamTable
                                                     array={playersArrayTable}
                                                     handleRemove={handleRemove}
                                                     type="players"
@@ -921,7 +921,7 @@ export const TeamDetailsDialog = ({ open, handleClose, team, mutate ,handleOpenD
 
                                                             }}
                                                         >
-                                                            {players?.map((option, key) => {
+                                                            {players && players?.map((option, key) => {
                                                                 return (
                                                                     <MenuItem key={key}
                                                                         value={option}>
