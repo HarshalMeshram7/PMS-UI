@@ -66,12 +66,21 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
-            teamList: [],
+            Tournament: "",
+            Description: "",
+            Address: "",
+            City: "",
+            State: "",
+            Country: "",
+            Pincode: "",
+            ContactPerson: "",
+            Phone: "",
+            EmailID: "",
+            StartDate: "",
+            EndDate: "",
             NOG: "",
             NOTIG: "",
-            TournamentName: "",
-            TournamentStartDate: "",
-            TournamentEndDate: "",
+            teamList: [],
         },
 
         validationSchema: Yup.object({
@@ -107,7 +116,7 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
             open={open}
             onClose={!loading && handleClose}
             fullWidth
-            maxWidth="xl"
+            maxWidth="lg"
             BackdropProps={{
                 style: { backgroundColor: "#121212dd", },
             }}
@@ -124,26 +133,208 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                 >
                     <Grid
                         item
-                        md={3}
+                        md={6}
                         xs={12}
                     >
                         <TextField
-                            error={Boolean(formik.touched.TournamentName && formik.errors.TournamentName)}
+                            error={Boolean(formik.touched.Tournament && formik.errors.Tournament)}
                             fullWidth
-                            helperText={formik.touched.TournamentName && formik.errors.TournamentName}
+                            helperText={formik.touched.Tournament && formik.errors.Tournament}
                             label="Name of Tournament"
                             margin="dense"
-                            name="TournamentName"
+                            name="Tournament"
                             type="text"
                             variant="outlined"
                             onChange={(e) => { formik.handleChange(e) }}
                             onBlur={formik.handleBlur}
-                            value={formik.values.TournamentName}
+                            value={formik.values.Tournament}
                         />
                     </Grid>
+
                     <Grid
                         item
-                        md={3}
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.Description && formik.errors.Description)}
+                            fullWidth
+                            helperText={formik.touched.Description && formik.errors.Description}
+                            label="Description"
+                            margin="dense"
+                            name="Description"
+                            type="text"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.Description}
+                        />
+                    </Grid>
+
+                    <Grid
+                        item
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.Address && formik.errors.Address)}
+                            fullWidth
+                            helperText={formik.touched.Address && formik.errors.Address}
+                            label="Address"
+                            margin="dense"
+                            name="Address"
+                            type="text"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.Address}
+                        />
+                    </Grid>
+
+                    <Grid
+                        item
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.City && formik.errors.City)}
+                            fullWidth
+                            helperText={formik.touched.City && formik.errors.City}
+                            label="City"
+                            margin="dense"
+                            name="City"
+                            type="text"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.City}
+                        />
+                    </Grid>
+
+
+                    <Grid
+                        item
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.State && formik.errors.State)}
+                            fullWidth
+                            helperText={formik.touched.State && formik.errors.State}
+                            label="State"
+                            margin="dense"
+                            name="State"
+                            type="text"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.State}
+                        />
+                    </Grid>
+
+                    <Grid
+                        item
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.Country && formik.errors.Country)}
+                            fullWidth
+                            helperText={formik.touched.Country && formik.errors.Country}
+                            label="Country"
+                            margin="dense"
+                            name="Country"
+                            type="text"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.Country}
+                        />
+                    </Grid>
+
+                    <Grid
+                        item
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.Pincode && formik.errors.Pincode)}
+                            fullWidth
+                            helperText={formik.touched.Pincode && formik.errors.Pincode}
+                            label="Pincode"
+                            margin="dense"
+                            name="Pincode"
+                            type="number"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.Pincode}
+                        />
+                    </Grid>
+
+                    <Grid
+                        item
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.ContactPerson && formik.errors.ContactPerson)}
+                            fullWidth
+                            helperText={formik.touched.ContactPerson && formik.errors.ContactPerson}
+                            label="ContactPerson"
+                            margin="dense"
+                            name="ContactPerson"
+                            type="text"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.ContactPerson}
+                        />
+                    </Grid>
+
+                    <Grid
+                        item
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.Phone && formik.errors.Phone)}
+                            fullWidth
+                            helperText={formik.touched.Phone && formik.errors.Phone}
+                            label="Phone"
+                            margin="dense"
+                            name="Phone"
+                            type="text"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.Phone}
+                        />
+                    </Grid>
+
+                    <Grid
+                        item
+                        md={6}
+                        xs={12}
+                    >
+                        <TextField
+                            error={Boolean(formik.touched.EmailID && formik.errors.EmailID)}
+                            fullWidth
+                            helperText={formik.touched.EmailID && formik.errors.EmailID}
+                            label="EmailID"
+                            margin="dense"
+                            name="EmailID"
+                            type="email"
+                            variant="outlined"
+                            onChange={(e) => { formik.handleChange(e) }}
+                            onBlur={formik.handleBlur}
+                            value={formik.values.EmailID}
+                        />
+                    </Grid>
+
+                    <Grid
+                        item
+                        md={6}
                         xs={12}
                     >
                         <FormControl fullWidth>
@@ -169,19 +360,19 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
 
                     <Grid
                         item
-                        md={3}
+                        md={6}
                         xs={12}
                     >
                         <TextField
-                            error={Boolean(formik.touched.TournamentStartDate && formik.errors.TournamentStartDate)}
+                            error={Boolean(formik.touched.StartDate && formik.errors.StartDate)}
                             fullWidth
-                            helperText={formik.touched.TournamentStartDate && formik.errors.TournamentStartDate}
-                            name="TournamentStartDate"
+                            helperText={formik.touched.StartDate && formik.errors.StartDate}
+                            name="StartDate"
                             label="Tournament Start Date"
                             InputLabelProps={{ shrink: true }}
                             margin="dense"
                             onBlur={formik.handleBlur}
-                            value={formik.values.TournamentStartDate}
+                            value={formik.values.StartDate}
                             onChange={formik.handleChange}
                             type="date"
                             variant="outlined"
@@ -190,19 +381,19 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
 
                     <Grid
                         item
-                        md={3}
+                        md={6}
                         xs={12}
                     >
                         <TextField
-                            error={Boolean(formik.touched.TournamentEndDate && formik.errors.TournamentEndDate)}
+                            error={Boolean(formik.touched.EndDate && formik.errors.EndDate)}
                             fullWidth
-                            helperText={formik.touched.TournamentEndDate && formik.errors.TournamentEndDate}
-                            name="TournamentEndDate"
+                            helperText={formik.touched.EndDate && formik.errors.EndDate}
+                            name="EndDate"
                             label="Tournament End Date"
                             InputLabelProps={{ shrink: true }}
                             margin="dense"
                             onBlur={formik.handleBlur}
-                            value={formik.values.TournamentEndDate}
+                            value={formik.values.EndDate}
                             onChange={formik.handleChange}
                             type="date"
                             variant="outlined"
@@ -211,7 +402,7 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
 
                     <Grid
                         item
-                        md={3}
+                        md={6}
                         xs={12}
                     >
                         <FormControl fullWidth>
@@ -240,7 +431,7 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
 
                     <Grid
                         item
-                        md={3}
+                        md={6}
                         xs={12}
                     >
                         <TextField
@@ -260,7 +451,7 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
 
                     <Grid
                         item
-                        md={3}
+                        md={6}
                         xs={12}
                     >
                         <TextField
@@ -274,7 +465,7 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                             variant="outlined"
                             value={formik.values.NOTIG}
                             onChange={(e) => {
-                                if (formik.values.teamList.length >= (formik.values.NOG * e.target.value)) {
+                                if (formik.values.teamList.length > (formik.values.NOG * e.target.value)) {
                                     formik.touched.NOTIG = true;
                                     formik.errors.NOTIG = "Please choose greater number"
                                 } else {
@@ -284,13 +475,12 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                                 formik.handleChange(e)
                             }}
                             onBlur={formik.handleBlur}
-
                         />
                     </Grid>
 
                     <Grid
                         item
-                        md={3}
+                        md={6}
                         xs={12}
                     >
                         <Button
@@ -302,9 +492,9 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                 {/* creating teams chips */}
                 <Grid
                     container
-                    style={{ justifyContent: "center", marginTop: 50, marginBottom: 50 }}
+                    style={{ justifyContent: "center", marginTop: 10, marginBottom: 10 }}
                 >
-                    <Stack direction="row" spacing={5}>
+                    <Stack direction="row" spacing={3}>
                         {numberOfTeams?.map((totolteams, teamskey) => {
                             return (
                                 <Chip onClick=
@@ -314,7 +504,6 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                         })}
                     </Stack>
                 </Grid>
-
 
                 {/* Creating Groups */}
                 {teamsFixed &&
@@ -332,7 +521,7 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                                     >
                                         {/* <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}> */}
                                         <Card variant="outlined">
-                                            <CardContent style={{ minHeight: 300 }}>
+                                            <CardContent style={{ minHeight: 10 }}>
                                                 <List subheader={group} key={groupkey}>
 
                                                     {numberOfTeamsInGroup?.map((noOfteams, teamkey) => (
@@ -354,7 +543,6 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                                 </>
                             )
                         })}
-
 
                     </Grid>
                 }
