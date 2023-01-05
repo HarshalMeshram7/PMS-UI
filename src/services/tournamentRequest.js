@@ -2,14 +2,14 @@ import axios from "axios";
 import useStorage from "src/hooks/useStorage";
 import {  MAIN_URL2 } from "./apiConfig";
 
-// Add Staff
-export const addStaff = async (data) => {
+// Add Tournament
+export const addTournament = async (data) => {
   const { token } = useStorage();
   if (!token) {
     throw "No Token";
   }
   try {
-    const res = await axios.post(`${MAIN_URL2}/Savestaff`, data, {
+    const res = await axios.post(`${MAIN_URL2}/savetournament`, data, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -22,15 +22,15 @@ export const addStaff = async (data) => {
 };
 
 
-//UPDATE STAFF
-export const updateStaff = async (id, data) => {
+//UPDATE Tournament
+export const updateTournament = async (id, data) => {
   const { token } = useStorage();
   if (!id || !data || !token) {
     throw "No Token";
     // return;
   }
   try {
-    const res = await axios.put(`${MAIN_URL2}/admin/${id}/Updatestaff/`, data, {
+    const res = await axios.put(`${MAIN_URL2}/admin/${id}/Updatetournament/`, data, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -45,14 +45,14 @@ export const updateStaff = async (id, data) => {
 
 
 
-//GET All STAFF 
-export const getAllStaff = async (params) => {
+//GET All Tournament 
+export const getAllTournament = async (params) => {
   const { token } = useStorage();
   if (!token) {
     throw "No Token";
   }
   try {
-    let res = await axios.get(`${MAIN_URL2}/getStaffbypattern/`, {
+    let res = await axios.get(`${MAIN_URL2}/getTournamentsbypattern/`, {
       params: params,
       headers: {
         Authorization: "Bearer " + token,

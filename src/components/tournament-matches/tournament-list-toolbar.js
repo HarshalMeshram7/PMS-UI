@@ -46,7 +46,7 @@ import {
           <Button
             color="primary"
             variant="contained"
-            onClick={ props.handleOpenAddAdministrative }
+            onClick={ props.handleOpenAddTournament }
           >
             Create Tournament
           </Button>
