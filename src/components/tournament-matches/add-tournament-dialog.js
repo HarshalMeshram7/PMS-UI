@@ -33,7 +33,6 @@ import LoadingBox from "src/components/common/loading-box";
 import { useAllTeams } from "src/adapters/teamAdapter";
 
 
-
 export const AddFixturesDialog = ({ open, handleClose }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState();
@@ -42,7 +41,6 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
     const [numberOfGroups, setNumberOfGroups] = useState([]);
     const [numberOfTeamsInGroup, setNumberOfTeamsInGroup] = useState([]);
     const [teamsFixed, setTeamsFixed] = useState(false);
-
 
     const Venue = [
         {
@@ -91,8 +89,6 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
         },
     });
 
-
-
     const handleSelectTeam = (e) => {
         console.log(formik.values);
         setNumberOfTeams(formik.values.teamList)
@@ -110,9 +106,9 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
     }
     // console.log(groups ,teamsingroup );
     const { teams, error, mutate } = useAllTeams();
+    
     return (
         <Dialog
-
             open={open}
             onClose={!loading && handleClose}
             fullWidth
@@ -210,7 +206,6 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                             value={formik.values.City}
                         />
                     </Grid>
-
 
                     <Grid
                         item
@@ -357,7 +352,6 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                         </FormControl>
                     </Grid>
 
-
                     <Grid
                         item
                         md={6}
@@ -422,12 +416,6 @@ export const AddFixturesDialog = ({ open, handleClose }) => {
                             </Select>
                         </FormControl>
                     </Grid>
-
-
-
-
-
-
 
                     <Grid
                         item

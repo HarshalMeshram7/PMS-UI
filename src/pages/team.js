@@ -4,7 +4,7 @@ import { DashboardLayout } from "src/components/dashboard-layout";
 import { Box, Container, Grid, keyframes, Pagination } from '@mui/material';
 import { TeamListToolbar } from "src/components/team/team-list-toolbar";
 import { TeamCard } from "src/components/team/team-card";
-import { useState ,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAllTeams } from "src/adapters/teamAdapter";
 import { AddTeamDialog } from "src/components/team/add-team-dialog";
 import { TeamDetailsDialog } from "src/components/team/team-details-dialog";
@@ -63,11 +63,11 @@ const Team = () => {
         console.log(res);
         if (res?.status === "success") {
           mutate();
-          enqueueSnackbar("Team Deleted Succesfully", { variant: "success" });         
+          enqueueSnackbar("Team Deleted Succesfully", { variant: "success" });
           setOpenDeleteDialogue(false);
           setShowTeamDetailsDialog(false)
-        }else{
-          
+        } else {
+
         }
       });
     } catch (error) {
@@ -83,10 +83,10 @@ const Team = () => {
   const handleCloseDeleteDialogue = () => {
     setOpenDeleteDialogue(false);
   };
-  const {clubTeamFilter ,loggedInUserName} = useStorage()
-    
+  const { clubTeamFilter, loggedInUserName } = useStorage()
+
   useEffect(() => {
-    filterArrayByArrayIDs(teams, clubTeamFilter,loggedInUserName).then((filtered) => {
+    filterArrayByArrayIDs(teams, clubTeamFilter, loggedInUserName).then((filtered) => {
       console.log(filtered)
       setFilteredClubTeams(filtered);
     });
@@ -111,7 +111,7 @@ const Team = () => {
         <AddTeamDialog
           open={showAddTeamDialog}
           handleClose={handleCloseAddTeam}
-          mutate = {mutate}
+          mutate={mutate}
         />
         <DeleteDialog
           handleDelete={handleDeleteClubTeam}

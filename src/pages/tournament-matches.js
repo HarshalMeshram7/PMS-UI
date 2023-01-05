@@ -13,18 +13,18 @@ import { TournamentDetailsDialog } from "src/components/tournament-matches/tourn
 const TournamentMatches = () => {
 
   const [showAddTournamentDialog, setShowAddTournamentDialog] = useState(false);
-  const handleCloseAddTournament = () => setShowAddTournamentDialog(false);
-  const handleOpenAddTournament = () => setShowAddTournamentDialog(true);
   const [showTournamentDetailsDialog, setShowTournamentDetailsDialog] = useState(false);
   const [params, setParams] = useState({ searchpattern: "" })
 
+  const handleOpenAddTournament = () => setShowAddTournamentDialog(true);
+  const handleCloseAddTournament = () => setShowAddTournamentDialog(false);
   const handleCloseStaffRegistrationDetails = () => setShowTournamentDetailsDialog(false);
+  const handleCloseTournamentDetails = () => setShowTournamentDetailsDialog(false);
 
   const handleOpenTournamentDetails = (tournament) => {
     console.log(tournament);
     setShowTournamentDetailsDialog(true)
   };
-  const handleCloseTournamentDetails = () => setShowTournamentDetailsDialog(false);
 
   const { tournaments, loading, mutate } = useAllTournament({ ...params })
 
@@ -48,7 +48,6 @@ const TournamentMatches = () => {
         />
 
         <TournamentDetailsDialog
-          // staff={staff}
           open={showTournamentDetailsDialog}
           handleClose={handleCloseTournamentDetails}
         />
