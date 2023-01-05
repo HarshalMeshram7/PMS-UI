@@ -33,18 +33,18 @@ const Team = () => {
 
 
   const handleOpenTeamDetails = (team) => {
-    getTeam({ id: team.ID }).then((res) => {
-      setTeam(res)
+    getTeam({ ID: team.ID }).then((res) => {
+      console.log(res)
+      setTeam(res?.TeamInfo[0])
       setShowTeamDetailsDialog(true)
-
     })
   };
   const handleCloseTeamDetails = () => setShowTeamDetailsDialog(false);
 
   const handleOpenTeamFinance = (team) => {
 
-    getTeam({ id: team.ID }).then((res) => {
-      setTeam(res)
+    getTeam({ ID: team.ID }).then((res) => {
+      setTeam(res?.TeamInfo[0])
       setShowTeamFinanceDialog(true)
     })
 

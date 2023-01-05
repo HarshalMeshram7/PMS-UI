@@ -52,7 +52,7 @@ export const getTeam = async (params) => {
                 Authorization: "Bearer " + token,
             },
         });
-        return res?.data?.result[0];
+        return res?.data?.result;
     } catch (error) {
         console.log(error);
         throw error;
