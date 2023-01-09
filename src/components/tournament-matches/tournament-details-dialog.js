@@ -30,7 +30,8 @@ import * as Yup from "yup";
 import LoadingBox from "src/components/common/loading-box";
 import { useAllTeams } from "src/adapters/teamAdapter";
 
-export const TournamentDetailsDialog = ({ open, handleClose }) => {
+export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
+  console.log(tournament);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
 
@@ -87,7 +88,6 @@ export const TournamentDetailsDialog = ({ open, handleClose }) => {
   });
 
   const handleSelectTeam = (e) => {
-    console.log(formik.values);
     setNumberOfTeams(formik.values.teamList)
     setTeamsFixed(true)
     let groups = [];
@@ -101,7 +101,6 @@ export const TournamentDetailsDialog = ({ open, handleClose }) => {
     setNumberOfGroups(groups)
     setNumberOfTeamsInGroup(teamsingroup)
   }
-  // console.log(groups ,teamsingroup );
 
   const { teams, error, mutate } = useAllTeams();
 

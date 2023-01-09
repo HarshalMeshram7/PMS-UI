@@ -15,14 +15,14 @@ const TournamentMatches = () => {
   const [showAddTournamentDialog, setShowAddTournamentDialog] = useState(false);
   const [showTournamentDetailsDialog, setShowTournamentDetailsDialog] = useState(false);
   const [params, setParams] = useState({ searchpattern: "" })
+  const [tournament, setTournament] = useState(null);
 
   const handleOpenAddTournament = () => setShowAddTournamentDialog(true);
   const handleCloseAddTournament = () => setShowAddTournamentDialog(false);
-  const handleCloseStaffRegistrationDetails = () => setShowTournamentDetailsDialog(false);
   const handleCloseTournamentDetails = () => setShowTournamentDetailsDialog(false);
 
   const handleOpenTournamentDetails = (tournament) => {
-    console.log(tournament);
+    setTournament(tournament);
     setShowTournamentDetailsDialog(true)
   };
 
@@ -45,11 +45,14 @@ const TournamentMatches = () => {
         <AddFixturesDialog
           open={showAddTournamentDialog}
           handleClose={handleCloseAddTournament}
+          mutate={mutate}
         />
 
         <TournamentDetailsDialog
           open={showTournamentDetailsDialog}
           handleClose={handleCloseTournamentDetails}
+          mutate={mutate}
+          tournament={tournament}
         />
 
         <Container maxWidth={false}>
@@ -64,7 +67,7 @@ const TournamentMatches = () => {
               spacing={3}
             >
               {tournaments && tournaments?.map((product, key) => {
-                console.log(product);
+                
                 return (
                   <Grid
                     item
