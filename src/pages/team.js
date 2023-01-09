@@ -1,10 +1,10 @@
 import React from "react";
-import Head from 'next/head';
+import Head from "next/head";
 import { DashboardLayout } from "src/components/dashboard-layout";
-import { Box, Container, Grid, keyframes, Pagination } from '@mui/material';
+import { Box, Container, Grid, keyframes, Pagination } from "@mui/material";
 import { TeamListToolbar } from "src/components/team/team-list-toolbar";
 import { TeamCard } from "src/components/team/team-card";
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import { useAllTeams } from "src/adapters/teamAdapter";
 import { AddTeamDialog } from "src/components/team/add-team-dialog";
 import { TeamDetailsDialog } from "src/components/team/team-details-dialog";
@@ -19,11 +19,11 @@ const Team = () => {
   const [showAddTeamDialog, setShowAddTeamDialog] = useState(false);
   const [showTeamDetailsDialog, setShowTeamDetailsDialog] = useState(false);
   const [showTeamFinanceDialog, setShowTeamFinanceDialog] = useState(false);
-  const [team, setTeam] = useState([])
-  const [filteredClubTeams, setFilteredClubTeams] = useState([])
-  const [params, setParams] = useState({ searchpattern: "" })
+  const [team, setTeam] = useState([]);
+  const [teamMembers, setTeamMembers] = useState({});
+  const [filteredClubTeams, setFilteredClubTeams] = useState([]);
+  const [params, setParams] = useState({ searchpattern: "" });
   const { enqueueSnackbar } = useSnackbar();
-
 
   const [openDeleteDialogue, setOpenDeleteDialogue] = useState(false);
 
@@ -31,31 +31,30 @@ const Team = () => {
   const handleCloseAddTeam = () => setShowAddTeamDialog(false);
   const { teams, loading, error, mutate } = useAllTeams({ ...params });
 
-
   const handleOpenTeamDetails = (team) => {
     getTeam({ ID: team.ID }).then((res) => {
-      console.log(res)
-      setTeam(res?.TeamInfo[0])
-      setShowTeamDetailsDialog(true)
-    })
+      setTeam(res?.TeamInfo[0]);
+      setTeamMembers({
+        teamplayersTypes: res.teamplayersTypes,
+        teamstaffsTypes: res.teamstaffsTypes,
+        teamcoachesTypes: res.teamcoachesTypes,
+      });
+      setShowTeamDetailsDialog(true);
+    });
   };
   const handleCloseTeamDetails = () => setShowTeamDetailsDialog(false);
 
   const handleOpenTeamFinance = (team) => {
-
     getTeam({ ID: team.ID }).then((res) => {
-      setTeam(res?.TeamInfo[0])
-      setShowTeamFinanceDialog(true)
-    })
-
+      setTeam(res?.TeamInfo[0]);
+      setShowTeamFinanceDialog(true);
+    });
   };
   const handleCloseTeamFinance = () => setShowTeamFinanceDialog(false);
 
   const handleSearch = (value) => {
-    setParams((p) => ({ ...p, searchpattern: value }))
+    setParams((p) => ({ ...p, searchpattern: value }));
   };
-
-
 
   const handleDeleteClubTeam = (ID) => {
     try {
@@ -65,9 +64,8 @@ const Team = () => {
           mutate();
           enqueueSnackbar("Team Deleted Succesfully", { variant: "success" });
           setOpenDeleteDialogue(false);
-          setShowTeamDetailsDialog(false)
+          setShowTeamDetailsDialog(false);
         } else {
-
         }
       });
     } catch (error) {
@@ -83,36 +81,27 @@ const Team = () => {
   const handleCloseDeleteDialogue = () => {
     setOpenDeleteDialogue(false);
   };
-  const { clubTeamFilter, loggedInUserName } = useStorage()
+  const { clubTeamFilter, loggedInUserName } = useStorage();
 
   useEffect(() => {
     filterArrayByArrayIDs(teams, clubTeamFilter, loggedInUserName).then((filtered) => {
-      console.log(filtered)
       setFilteredClubTeams(filtered);
     });
   }, [teams]);
 
-
-
   return (
     <>
       <Head>
-        <title>
-          Team | PMS
-        </title>
+        <title>Team | PMS</title>
       </Head>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
+          py: 8,
         }}
       >
-        <AddTeamDialog
-          open={showAddTeamDialog}
-          handleClose={handleCloseAddTeam}
-          mutate={mutate}
-        />
+        <AddTeamDialog open={showAddTeamDialog} handleClose={handleCloseAddTeam} mutate={mutate} />
         <DeleteDialog
           handleDelete={handleDeleteClubTeam}
           name={team.Team}
@@ -120,7 +109,9 @@ const Team = () => {
           open={openDeleteDialogue}
           handleClose={handleCloseDeleteDialogue}
         />
-        <TeamDetailsDialog team={team}
+        <TeamDetailsDialog
+          team={team}
+          teamMembers={teamMembers}
           mutate={mutate}
           open={showTeamDetailsDialog}
           handleClose={handleCloseTeamDetails}
@@ -140,24 +131,17 @@ const Team = () => {
             open={showAddTeamDialog}
           />
           <Box sx={{ pt: 3 }}>
-            <Grid
-              container
-              spacing={3}
-            >
-              {filteredClubTeams && filteredClubTeams?.map((product, key) => (
-                <Grid
-                  item
-                  key={key}
-                  lg={4}
-                  md={6}
-                  xs={12}
-                >
-                  <TeamCard
-                    handleOpenTeamFinance={handleOpenTeamFinance}
-                    handleOpenTeamDetails={handleOpenTeamDetails}
-                    product={product} />
-                </Grid>
-              ))}
+            <Grid container spacing={3}>
+              {filteredClubTeams &&
+                filteredClubTeams?.map((product, key) => (
+                  <Grid item key={key} lg={4} md={6} xs={12}>
+                    <TeamCard
+                      handleOpenTeamFinance={handleOpenTeamFinance}
+                      handleOpenTeamDetails={handleOpenTeamDetails}
+                      product={product}
+                    />
+                  </Grid>
+                ))}
             </Grid>
           </Box>
           {/* <Box
@@ -177,13 +161,8 @@ const Team = () => {
       </Box>
     </>
   );
-}
+};
 
-
-Team.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+Team.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Team;

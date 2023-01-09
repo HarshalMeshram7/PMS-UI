@@ -147,9 +147,9 @@ export const DashboardNavbar = (props) => {
             >
               Logout
             </MenuItem>
-            <MenuItem>
+            {/* <MenuItem>
               <ChangeLanguage></ChangeLanguage>
-            </MenuItem>
+            </MenuItem> */}
           </Menu>
         </Toolbar>
       </DashboardNavbarRoot>

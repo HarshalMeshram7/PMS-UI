@@ -29,6 +29,7 @@ export default function TeamTable({ array, handleRemove, type , tableTitle }) {
                     </TableHead>
                     <TableBody>
                         {array?.map((item, index) => {
+                            console.log(item)
                             return (
                                 <TableRow key={index}>
                                     <TableCell>{item.name}</TableCell>

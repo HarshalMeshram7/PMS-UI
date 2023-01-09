@@ -10,7 +10,6 @@ export const removeItemFromArray = (array, index) => {
 
 export const filterArrayByArrayIDs = (arr, keys, superAdmin) => {
   return new Promise(async function (resolve, reject) {
-    console.log(arr)
     if (arr !== [] || arr !== null || arr !== undefined || arr !== false ) {
       if (superAdmin == "SuperAdmin") {
         resolve(arr);
