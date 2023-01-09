@@ -179,13 +179,13 @@ export const UserAccessListResults = ({ userAccess, handleOpenUserAccessDetails,
                     {users.MobileNo}
                   </TableCell>
                   <TableCell>
-                    <Button
+              {(users.UserName !== "SuperAdmin") && <Button
                       onClick={() => {
                         handleOpenDeleteDialogue(users);
                       }}
                     >
                       X
-                    </Button>
+                    </Button>}
                   </TableCell>
 
                   {/* <TableCell>

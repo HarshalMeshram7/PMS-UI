@@ -25,7 +25,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useEffect, useState, useReducer } from "react";
+import { useEffect, useState, useReducer, useLayoutEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import LoadingBox from "src/components/common/loading-box";
@@ -47,6 +47,11 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user ,mutate }) => 
   });
 
   let userRoles = finalroles;
+  useLayoutEffect(()=>{
+    let {userAccessForTable,userRole} =  user
+    setFinalAccessForTable(userAccessForTable)
+    setFinalroles(userRole)
+  },[user])
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -203,13 +208,6 @@ export const UserAccessDetailsDialog = ({ open, handleClose, user ,mutate }) => 
     setFinalAccessForTable(newValue);
     forceUpdate();
   };
-
-  if(user?.userAccessForTable != undefined && user?.userAccessForTable.length > 0){
-    finalAccessForTable = user?.userAccessForTable
-  }
-  if(user?.userRole != undefined){
-    finalroles = user?.userRole
-  }
 
   return (
     <Dialog
