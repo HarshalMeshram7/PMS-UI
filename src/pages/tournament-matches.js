@@ -26,6 +26,8 @@ const TournamentMatches = () => {
     setShowTournamentDetailsDialog(true)
   };
 
+  
+
   const { tournaments, loading, mutate } = useAllTournament({ ...params })
 
   return (

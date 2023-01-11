@@ -42,6 +42,23 @@ export const updateTournament = async (id, data) => {
   }
 };
 
+//Save Tournament Sports Division Step 1
+export const saveTournamentSportsDivision = async ( data) => {
+  const { token } = useStorage();
+  
+  try {
+    const res = await axios.post(`${MAIN_URL2}/SavetournamentSports/`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
 
 
 
