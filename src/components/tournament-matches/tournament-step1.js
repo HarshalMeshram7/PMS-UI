@@ -10,13 +10,10 @@ import {
     MenuItem,
 } from "@mui/material";
 
-export default function TournamentStep1({ formik, sportsList, handleStep1 }) {
+export default function TournamentStep1({ formik, sportsList, handleStep1, step2 }) {
     return (
         <>
-            <Grid
-                container
-                spacing={3}
-            >
+            
 
                 {/* Typography */}
                 <Grid
@@ -243,9 +240,25 @@ export default function TournamentStep1({ formik, sportsList, handleStep1 }) {
                     md={12}
                     xs={12}
                 >
-                    <Button type="submit" onClick={handleStep1} variant="contained">Next (Step 1)</Button>
+                    <Button
+                        type="submit" disabled={step2}
+                        onClick={handleStep1} variant="contained">Next (Step 1)</Button>
                 </Grid>
-            </Grid>
+
+                <Grid
+                    item
+                    md={12}
+                    xs={12}
+                >
+                </Grid>
+
+                <Grid
+                    item
+                    md={12}
+                    xs={12}
+                >
+                </Grid>
+            
         </>
     )
 }

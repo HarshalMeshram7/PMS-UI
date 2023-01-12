@@ -23,14 +23,11 @@ export const addTournament = async (data) => {
 
 
 //UPDATE Tournament
-export const updateTournament = async (id, data) => {
+export const updateTournament = async ( data) => {
   const { token } = useStorage();
-  if (!id || !data || !token) {
-    throw "No Token";
-    // return;
-  }
+  
   try {
-    const res = await axios.put(`${MAIN_URL2}/admin/${id}/Updatetournament/`, data, {
+    const res = await axios.post(`${MAIN_URL2}/Updatetournament/`, data, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -48,6 +45,40 @@ export const saveTournamentSportsDivision = async ( data) => {
   
   try {
     const res = await axios.post(`${MAIN_URL2}/SavetournamentSports/`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+//Save Tournament Sports Division Step 2
+export const saveTournamentSportsDivisionGroupAndTeams = async ( data) => {
+  const { token } = useStorage();
+  
+  try {
+    const res = await axios.post(`${MAIN_URL2}/tournamentSportsDivisionGroupsandteam/`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+//Save Tournament Sports Division Step 3
+export const saveTournamentSportsDivisionTeamsinGroup = async ( data) => {
+  const { token } = useStorage();
+  
+  try {
+    const res = await axios.post(`${MAIN_URL2}/tournamentSportsDivisionTeamsinGroup/`, data, {
       headers: {
         Authorization: "Bearer " + token,
       },

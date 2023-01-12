@@ -1,27 +1,15 @@
 import {
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  CardContent,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Typography,
+
   TextField,
-  FormControl,
-  InputLabel,
+
   Grid,
-  Select,
-  MenuItem,
-  Chip,
-  Stack,
-  Card,
-  Divider,
+
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useState, useEffect } from "react";
@@ -33,22 +21,28 @@ import { getAllSports } from "src/services/commonRequest";
 import TournamentStep1 from "./tournament-step1";
 import TournamentStep2 from "./tournament-step2";
 import TournamentStep3 from "./tournament-step3";
-import { saveTournamentSportsDivision } from "src/services/tournamentRequest";
+import { saveTournamentSportsDivision, saveTournamentSportsDivisionGroupAndTeams, saveTournamentSportsDivisionTeamsinGroup, updateTournament } from "src/services/tournamentRequest";
 
 export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
+  console.log(tournament);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
 
-  const [numberOfTeams, setNumberOfTeams] = useState([]);
-  const [numberOfGroups, setNumberOfGroups] = useState([]);
-  const [numberOfTeamsInGroup, setNumberOfTeamsInGroup] = useState([]);
-  const [teamsFixed, setTeamsFixed] = useState(false);
+
   const [sportsList, setSportsList] = useState(null);
 
   const [step1, setStep1] = useState((true))
   const [tournamentSportsDivision, setTournamentSportsDivision] = useState(null)
   const [step2, setStep2] = useState((false))
+  const [tournamentSportsDivisionGroupsTeams, setTournamentSportsDivisionGroupsTeams] = useState(null)
   const [step3, setStep3] = useState((false))
+
+  const [groupsTeamsForTable, setGroupsTeamsForTable] = useState([]);
+  const [groupsTeamsID, setGroupsTeamsID] = useState([]);
+
+  const GroupTeams = {
+    groupsTeamsForTable, setGroupsTeamsForTable, groupsTeamsID, setGroupsTeamsID
+  }
 
   const formik = useFormik({
     enableReinitialize: true,
@@ -79,11 +73,7 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
       NoOfTeams: "",
       //Create Group (Step 2)
       teamList: [],
-      NOG: "",
-      NOTIG: "",
-      // Add Teams (Step 3)
-      AvailableGroup: "",
-      AvailableGroupTeams: [],
+      NoOfGroups: "",
     },
 
     validationSchema: Yup.object({
@@ -91,8 +81,40 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
 
     onSubmit: async (data) => {
       console.log(data);
+      setLoading(true);
+      try {
+        let finalData = {
+          "ID": tournament.ID,
+          "Tournament": data.Tournament,
+          "Description": data.Description,
+          "Address": data.Address,
+          "City": data.City,
+          "State": data.State,
+          "Country": data.Country,
+          "PinCode": data.Pincode,
+          "ContactPerson": data.ContactPerson,
+          "Phone": data.Phone,
+          "EmailID": data.EmailID,
+          "StartDate": data.StartDate,
+          "EndDate": data.EndDate,
+        }
+        await updateTournament(finalData).then((resp) => {
+          if (resp.status === "success") {
+            enqueueSnackbar("Tournament Updated Succesfully", { variant: "success" });
+            setLoading(false);
+          }
+          if (resp.status === "failed") {
+            enqueueSnackbar("Tournament not updated", { variant: "failed" });
+            setLoading(false);
+          }
+        });
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+      }
     },
   });
+
 
   useEffect(() => {
 
@@ -107,15 +129,58 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
     const { DivisonDescription, Gender, MinPlayers, MaxPlayers, NoOfTeams,
       InternationalPlayers, NationalPlayers, LocalPlayers, AcademyPlayers, SportID } = formik.values
 
-    saveTournamentSportsDivision({
-      DivisonDescription, Gender, MinPlayers, MaxPlayers, NoOfTeams,
-      InternationalPlayers, NationalPlayers, LocalPlayers, AcademyPlayers,
-      SportID, TournamentID: tournament.ID
-    })
-      .then((res) => {
-        setTournamentSportsDivision(res.result)
-        setStep2(true)
+    try {
+      saveTournamentSportsDivision({
+        DivisonDescription, Gender, MinPlayers, MaxPlayers, NoOfTeams,
+        InternationalPlayers, NationalPlayers, LocalPlayers, AcademyPlayers,
+        SportID, TournamentID: tournament.ID
       })
+        .then((res) => {
+          setTournamentSportsDivision(res.result)
+          setStep2(true)
+        })
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleStep2 = (TournamentSportsDivisionID) => {
+    const { NoOfGroups, teamList } = formik.values
+    try {
+      saveTournamentSportsDivisionGroupAndTeams({
+        TournamentSportsDivisionID, NoOfGroups, ClubTeamListID: teamList
+      })
+        .then((res) => {
+          setTournamentSportsDivisionGroupsTeams(res.result)
+          setStep3(true)
+
+        })
+    }
+    catch (error) {
+      console.log(error);
+    }
+  }
+
+  const handleStep3 = (GroupTeam) => {
+    try {
+      saveTournamentSportsDivisionTeamsinGroup({
+        TournamentSportsDivisionID: tournamentSportsDivision?.TournamentSportsDivisionID,
+        GroupTeams: GroupTeam
+      })
+        .then((res) => {
+          if (res.status == "success") {
+            enqueueSnackbar("Tournament Teams Saved Succesfully", { variant: "success" });
+          }
+          else {
+            enqueueSnackbar("Something went wrong", { variant: "failed" });
+          }
+        })
+      console.log(GroupTeam);
+    }
+    catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -389,255 +454,29 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
             <Button type="submit" onClick={formik.handleSubmit} variant="contained">Update</Button>
           </Grid>
 
+
+
+          <TournamentStep1
+            formik={formik}
+            sportsList={sportsList}
+            handleStep1={handleStep1}
+            step2={step2}
+          />
+
+          {step2 && <TournamentStep2
+            teams={teams}
+            formik={formik}
+            handleStep2={handleStep2}
+            tournamentSportsDivision={tournamentSportsDivision}
+            step3={step3}
+          />}
+
+          {step3 && <TournamentStep3
+            handleStep3={handleStep3}
+            tournamentSportsDivisionGroupsTeams={tournamentSportsDivisionGroupsTeams}
+            GroupTeams={GroupTeams}
+          />}
         </Grid>
-
-        <TournamentStep1
-          formik={formik}
-          sportsList={sportsList}
-          handleStep1={handleStep1}
-        />
-
-        {/* creating teams chips */}
-        {/* <Grid
-          container
-          style={{ justifyContent: "center", marginTop: 10, marginBottom: 10 }}
-        >
-          <Stack direction="row" spacing={3}>
-            {numberOfTeams?.map((totolteams, teamskey) => {
-              return (
-                <Chip onClick=
-                  {() => alert(totolteams)}
-                  label={totolteams} key={teamskey} />
-              )
-            })}
-          </Stack>
-        </Grid> */}
-
-        {/* Creating Groups */}
-        {teamsFixed && false &&
-          <Grid
-            container
-            spacing={3}
-          >
-            {numberOfGroups.map((group, groupkey) => {
-              return (
-                <>
-                  <Grid
-                    item
-                    md={3}
-                    xs={12}
-                  >
-                    {/* <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}> */}
-                    <Card variant="outlined">
-                      <CardContent style={{ minHeight: 10 }}>
-                        <List subheader={group} key={groupkey}>
-
-                          {numberOfTeamsInGroup?.map((noOfteams, teamkey) => (
-                            <>
-                              <ListItem disablePadding key={teamkey} >
-                                <ListItemButton>
-                                  <ListItemText primary={noOfteams} />
-                                </ListItemButton>
-                              </ListItem>
-                              < Divider />
-                            </>
-                          ))}
-                        </List>
-                      </CardContent>
-                    </Card>
-                    {/* </Box> */}
-                  </Grid>
-                </>
-              )
-            })}
-          </Grid>
-        }
-
-        {/* START 22222222222222222222222222222222222222222222222222222222222222222222222222222 */}
-
-        {step2 && <TournamentStep2
-          teams={teams}
-          formik={formik}
-        />}
-
-        {/* <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            item
-            md={12}
-            xs={12}
-          >
-            <Typography
-              color="inherit"
-              variant="h5"
-            >
-              Create Groups (Step 2)
-            </Typography>
-          </Grid>
-
-          <Grid
-            item
-            md={4}
-            xs={12}
-          >
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-helper-label">Select teams for tournament</InputLabel>
-              <Select
-                labelId="demo-simple-select-helper-label"
-                id="demo-simple-select-helper"
-                value={formik.values.teamList}
-                name="teamList"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                multiple
-                label="Team List"
-              >{teams?.map((item, key) => (
-                <MenuItem key={key} value={item.name}>{item.name}</MenuItem>)
-              )}
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid
-            item
-            md={4}
-            xs={12}
-          >
-            <TextField
-              error={Boolean(formik.touched.NOG && formik.errors.NOG)}
-              fullWidth
-              helperText={formik.touched.NOG && formik.errors.NOG}
-              label="Select Number of Groups"
-              margin="dense"
-              name="NOG"
-              type="number"
-              variant="outlined"
-              onChange={(e) => { formik.handleChange(e) }}
-              onBlur={formik.handleBlur}
-              value={formik.values.NOG}
-            />
-          </Grid>
-
-          <Grid
-            item
-            md={4}
-            xs={12}
-          >
-            <TextField
-              error={Boolean(formik.touched.NOTIG && formik.errors.NOTIG)}
-              fullWidth
-              helperText={formik.touched.NOTIG && formik.errors.NOTIG}
-              label="Select MAX Number of Teams in a Group"
-              margin="dense"
-              name="NOTIG"
-              type="number"
-              variant="outlined"
-              value={formik.values.NOTIG}
-              onChange={(e) => {
-                if (formik.values.teamList.length > (formik.values.NOG * e.target.value)) {
-                  formik.touched.NOTIG = true;
-                  formik.errors.NOTIG = "Please choose greater number"
-                } else {
-                  formik.touched.NOTIG = false;
-                  formik.errors.NOTIG = ""
-                }
-                formik.handleChange(e)
-              }}
-              onBlur={formik.handleBlur}
-            />
-          </Grid>
-
-          <Grid
-            item
-            md={12}
-            xs={12}
-          >
-            <Button type="submit" onClick={handleSelectTeam} variant="contained">Next (Step 2)</Button>
-          </Grid>
-        </Grid> */}
-        {/* END 22222222222222222222222222222222222222222222222222222222222222222222222222222 */}
-
-
-
-
-        {/* START 33333333333333333333333333333333333333333333333333333333333333333333333333333333 */}
-        {step3 && <TournamentStep3
-          formik={formik}
-        />}
-
-        {/* <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            item
-            md={12}
-            xs={12}
-          >
-            <Typography
-              color="inherit"
-              variant="h5"
-            >
-              Add Teams (Step 3)
-            </Typography>
-          </Grid>
-
-          <Grid
-            item
-            md={4}
-            xs={12}
-          >
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Available Group</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="AvailableGroup"
-                label="Available Group"
-                onChange={(e) => { formik.handleChange(e) }}
-              >
-                <MenuItem value={1}>Hard code Group 1</MenuItem>
-                <MenuItem value={2}>Hard code Group 2</MenuItem>
-                <MenuItem value={0}>Hard code Group 3</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid
-            item
-            md={4}
-            xs={12}
-          >
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Available Teams</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                multiple
-                value={formik.values.AvailableGroupTeams}
-                name="AvailableGroupTeams"
-                label="Available Teams"
-                onChange={(e) => { formik.handleChange(e) }}
-              >
-                <MenuItem value={1}>Hard code team 1</MenuItem>
-                <MenuItem value={2}>Hard code team 2</MenuItem>
-                <MenuItem value={0}>Hard code team 3</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-
-          <Grid
-            item
-            md={12}
-            xs={12}
-          >
-            <Button type="submit" onClick={handleSelectTeam} variant="contained">Next (Step 3)</Button>
-          </Grid>
-
-        </Grid> */}
-        {/* END 33333333333333333333333333333333333333333333333333333333333333333333333333333333 */}
 
       </DialogContent>
 

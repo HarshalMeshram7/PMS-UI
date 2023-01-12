@@ -10,106 +10,89 @@ import {
     MenuItem,
 } from "@mui/material";
 
-export default function TournamentStep2({ formik, teams }) {
+export default function TournamentStep2({ formik, teams, handleStep2, step3, tournamentSportsDivision }) {
     return (
         <>
             <Grid
-                container
-                spacing={3}
-            >
-                <Grid
-                    item
-                    md={12}
-                    xs={12}>
-                    <Typography
-                        color="inherit"
-                        variant="h5"
-                    >
-                        Create Groups (Step 2)
-                    </Typography>
-                </Grid>
-
-                <Grid
-                    item
-                    md={4}
-                    xs={12}
+                item
+                md={12}
+                xs={12}>
+                <Typography
+                    color="inherit"
+                    variant="h5"
                 >
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-helper-label">Select teams for tournament</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-helper-label"
-                            id="demo-simple-select-helper"
-                            value={formik.values.teamList}
-                            name="teamList"
-                            onChange={formik.handleChange}
-                            onBlur={formik.handleBlur}
-                            multiple
-                            label="Team List"
-                        >{teams?.map((item, key) => (
-                            <MenuItem key={key} value={item.name}>{item.name}</MenuItem>)
-                        )}
-                        </Select>
-                    </FormControl>
-                </Grid>
-
-                <Grid
-                    item
-                    md={4}
-                    xs={12}
-                >
-                    <TextField
-                        error={Boolean(formik.touched.NOG && formik.errors.NOG)}
-                        fullWidth
-                        helperText={formik.touched.NOG && formik.errors.NOG}
-                        label="Select Number of Groups"
-                        margin="dense"
-                        name="NOG"
-                        type="number"
-                        variant="outlined"
-                        onChange={(e) => { formik.handleChange(e) }}
-                        onBlur={formik.handleBlur}
-                        value={formik.values.NOG}
-                    />
-                </Grid>
-
-                <Grid
-                    item
-                    md={4}
-                    xs={12}
-                >
-                    <TextField
-                        error={Boolean(formik.touched.NOTIG && formik.errors.NOTIG)}
-                        fullWidth
-                        helperText={formik.touched.NOTIG && formik.errors.NOTIG}
-                        label="Select MAX Number of Teams in a Group"
-                        margin="dense"
-                        name="NOTIG"
-                        type="number"
-                        variant="outlined"
-                        value={formik.values.NOTIG}
-                        onChange={(e) => {
-                            if (formik.values.teamList.length > (formik.values.NOG * e.target.value)) {
-                                formik.touched.NOTIG = true;
-                                formik.errors.NOTIG = "Please choose greater number"
-                            } else {
-                                formik.touched.NOTIG = false;
-                                formik.errors.NOTIG = ""
-                            }
-                            formik.handleChange(e)
-                        }}
-                        onBlur={formik.handleBlur}
-                    />
-                </Grid>
-
-                <Grid
-                    item
-                    md={12}
-                    xs={12}
-                >
-                    <Button type="submit" variant="contained">Next (Step 2)</Button>
-                </Grid>
-
+                    Create Groups (Step 2)
+                </Typography>
             </Grid>
+
+            <Grid
+                item
+                md={6}
+                xs={12}
+            >
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-helper-label">Select teams for tournament</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-helper-label"
+                        id="demo-simple-select-helper"
+                        value={formik.values.teamList}
+                        name="teamList"
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        multiple
+                        label="Select teams for tournament"
+                    >{teams?.map((item, key) => (
+                        <MenuItem key={key} value={item.ID}>{item.name}</MenuItem>)
+                    )}
+                    </Select>
+                </FormControl>
+            </Grid>
+
+            <Grid
+                item
+                md={6}
+                xs={12}
+            >
+                <TextField
+                    error={Boolean(formik.touched.NoOfGroups && formik.errors.NoOfGroups)}
+                    fullWidth
+                    helperText={formik.touched.NoOfGroups && formik.errors.NoOfGroups}
+                    label="Select Number of Groups"
+                    margin="dense"
+                    name="NoOfGroups"
+                    type="number"
+                    variant="outlined"
+                    onChange={(e) => { formik.handleChange(e) }}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.NoOfGroups}
+                />
+            </Grid>
+
+            <Grid
+                item
+                md={12}
+                xs={12}
+            >
+                <Button
+                    disabled={step3}
+                    onClick={() => { handleStep2(tournamentSportsDivision?.TournamentSportsDivisionID) }}
+                    variant="contained">Next (Step 2)</Button>
+            </Grid>
+
+            <Grid
+                item
+                md={12}
+                xs={12}
+            >
+            </Grid>
+
+            <Grid
+                item
+                md={12}
+                xs={12}
+            >
+            </Grid>
+
         </>
     )
 }
