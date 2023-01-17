@@ -194,3 +194,24 @@ export const changeStaffPassword = async (id, data) => {
     throw error;
   }
 };
+
+
+//GET All Tournament 
+export const getTournamentDetailsByID = async (params) => {
+  const { token } = useStorage();
+  if (!token) {
+    throw "No Token";
+  }
+  try {
+    let res = await axios.get(`${MAIN_URL2}/getTournamentDetailsbyID/`, {
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

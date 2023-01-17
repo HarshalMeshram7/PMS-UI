@@ -23,8 +23,8 @@ import TournamentStep2 from "./tournament-step2";
 import TournamentStep3 from "./tournament-step3";
 import { saveTournamentSportsDivision, saveTournamentSportsDivisionGroupAndTeams, saveTournamentSportsDivisionTeamsinGroup, updateTournament } from "src/services/tournamentRequest";
 
-export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
-  console.log(tournament);
+export const TournamentDetailsDialog = ({ open, handleClose, tournament, tournamentDetails }) => {
+  console.log(tournamentDetails);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
 
@@ -32,7 +32,7 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
   const [sportsList, setSportsList] = useState(null);
 
   const [step1, setStep1] = useState((true))
-  const [tournamentSportsDivision, setTournamentSportsDivision] = useState(null)
+  const [tournamentSportsDivisionID, setTournamentSportsDivisionID] = useState(null)
   const [step2, setStep2] = useState((false))
   const [tournamentSportsDivisionGroupsTeams, setTournamentSportsDivisionGroupsTeams] = useState(null)
   const [step3, setStep3] = useState((false))
@@ -61,16 +61,16 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
       StartDate: tournament?.StartDate || "",
       EndDate: tournament?.EndDate || "",
       //Sports Division (Step 1)
-      SportID: "",
-      MinPlayers: "",
-      MaxPlayers: "",
-      InternationalPlayers: "",
-      NationalPlayers: "",
-      LocalPlayers: "",
-      AcademyPlayers: "",
-      DivisonDescription: "",
-      Gender: "",
-      NoOfTeams: "",
+      SportID: tournamentDetails?.TournamentInfo?.SportsID || '',
+      MinPlayers: tournamentDetails?.TournamentInfo?.MinPlayers || '',
+      MaxPlayers: tournamentDetails?.TournamentInfo?.MaxPlayers || '',
+      InternationalPlayers: tournamentDetails?.TournamentInfo?.InternationalPlayer || '',
+      NationalPlayers: tournamentDetails?.TournamentInfo?.NationalPlayer || '',
+      LocalPlayers: tournamentDetails?.TournamentInfo?.LocalPlayer || '',
+      AcademyPlayers: tournamentDetails?.TournamentInfo?.AcademyPlayer || '',
+      DivisonDescription: tournamentDetails?.TournamentInfo?.DivisionName || '',
+      Gender: tournamentDetails?.TournamentInfo?.Gender || '',
+      NoOfTeams: tournamentDetails?.TournamentInfo?.NoOfTeams || '',
       //Create Group (Step 2)
       teamList: [],
       NoOfGroups: "",
@@ -123,6 +123,30 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
     });
   }, []);
 
+  useEffect(() => {
+    // for step 1
+    if (tournamentDetails?.TournamentInfo?.TournamentSportsDivisionID !== undefined) {
+      setStep2(true)
+      setTournamentSportsDivisionID(tournamentDetails?.TournamentInfo?.TournamentSportsDivisionID)
+    }
+    else {
+      setStep2(false)
+      setTournamentSportsDivisionID(null)
+    }
+  }, [tournamentDetails?.TournamentInfo?.TournamentSportsDivisionID]);
+
+  useEffect(() => {
+    // for step 1
+    if (tournamentDetails?.TSDGT?.TSDGroups?.length !== 0 && tournamentDetails?.TSDGT?.TSDTeams?.length !== 0) {
+      setTournamentSportsDivisionGroupsTeams(tournamentDetails?.TSDGT)
+      setStep3(true)
+    }
+    else {
+      setStep3(false)
+      setTournamentSportsDivisionGroupsTeams(null)
+    }
+  }, [tournamentDetails?.TournamentInfo?.TournamentSportsDivisionID]);
+
   const { teams, error, mutate } = useAllTeams();
 
   const handleStep1 = () => {
@@ -136,7 +160,7 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
         SportID, TournamentID: tournament.ID
       })
         .then((res) => {
-          setTournamentSportsDivision(res.result)
+          setTournamentSportsDivisionID(res.result.TournamentSportsDivisionID)
           setStep2(true)
         })
     }
@@ -165,7 +189,7 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
   const handleStep3 = (GroupTeam) => {
     try {
       saveTournamentSportsDivisionTeamsinGroup({
-        TournamentSportsDivisionID: tournamentSportsDivision?.TournamentSportsDivisionID,
+        TournamentSportsDivisionID: tournamentSportsDivisionID,
         GroupTeams: GroupTeam
       })
         .then((res) => {
@@ -467,7 +491,7 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament }) => {
             teams={teams}
             formik={formik}
             handleStep2={handleStep2}
-            tournamentSportsDivision={tournamentSportsDivision}
+            tournamentSportsDivisionID={tournamentSportsDivisionID}
             step3={step3}
           />}
 

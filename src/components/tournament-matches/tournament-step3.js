@@ -28,25 +28,6 @@ export default function TournamentStep3({ handleStep3,
 
     const [_, forceUpdate] = useReducer((x) => x + 1, 0);
 
-    let TSDGroupsHard = [
-        {
-            ID: "1",
-            Description: "Group1"
-        },
-        {
-            ID: "2",
-            Description: "Group2"
-        }
-    ], TSDTeamsHard = [
-        {
-            ID: "1",
-            Description: "Team1"
-        },
-        {
-            ID: "2",
-            Description: "Team2"
-        }
-    ]
 
     if (tournamentSportsDivisionGroupsTeams) {
         const { TSDGroups, TSDTeams } = tournamentSportsDivisionGroupsTeams;
@@ -82,6 +63,8 @@ export default function TournamentStep3({ handleStep3,
 
         setGroupsTeamsID(newTempMainIDArray);
         setGroupsTeamsForTable(newTempArray);
+        console.log({newTempMainIDArray});
+        console.log({newTempArray});
 
         forceUpdate();
 
@@ -157,7 +140,7 @@ export default function TournamentStep3({ handleStep3,
             <Grid item md={4} xs={12}>
                 <Autocomplete
                     id="tags-outlined"
-                    options={TSDGroupsHard}
+                    options={TSDGroups}
                     getOptionLabel={(option) => option.Description}
                     filterSelectedOptions
                     onChange={(e, value) => { setGroup(value) }}
@@ -175,7 +158,7 @@ export default function TournamentStep3({ handleStep3,
                 <Autocomplete
                     multiple
                     id="tags-outlined"
-                    options={TSDTeamsHard}
+                    options={TSDTeams}
                     getOptionLabel={(option) => option.Description}
                     filterSelectedOptions
                     onChange={(e, value) => { setTeams(value) }}

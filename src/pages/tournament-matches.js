@@ -9,6 +9,7 @@ import { useAllTournament } from "src/adapters/tournamentAdapter";
 import { TournamentCard } from "src/components/tournament-matches/tournament-card";
 import { StaffRegistrationDetailsDialog } from "src/components/staff-registration/staff-details-dialog";
 import { TournamentDetailsDialog } from "src/components/tournament-matches/tournament-details-dialog";
+import { getTournamentDetailsByID } from "src/services/tournamentRequest";
 
 const TournamentMatches = () => {
 
@@ -16,17 +17,30 @@ const TournamentMatches = () => {
   const [showTournamentDetailsDialog, setShowTournamentDetailsDialog] = useState(false);
   const [params, setParams] = useState({ searchpattern: "" })
   const [tournament, setTournament] = useState(null);
+  
+  const [tournamentDetails, setTournamentDetails] = useState(null);
 
   const handleOpenAddTournament = () => setShowAddTournamentDialog(true);
   const handleCloseAddTournament = () => setShowAddTournamentDialog(false);
   const handleCloseTournamentDetails = () => setShowTournamentDetailsDialog(false);
 
   const handleOpenTournamentDetails = (tournament) => {
-    setTournament(tournament);
-    setShowTournamentDetailsDialog(true)
+    try {
+
+      getTournamentDetailsByID({ID:tournament.ID}).then((res) => {
+        setTournamentDetails(res)
+        setTournament(tournament);
+        setShowTournamentDetailsDialog(true)
+      })
+
+    }
+    catch (error) {
+      console.log(error);
+    }
+
   };
 
-  
+
 
   const { tournaments, loading, mutate } = useAllTournament({ ...params })
 
@@ -55,6 +69,7 @@ const TournamentMatches = () => {
           handleClose={handleCloseTournamentDetails}
           mutate={mutate}
           tournament={tournament}
+          tournamentDetails={tournamentDetails}
         />
 
         <Container maxWidth={false}>
@@ -69,7 +84,7 @@ const TournamentMatches = () => {
               spacing={3}
             >
               {tournaments && tournaments?.map((product, key) => {
-                
+
                 return (
                   <Grid
                     item

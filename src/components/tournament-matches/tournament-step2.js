@@ -10,7 +10,7 @@ import {
     MenuItem,
 } from "@mui/material";
 
-export default function TournamentStep2({ formik, teams, handleStep2, step3, tournamentSportsDivision }) {
+export default function TournamentStep2({ formik, teams, handleStep2, step3, tournamentSportsDivisionID }) {
     return (
         <>
             <Grid
@@ -75,7 +75,7 @@ export default function TournamentStep2({ formik, teams, handleStep2, step3, tou
             >
                 <Button
                     disabled={step3}
-                    onClick={() => { handleStep2(tournamentSportsDivision?.TournamentSportsDivisionID) }}
+                    onClick={() => { handleStep2(tournamentSportsDivisionID) }}
                     variant="contained">Next (Step 2)</Button>
             </Grid>
 
