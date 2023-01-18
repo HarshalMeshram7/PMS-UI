@@ -24,7 +24,7 @@ import TournamentStep3 from "./tournament-step3";
 import { saveTournamentSportsDivision, saveTournamentSportsDivisionGroupAndTeams, saveTournamentSportsDivisionTeamsinGroup, updateTournament } from "src/services/tournamentRequest";
 
 export const TournamentDetailsDialog = ({ open, handleClose, tournament, tournamentDetails }) => {
-  console.log(tournamentDetails);
+  // console.log(tournamentDetails);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
 
@@ -124,6 +124,38 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament, tournam
   }, []);
 
   useEffect(() => {
+
+    // FOR STEP3
+    if(tournamentDetails?.GroupTeamData?.length > 0){
+      
+      let newTempMainIDArray = [], newTempArray = []
+      let GroupTeamData = tournamentDetails?.GroupTeamData
+      GroupTeamData.map((item)=>{
+       let tempID = {
+          GroupID : item.GroupID,
+          TeamsID : item.TeamIDs
+        }
+
+        let tempName = {
+          group : item.GroupName,
+          teams : item.TeamNames
+        }
+        
+        newTempMainIDArray.push(tempID)
+        newTempArray.push(tempName)
+      })
+      setGroupsTeamsID(newTempMainIDArray);
+      setGroupsTeamsForTable(newTempArray);
+      setStep3(true)
+    }else{
+      
+      setStep3(false)
+    }
+    
+    
+  }, [tournamentDetails?.GroupTeamData]);
+
+  useEffect(() => {
     // for step 1
     if (tournamentDetails?.TournamentInfo?.TournamentSportsDivisionID !== undefined) {
       setStep2(true)
@@ -136,16 +168,18 @@ export const TournamentDetailsDialog = ({ open, handleClose, tournament, tournam
   }, [tournamentDetails?.TournamentInfo?.TournamentSportsDivisionID]);
 
   useEffect(() => {
-    // for step 1
-    if (tournamentDetails?.TSDGT?.TSDGroups?.length !== 0 && tournamentDetails?.TSDGT?.TSDTeams?.length !== 0) {
+    // for step 2
+    if (tournamentDetails?.TSDGT?.TSDGroups?.length !== 0 && tournamentDetails?.TSDGT?.TSDTeams?.length !== 0 && tournamentDetails?.TSDGT?.TSDGroups !== undefined && tournamentDetails?.TSDGT?.TSDTeams !== undefined) {
       setTournamentSportsDivisionGroupsTeams(tournamentDetails?.TSDGT)
+      
       setStep3(true)
     }
     else {
+      
       setStep3(false)
       setTournamentSportsDivisionGroupsTeams(null)
     }
-  }, [tournamentDetails?.TournamentInfo?.TournamentSportsDivisionID]);
+  }, [tournamentDetails]);
 
   const { teams, error, mutate } = useAllTeams();
 

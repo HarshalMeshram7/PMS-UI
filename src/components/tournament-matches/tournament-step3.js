@@ -37,7 +37,6 @@ export default function TournamentStep3({ handleStep3,
     } = GroupTeams;
 
     const handleAddGroupTeam = async () => {
-        console.log({ group, teams })
 
         let groupID = group.ID,
             groupName = group.Description,
@@ -63,8 +62,8 @@ export default function TournamentStep3({ handleStep3,
 
         setGroupsTeamsID(newTempMainIDArray);
         setGroupsTeamsForTable(newTempArray);
-        console.log({newTempMainIDArray});
-        console.log({newTempArray});
+        console.log({ newTempMainIDArray });
+        console.log({ newTempArray });
 
         forceUpdate();
 
@@ -85,6 +84,7 @@ export default function TournamentStep3({ handleStep3,
                     Add Teams (Step 3)
                 </Typography>
             </Grid>
+            
             <Grid
                 item
                 md={3}
@@ -95,7 +95,7 @@ export default function TournamentStep3({ handleStep3,
                 {groupsTeamsForTable?.length > 0 && groupsTeamsForTable?.map((item, key) => (
 
                     <Card key={key} variant="outlined">
-                        <CardContent style={{ paddingBottom: 0 }} >
+                        <CardContent style={{ paddingBottom: 50 }} >
                             <List component="h3" subheader={item.group} >
                                 {item?.teams?.map((item2, key) => (
 
@@ -137,46 +137,48 @@ export default function TournamentStep3({ handleStep3,
                 {/* </Box> */}
             </Grid>
 
-            <Grid item md={4} xs={12}>
-                <Autocomplete
-                    id="tags-outlined"
-                    options={TSDGroups}
-                    getOptionLabel={(option) => option.Description}
-                    filterSelectedOptions
-                    onChange={(e, value) => { setGroup(value) }}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label="Group"
-                            placeholder="Select Group"
-                        />
-                    )}
-                />
-            </Grid>
+         
+                <Grid item md={12} xs={12}>
+                    <Autocomplete
+                        id="tags-outlined"
+                        options={TSDGroups || []}
+                        getOptionLabel={(option) => option.Description}
+                        filterSelectedOptions
+                        onChange={(e, value) => { setGroup(value) }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Group"
+                                placeholder="Select Group"
+                            />
+                        )}
+                    />
+                </Grid>
 
-            <Grid item md={4} xs={12}>
-                <Autocomplete
-                    multiple
-                    id="tags-outlined"
-                    options={TSDTeams}
-                    getOptionLabel={(option) => option.Description}
-                    filterSelectedOptions
-                    onChange={(e, value) => { setTeams(value) }}
-                    renderInput={(params) => (
-                        <TextField
-                            {...params}
-                            label="Teams"
-                            placeholder="Select Team"
-                        />
-                    )}
-                />
-            </Grid>
+                <Grid item md={12} xs={12}>
+                    <Autocomplete
+                        multiple
+                        id="tags-outlined"
+                        options={TSDTeams || []}
+                        getOptionLabel={(option) => option.Description}
+                        filterSelectedOptions
+                        onChange={(e, value) => { setTeams(value) }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Teams"
+                                placeholder="Select Team"
+                            />
+                        )}
+                    />
+                </Grid>
 
-            <Grid item md={4} xs={12}>
-                <Button onClick={handleAddGroupTeam} variant="contained">
-                    Add Teams
-                </Button>
-            </Grid>
+                <Grid item md={12} xs={12}>
+                    <Button onClick={handleAddGroupTeam} variant="contained">
+                        Add Teams
+                    </Button>
+                </Grid>
+           
 
             <Grid
                 item
