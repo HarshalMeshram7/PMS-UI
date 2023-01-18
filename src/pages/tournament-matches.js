@@ -10,6 +10,7 @@ import { TournamentCard } from "src/components/tournament-matches/tournament-car
 import { StaffRegistrationDetailsDialog } from "src/components/staff-registration/staff-details-dialog";
 import { TournamentDetailsDialog } from "src/components/tournament-matches/tournament-details-dialog";
 import { getTournamentDetailsByID } from "src/services/tournamentRequest";
+import { TournamentFixturesDialog } from "src/components/tournament-matches/tournament-fixtures-dialog";
 
 const TournamentMatches = () => {
 
@@ -17,7 +18,7 @@ const TournamentMatches = () => {
   const [showTournamentDetailsDialog, setShowTournamentDetailsDialog] = useState(false);
   const [params, setParams] = useState({ searchpattern: "" })
   const [tournament, setTournament] = useState(null);
-  
+
   const [tournamentDetails, setTournamentDetails] = useState(null);
 
   const handleOpenAddTournament = () => setShowAddTournamentDialog(true);
@@ -28,7 +29,7 @@ const TournamentMatches = () => {
     try {
 
       setTournament(tournament);
-      getTournamentDetailsByID({ID:tournament.ID}).then((res) => {
+      getTournamentDetailsByID({ ID: tournament.ID }).then((res) => {
         setTournamentDetails(res)
       })
       setShowTournamentDetailsDialog(true)
@@ -38,6 +39,12 @@ const TournamentMatches = () => {
       console.log(error);
     }
 
+  };
+
+  const [showTournamentFixturesDialog, setShowTournamentFixturesDialog] = useState(false);
+  const handleCloseTournamentFixtures = () => setShowTournamentFixturesDialog(false);
+  const handleOpenTournamentFixtures = () => {
+    setShowTournamentFixturesDialog(true)
   };
 
 
@@ -72,6 +79,12 @@ const TournamentMatches = () => {
           tournamentDetails={tournamentDetails}
         />
 
+        <TournamentFixturesDialog
+          open={showTournamentFixturesDialog}
+          handleClose={handleCloseTournamentFixtures}
+        // mutate={mutate}
+        />
+
         <Container maxWidth={false}>
 
           <FixturesListToolbar
@@ -95,6 +108,7 @@ const TournamentMatches = () => {
                   >
                     <TournamentCard
                       handleOpenTournamentDetails={handleOpenTournamentDetails}
+                      handleOpenTournamentFixtures={handleOpenTournamentFixtures}
                       product={product} />
                   </Grid>
                 )

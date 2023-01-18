@@ -3,9 +3,8 @@ import { Avatar, Box, Button, Card, CardContent, Divider, Grid, Typography } fro
 import { Clock as ClockIcon } from '../../icons/clock';
 import { Download as DownloadIcon } from '../../icons/download';
 
-export const TournamentCard = ({ product, 
-  handleOpenTournamentDetails,  ...rest 
-}) => (
+export const TournamentCard = ({ product, handleOpenTournamentDetails, handleOpenTournamentFixtures,
+  ...rest }) => (
   <Card
     sx={{
       display: 'flex',
@@ -36,7 +35,7 @@ export const TournamentCard = ({ product,
       >
         {product.name}
       </Typography>
-     
+
     </CardContent>
     <Box sx={{ flexGrow: 1 }} />
     <Divider />
@@ -53,7 +52,7 @@ export const TournamentCard = ({ product,
             display: 'flex'
           }}
         >
-         
+
         </Grid>
         <Grid
           item
@@ -62,10 +61,16 @@ export const TournamentCard = ({ product,
             display: 'flex'
           }}
         >
-                      
+
           <Button
             id={product.name}
-            onClick={() => { handleOpenTournamentDetails(product) }}>Details</Button>
+            onClick={() => { handleOpenTournamentFixtures() }}>Fixtures
+          </Button>
+
+          <Button
+            id={product.name}
+            onClick={() => { handleOpenTournamentDetails(product) }}>Details
+          </Button>
 
         </Grid>
       </Grid>
