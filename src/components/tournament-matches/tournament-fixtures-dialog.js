@@ -25,53 +25,12 @@ import { DateTimePicker } from "@mui/lab";
 import {
   gettournamentSportsByTournamentID, gettournamentSportDivisionByTournamentSportID,
   gettournamentGroupsandteamsBySportDivisionID,
-  getGroupTeamsByGroupID
+  getGroupTeamsByGroupID,
+  getMatchesByTournamentID,
+  deleteTournamentMatch
 } from 'src/services/tournamentRequest';
-
-const GroupHard = [
-  {
-    ID: 1,
-    Description: 'Group Hard 1'
-  },
-  {
-    ID: 2,
-    Description: 'Group Hard 2'
-  },
-  {
-    ID: 3,
-    Description: 'Group Hard 3'
-  },
-];
-
-const TeamHard1 = [
-  {
-    ID: 1,
-    Description: 'Team Hard 1'
-  },
-  {
-    ID: 2,
-    Description: 'Team Hard 2'
-  },
-  {
-    ID: 3,
-    Description: 'Team Hard 3'
-  },
-];
-
-const TeamHard2 = [
-  {
-    ID: 1,
-    Description: 'Team Hard 1'
-  },
-  {
-    ID: 2,
-    Description: 'Team Hard 2'
-  },
-  {
-    ID: 3,
-    Description: 'Team Hard 3'
-  },
-];
+import MatchTable from './match-table';
+import DeleteDialog from '../common/deleteDialog';
 
 const Result = [
   {
@@ -109,7 +68,6 @@ const Stadium = [
 
 
 export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
-  console.log(tournament);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
 
@@ -123,11 +81,8 @@ export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
       Result: '',
       Stadium: '',
     },
-
     validationSchema: Yup.object({
-
     }),
-
   });
 
   const [value, setValue] = React.useState(('2014-08-18T21:11:54'));
@@ -135,17 +90,28 @@ export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
   const [sportDivision, setSportDivision] = useState([]);
   const [sportGroups, setSportGroups] = useState([]);
   const [groupTeams, setGroupTeams] = useState([]);
+  const [Matches, setMatches] = useState([]);
+  const [match, setMatch] = useState({});
+  const [deleteDialogue, setDeleteDialogue] = useState(false);
 
 
   const handleChange = (newValue) => {
     setValue(newValue);
   };
 
+  const getMatchesByID = ()=>{
+    getMatchesByTournamentID({ ID: tournament?.ID }).then((res)=>{
+      setMatches(res)
+    })
+  }
+
   useEffect(() => {
     gettournamentSportsByTournamentID({ ID: tournament?.ID }).then((res) => {
       setSportList(res)
     })
+    getMatchesByID()
   }, [tournament])
+
 
   const handleSportsChange = (SportsID) => {
     gettournamentSportDivisionByTournamentSportID({ ID: SportsID }).then((res) => {
@@ -164,6 +130,19 @@ export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
       setGroupTeams(res)
     })
   }
+ const handleOpenDeleteDialogue = (match)=>{
+  console.log("Will Be Deleted Later",match)
+  setMatch(match)
+  setDeleteDialogue(true)
+ }
+ const handleCloseDeleteDialogue = ()=> setDeleteDialogue(false)
+
+ const handleDelete =(ID)=>{
+  deleteTournamentMatch(ID).then((res)=>{
+      console.log(res)
+      handleClose()
+  })
+ }
 
   return (
 
@@ -176,6 +155,14 @@ export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
         style: { backgroundColor: "#121212dd", },
       }}
     >
+      <DeleteDialog 
+      open={deleteDialogue}
+      handleClose={handleCloseDeleteDialogue}
+      handleDelete={handleDelete}
+      ID={match.ID}
+      name={`${match.Team1} vs ${match.Team2}`}
+      
+      />
       {loading && <LoadingBox />}
       <DialogTitle>Tournament Fixtures for {tournament?.name}</DialogTitle>
       <DialogContent style={{ height: '600px' }}>
@@ -186,7 +173,6 @@ export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
           container
           spacing={3}
         >
-
 
           <Grid
             item
@@ -388,6 +374,11 @@ export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
               variant="contained">Save
             </Button>
           </Grid>
+
+         {(Matches?.length> 0) && <MatchTable
+            array={Matches}
+            handleRemove={handleOpenDeleteDialogue}
+          />}
 
         </Grid>
 

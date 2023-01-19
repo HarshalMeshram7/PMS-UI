@@ -138,19 +138,18 @@ export const getStaffDetails = async (params) => {
 
 
 
-//DELETE STAFF
-export const deleteStaff = async (ID) => {
+//DELETE TournamentByID 
+export const deleteTournamentMatch = async (ID) => {
   const { token } = useStorage();
   if (!ID || !token) {
     throw "No Token";
   }
   try {
-    const res = await axios.delete(`${MAIN_URL2}/admin/${ID}/Deletestaff/`, { id: ID }, {
+    const res = await axios.delete(`${MAIN_URL2}/deleteTournamentMatch`, { ID }, {
       headers: {
         Authorization: "Bearer " + token,
       },
     });
-    console.log(res);
     return res.data;
   } catch (error) {
     console.log(error);
@@ -177,6 +176,28 @@ export const deleteStaff = async (ID) => {
 //     throw error;
 //   }
 // };
+//GET All Sports List for Fixtures 
+export const getMatchesByTournamentID = async (params) => {
+  const { token } = useStorage();
+  if(!params.ID){
+    return []
+  }
+  if (!token) {
+    throw "No Token";
+  }
+  try {
+    let res = await axios.get(`${MAIN_URL2}/getTournamentMatchByTournamentID/`, {
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
 
 
