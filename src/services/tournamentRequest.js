@@ -215,3 +215,95 @@ export const getTournamentDetailsByID = async (params) => {
     throw error;
   }
 };
+
+//GET All Sports List for Fixtures 
+export const gettournamentSportsByTournamentID = async (params) => {
+  const { token } = useStorage();
+  if(!params.ID){
+    return 
+  }
+  if (!token) {
+    throw "No Token";
+  }
+  try {
+    let res = await axios.get(`${MAIN_URL2}/gettournamentSportsByTournamentID/`, {
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+//GET All Sports Division for Fixtures 
+export const gettournamentSportDivisionByTournamentSportID = async (params) => {
+  const { token } = useStorage();
+  if(!params.ID){
+    return 
+  }
+  if (!token) {
+    throw "No Token";
+  }
+  try {
+    let res = await axios.get(`${MAIN_URL2}/gettournamentSportDivisionByTournamentSportID/`, {
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+//GET All Sports Group for Fixtures 
+export const gettournamentGroupsandteamsBySportDivisionID = async (params) => {
+  const { token } = useStorage();
+  if(!params.ID){
+    return 
+  }
+  if (!token) {
+    throw "No Token";
+  }
+  try {
+    let res = await axios.get(`${MAIN_URL2}/gettournamentGroupsandteamsBySportDivisionID/`, {
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+//GET All Group Teams for Fixtures 
+export const getGroupTeamsByGroupID = async (params) => {
+  const { token } = useStorage();
+  if(!params.ID){
+    return 
+  }
+  if (!token) {
+    throw "No Token";
+  }
+  try {
+    let res = await axios.get(`${MAIN_URL2}/getGroupTeamsByGroupID/`, {
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

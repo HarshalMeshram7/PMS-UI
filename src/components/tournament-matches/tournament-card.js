@@ -64,7 +64,7 @@ export const TournamentCard = ({ product, handleOpenTournamentDetails, handleOpe
 
           <Button
             id={product.name}
-            onClick={() => { handleOpenTournamentFixtures() }}>Fixtures
+            onClick={() => { handleOpenTournamentFixtures(product) }}>Fixtures
           </Button>
 
           <Button

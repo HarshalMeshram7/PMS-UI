@@ -43,7 +43,9 @@ const TournamentMatches = () => {
 
   const [showTournamentFixturesDialog, setShowTournamentFixturesDialog] = useState(false);
   const handleCloseTournamentFixtures = () => setShowTournamentFixturesDialog(false);
-  const handleOpenTournamentFixtures = () => {
+
+  const handleOpenTournamentFixtures = (tournament) => {
+    setTournament(tournament);
     setShowTournamentFixturesDialog(true)
   };
 
@@ -82,6 +84,7 @@ const TournamentMatches = () => {
         <TournamentFixturesDialog
           open={showTournamentFixturesDialog}
           handleClose={handleCloseTournamentFixtures}
+          tournament={tournament}
         // mutate={mutate}
         />
 

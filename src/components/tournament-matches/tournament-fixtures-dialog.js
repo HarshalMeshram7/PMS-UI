@@ -7,8 +7,13 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   Autocomplete,
   TextField,
+  Divider,
 
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -17,6 +22,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import LoadingBox from "src/components/common/loading-box";
 import { DateTimePicker } from "@mui/lab";
+import {
+  gettournamentSportsByTournamentID, gettournamentSportDivisionByTournamentSportID,
+  gettournamentGroupsandteamsBySportDivisionID,
+  getGroupTeamsByGroupID
+} from 'src/services/tournamentRequest';
 
 const GroupHard = [
   {
@@ -97,14 +107,21 @@ const Stadium = [
   },
 ];
 
-export const TournamentFixturesDialog = ({ open, handleClose, }) => {
+
+export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
+  console.log(tournament);
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-
+      GroupHard: '',
+      Team1: '',
+      Team2: '',
+      Duration: '',
+      Result: '',
+      Stadium: '',
     },
 
     validationSchema: Yup.object({
@@ -114,11 +131,39 @@ export const TournamentFixturesDialog = ({ open, handleClose, }) => {
   });
 
   const [value, setValue] = React.useState(('2014-08-18T21:11:54'));
+  const [sportList, setSportList] = useState([]);
+  const [sportDivision, setSportDivision] = useState([]);
+  const [sportGroups, setSportGroups] = useState([]);
+  const [groupTeams, setGroupTeams] = useState([]);
+
 
   const handleChange = (newValue) => {
     setValue(newValue);
   };
 
+  useEffect(() => {
+    gettournamentSportsByTournamentID({ ID: tournament?.ID }).then((res) => {
+      setSportList(res)
+    })
+  }, [tournament])
+
+  const handleSportsChange = (SportsID) => {
+    gettournamentSportDivisionByTournamentSportID({ ID: SportsID }).then((res) => {
+      setSportDivision(res)
+    })
+  }
+
+  const handleDivisionChange = (DivisioID) => {
+    gettournamentGroupsandteamsBySportDivisionID({ ID: DivisioID }).then((res) => {
+      setSportGroups(res.TSDGroups)
+    })
+  }
+
+  const handleGroupChange = (GroupID) => {
+    getGroupTeamsByGroupID({ ID: GroupID }).then((res) => {
+      setGroupTeams(res)
+    })
+  }
 
   return (
 
@@ -132,7 +177,7 @@ export const TournamentFixturesDialog = ({ open, handleClose, }) => {
       }}
     >
       {loading && <LoadingBox />}
-      <DialogTitle>Tournament Fixtures</DialogTitle>
+      <DialogTitle>Tournament Fixtures for {tournament?.name}</DialogTitle>
       <DialogContent style={{ height: '600px' }}>
         <DialogContentText sx={{ marginBottom: 2 }}>
           {/* Enter the required basic details of the Administrative Template below. */}
@@ -142,61 +187,123 @@ export const TournamentFixturesDialog = ({ open, handleClose, }) => {
           spacing={3}
         >
 
+
           <Grid
             item
             md={4}
             xs={12}>
-            <Autocomplete
-              id="tags-outlined"
-              options={GroupHard || []}
-              getOptionLabel={(option) => option.Description}
-              filterSelectedOptions
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Group"
-                  placeholder="Select Group"
-                />
-              )}
-            />
+            <FormControl fullWidth>
+              <InputLabel id="SportsList">Sports List</InputLabel>
+              <Select
+                name="SportsList"
+                label="SportsList"
+                onChange={(e, value) => {
+                  handleSportsChange(e.target.value)
+                }}
+              >
+                {sportList?.map((item, key) => (
+                  <MenuItem key={key} value={item.ID}>
+                    {item.Description}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid
             item
             md={4}
             xs={12}>
-            <Autocomplete
-              id="tags-outlined"
-              options={TeamHard1 || []}
-              getOptionLabel={(option) => option.Description}
-              filterSelectedOptions
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Team 1"
-                  placeholder="Select Team 1"
-                />
-              )}
-            />
+            <FormControl fullWidth>
+              <InputLabel id="SportsDivision">Sports Division</InputLabel>
+              <Select
+                name="SportsDivision"
+                label="SportsDivision"
+                onChange={(e, value) => {
+                  handleDivisionChange(e.target.value)
+                }}
+              >
+                {sportDivision?.map((item, key) => (
+                  <MenuItem key={key} value={item.ID}>
+                    {item.Description}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid
             item
             md={4}
             xs={12}>
-            <Autocomplete
-              id="tags-outlined"
-              options={TeamHard2 || []}
-              getOptionLabel={(option) => option.Description}
-              filterSelectedOptions
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Team 2"
-                  placeholder="Select Team 2"
-                />
-              )}
-            />
+          </Grid>
+
+          <Grid
+            item
+            md={4}
+            xs={12}>
+            <FormControl fullWidth>
+              <InputLabel id="Groups">Groups</InputLabel>
+              <Select
+                name="Groups"
+                label="Groups"
+                onChange={(e, value) => {
+                  handleGroupChange(e.target.value)
+                }}
+              >
+                {sportGroups?.map((item, key) => (
+                  <MenuItem key={key} value={item.ID}>
+                    {item.Description}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid
+            item
+            md={4}
+            xs={12}>
+            <FormControl fullWidth>
+              <InputLabel id="Team1">Team 1</InputLabel>
+              <Select
+                name="Team1"
+                label="Team1"
+                value={formik.values.Team1}
+                onChange={(e, value) => {
+                  { formik.handleChange(e) }
+                }}
+              >
+                {groupTeams?.map((item, key) => (
+                  <MenuItem key={key} value={item.ID}>
+                    {item.Description}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
+          <Grid
+            item
+            md={4}
+            xs={12}>
+            <FormControl fullWidth>
+              <InputLabel id="Team1">Team 2</InputLabel>
+              <Select
+                name="Team2"
+                label="Team2"
+                value={formik.values.Team2}
+                onChange={(e, value) => {
+                  { formik.handleChange(e) }
+                }}
+              >
+                {groupTeams?.map((item, key) => (
+                  <MenuItem key={key} value={item.ID}>
+                    {item.Description}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Grid>
 
           <Grid
@@ -279,7 +386,7 @@ export const TournamentFixturesDialog = ({ open, handleClose, }) => {
             <Button
               type="submit"
               variant="contained">Save
-              </Button>
+            </Button>
           </Grid>
 
         </Grid>
