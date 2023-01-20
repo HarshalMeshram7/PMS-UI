@@ -185,7 +185,7 @@ export default function TournamentStep3({ handleStep3,
                 md={4}
                 xs={12}
             >
-                <Button onClick={() => { handleStep3(groupsTeamsID) }} variant="contained">Next (Step 3)</Button>
+                <Button  onClick={() => { handleStep3(groupsTeamsID) }} variant="contained">Next (Step 3)</Button>
             </Grid>
 
         </>
