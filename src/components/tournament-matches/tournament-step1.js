@@ -22,7 +22,7 @@ import { useState } from "react";
 import DescriptionTable from "../common/descriptionTable";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-export default function TournamentStep1({ formik, sportsList, handleStep1, step2, tournament ,sportsByTournament,getSportsByTournamentID,divisionsByTournamentSports,handleSportsChange }) {
+export default function TournamentStep1({ formik, sportsList,  tournament ,sportsByTournament,getSportsByTournamentID,divisionsByTournamentSports,handleSportsChange }) {
   const [selectedSports, setSelectedSports] = useState("");
   
 
@@ -469,11 +469,6 @@ export default function TournamentStep1({ formik, sportsList, handleStep1, step2
         </Accordion>
       </Grid>
 
-      <Grid item md={12} xs={12}>
-        <Button disabled={step2} onClick={handleStep1} variant="contained">
-          Next Step1
-        </Button>
-      </Grid>
       <Grid item md={12} xs={12}></Grid>
 
       <Grid item md={12} xs={12}></Grid>

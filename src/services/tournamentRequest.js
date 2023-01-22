@@ -301,6 +301,27 @@ export const gettournamentGroupsandteamsBySportDivisionID = async (params) => {
     throw error;
   }
 };
+export const getGroupsInteamsBySportDivisionID = async (params) => {
+  const { token } = useStorage();
+  if(!params.ID){
+    return 
+  }
+  if (!token) {
+    throw "No Token";
+  }
+  try {
+    let res = await axios.get(`${MAIN_URL2}/getGroupsInTeamsBySportDivisionID/`, {
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
 //GET All Group Teams for Fixtures 
 export const getGroupTeamsByGroupID = async (params) => {

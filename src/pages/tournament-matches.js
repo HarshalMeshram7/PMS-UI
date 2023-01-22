@@ -27,13 +27,11 @@ const TournamentMatches = () => {
 
   const handleOpenTournamentDetails = (tournament) => {
     try {
-
       setTournament(tournament);
       getTournamentDetailsByID({ ID: tournament.ID }).then((res) => {
         setTournamentDetails(res)
       })
       setShowTournamentDetailsDialog(true)
-
     }
     catch (error) {
       console.log(error);

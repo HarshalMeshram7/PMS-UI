@@ -10,8 +10,16 @@ import {
   MenuItem,
 } from "@mui/material";
 
-export default function TournamentStep2({ formik, teams, handleStep2, step3,sportsByTournament,divisionsByTournamentSports,handleSportsChange }) {
-const  [selectedSportsDivision, setSelectedSportsDivision] = useState("");
+export default function TournamentStep2({
+  formik,
+  teams,
+  handleStep2,
+  sportsByTournament,
+  divisionsByTournamentSports,
+  handleSportsChange,
+  handleDivisionChange,
+}) {
+  const [selectedSportsDivision, setSelectedSportsDivision] = useState("");
 
   return (
     <>
@@ -51,7 +59,8 @@ const  [selectedSportsDivision, setSelectedSportsDivision] = useState("");
             name="DivisionBySports"
             required
             onChange={(e) => {
-                setSelectedSportsDivision(e.target.value);
+              handleDivisionChange(e.target.value);
+              setSelectedSportsDivision(e.target.value);
             }}
           >
             {divisionsByTournamentSports?.map((item, key) => (
@@ -62,7 +71,6 @@ const  [selectedSportsDivision, setSelectedSportsDivision] = useState("");
           </Select>
         </FormControl>
       </Grid>
-
 
       <Grid item md={6} xs={12}>
         <FormControl fullWidth>
@@ -106,13 +114,13 @@ const  [selectedSportsDivision, setSelectedSportsDivision] = useState("");
 
       <Grid item md={12} xs={12}>
         <Button
-          disabled={step3}
+          disabled={!selectedSportsDivision || !formik.values.NoOfGroups || !formik.values.teamList}
           onClick={() => {
             handleStep2(selectedSportsDivision);
           }}
           variant="contained"
         >
-          Next (Step 2)
+          Create Groups
         </Button>
       </Grid>
 
