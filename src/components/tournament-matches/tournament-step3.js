@@ -16,8 +16,6 @@ import {
     Autocomplete,
     TextField
 } from "@mui/material";
-import { useFormik } from "formik";
-
 
 
 export default function TournamentStep3({ handleStep3,
@@ -62,8 +60,6 @@ export default function TournamentStep3({ handleStep3,
 
         setGroupsTeamsID(newTempMainIDArray);
         setGroupsTeamsForTable(newTempArray);
-        console.log({ newTempMainIDArray });
-        console.log({ newTempArray });
 
         forceUpdate();
 
@@ -81,7 +77,7 @@ export default function TournamentStep3({ handleStep3,
                     color="inherit"
                     variant="h5"
                 >
-                    Add Teams (Step 3)
+                    Add Teams in Group (Step 3)
                 </Typography>
             </Grid>
             
@@ -172,7 +168,7 @@ export default function TournamentStep3({ handleStep3,
                         )}
                     />
                 </Grid>
-
+                
                 <Grid item md={12} xs={12}>
                     <Button onClick={handleAddGroupTeam} variant="contained">
                         Add Teams
@@ -185,7 +181,7 @@ export default function TournamentStep3({ handleStep3,
                 md={4}
                 xs={12}
             >
-                <Button onClick={() => { handleStep3(groupsTeamsID) }} variant="contained">Next (Step 3)</Button>
+                <Button  onClick={() => { handleStep3(groupsTeamsID) }} variant="contained">Save Teams</Button>
             </Grid>
 
         </>

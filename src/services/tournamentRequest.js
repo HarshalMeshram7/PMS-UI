@@ -39,12 +39,45 @@ export const updateTournament = async ( data) => {
   }
 };
 
-//Save Tournament Sports Division Step 1
+//Save Tournament Sports Division Step 1 old
 export const saveTournamentSportsDivision = async ( data) => {
   const { token } = useStorage();
   
   try {
     const res = await axios.post(`${MAIN_URL2}/SavetournamentSports/`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+//Save Tournament Sports Only Step 1.1 new
+export const saveTournamentSports = async ( data) => {
+  const { token } = useStorage();
+  
+  try {
+    const res = await axios.post(`${MAIN_URL2}/SavetournamentSportsNew/`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+//Save Tournament Sports Division Only Step 1.2 new
+export const saveTournamentSportsDivisionNew = async ( data) => {
+  const { token } = useStorage();
+  
+  try {
+    const res = await axios.post(`${MAIN_URL2}/SavetournamentSportDivision/`, data, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -157,25 +190,6 @@ export const deleteTournamentMatch = async (ID) => {
   }
 };
 
-
-
-//EXTRA 
-
-//UPDATE USER DETAILS
-// export const addUser = async (data) => {
-//   const { token } = useStorage();
-//   try {
-//     const res = await axios.post(`${MAIN_URL}/admin/create_admin/`, data, {
-//       headers: {
-//         Authorization: "Bearer " + token,
-//       },
-//     });
-//     return res.data;
-//   } catch (error) {
-//     console.log(error);
-//     throw error;
-//   }
-// };
 //GET All Sports List for Fixtures 
 export const getMatchesByTournamentID = async (params) => {
   const { token } = useStorage();
@@ -198,24 +212,6 @@ export const getMatchesByTournamentID = async (params) => {
     throw error;
   }
 };
-
-
-
-//Change STAFF PASSWORD
-export const changeStaffPassword = async (id, data) => {
-  const { token } = useStorage();
-  try {
-    const res = await axios.post(`${MAIN_URL2}/admin/${id}/reset_password/`, data, {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
-
 
 //GET All Tournament 
 export const getTournamentDetailsByID = async (params) => {
@@ -294,6 +290,27 @@ export const gettournamentGroupsandteamsBySportDivisionID = async (params) => {
   }
   try {
     let res = await axios.get(`${MAIN_URL2}/gettournamentGroupsandteamsBySportDivisionID/`, {
+      params: params,
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data.result;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+export const getGroupsInteamsBySportDivisionID = async (params) => {
+  const { token } = useStorage();
+  if(!params.ID){
+    return 
+  }
+  if (!token) {
+    throw "No Token";
+  }
+  try {
+    let res = await axios.get(`${MAIN_URL2}/getGroupsInTeamsBySportDivisionID/`, {
       params: params,
       headers: {
         Authorization: "Bearer " + token,
