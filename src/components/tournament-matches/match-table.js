@@ -9,15 +9,15 @@ import {
     Typography
 } from "@mui/material"
 
-export default function MatchTable({ array, handleRemove}) {
+export default function MatchTable({ array, handleRemove, title }) {
     return (
         <Grid item md={12} xs={12}>
             <Typography
-                        color="textPrimary"
-                        // variant="body1"
-                      >
-                        Tournament Matches
-                      </Typography>
+                color="textPrimary"
+            // variant="body1"
+            >
+                {title}
+            </Typography>
             {array?.length !== 0 && (
                 <Table aria-label="caption table">
                     <TableHead>
@@ -31,7 +31,7 @@ export default function MatchTable({ array, handleRemove}) {
                             <TableCell>Match Date/Time</TableCell>
                             <TableCell>Duration</TableCell>
                             <TableCell>Stadium</TableCell>
-                            <TableCell>Result</TableCell>                            
+                            <TableCell>Result</TableCell>
                             <TableCell align="right">Action</TableCell>
                         </TableRow>
                     </TableHead>

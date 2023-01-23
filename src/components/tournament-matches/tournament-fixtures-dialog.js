@@ -377,6 +377,7 @@ export const TournamentFixturesDialog = ({ open, handleClose, tournament }) => {
 
          {(Matches?.length> 0) && <MatchTable
             array={Matches}
+            title='Tournament Match'
             handleRemove={handleOpenDeleteDialogue}
           />}
 

@@ -111,6 +111,11 @@ const items = [
     title: 'Tournaments and Matches'
   },
   {
+    href: '/matches',
+    icon: (<AssignmentIcon fontSize="small" />),
+    title: 'Matches'
+  },
+  {
     href: '/scorecard',
     icon: (<AssignmentIcon fontSize="small" />),
     title: 'Scorecard'
