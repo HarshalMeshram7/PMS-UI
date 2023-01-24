@@ -215,8 +215,6 @@ export const AddAcademyDialog = ({ open, handleClose, mutate }) => {
         onSubmit: async (data) => {
             setLoading(true);
             try {
-                console.log("**********");
-                console.log(data);
                 let finalData = { ...data, logo: handlePriview(uploadedLogoName), banner: handlePriview(uploadedBannerName) }
                 await addAcademy(finalData).then((resp) => {
                     if (resp.status === "success") {

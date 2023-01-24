@@ -1,80 +1,122 @@
 import React from "react";
-import Head from 'next/head';
+import Head from "next/head";
 import { DashboardLayout } from "src/components/dashboard-layout";
-import { Box, Container, Grid, keyframes, Pagination } from '@mui/material';
-import { teams } from "src/__mocks__/teams";
+import { Box, Container, Grid, keyframes, Pagination } from "@mui/material";
 import { TeamListToolbar } from "src/components/team/team-list-toolbar";
 import { TeamCard } from "src/components/team/team-card";
-import { useState } from 'react';
-import { useAllAcademies } from "src/adapters/academyAdapter";
+import { useState, useEffect } from "react";
 import { useAllTeams } from "src/adapters/teamAdapter";
 import { AddTeamDialog } from "src/components/team/add-team-dialog";
 import { TeamDetailsDialog } from "src/components/team/team-details-dialog";
 import { TeamFinanceDialog } from "src/components/team/team-finance-dialog";
-import { getTeam } from "src/services/teamRequest";
+import { deleteClubTeam, getTeam } from "src/services/teamRequest";
+import DeleteDialog from "src/components/common/deleteDialog";
+import { useSnackbar } from "notistack";
+import useStorage from "src/hooks/useStorage";
+import { filterArrayByArrayIDs } from "src/utils/commonFunctions";
 
 const Team = () => {
   const [showAddTeamDialog, setShowAddTeamDialog] = useState(false);
   const [showTeamDetailsDialog, setShowTeamDetailsDialog] = useState(false);
   const [showTeamFinanceDialog, setShowTeamFinanceDialog] = useState(false);
-  const [team, setTeam] = useState([])
-  const [params, setParams] = useState({searchpattern: ""})
+  const [team, setTeam] = useState([]);
+  const [teamMembers, setTeamMembers] = useState({});
+  const [filteredClubTeams, setFilteredClubTeams] = useState([]);
+  const [params, setParams] = useState({ searchpattern: "" });
+  const { enqueueSnackbar } = useSnackbar();
+
+  const [openDeleteDialogue, setOpenDeleteDialogue] = useState(false);
 
   const handleOpenAddTeam = () => setShowAddTeamDialog(true);
   const handleCloseAddTeam = () => setShowAddTeamDialog(false);
+  const { teams, loading, error, mutate } = useAllTeams({ ...params });
 
   const handleOpenTeamDetails = (team) => {
-    getTeam({id:team.ID}).then((res)=>{
-      console.log(res);
-      setTeam(res)
-      setShowTeamDetailsDialog(true)
-
-    })
+    getTeam({ ID: team.ID }).then((res) => {
+      setTeam(res?.TeamInfo[0]);
+      setTeamMembers({
+        teamplayersTypes: res.teamplayersTypes,
+        teamstaffsTypes: res.teamstaffsTypes,
+        teamcoachesTypes: res.teamcoachesTypes,
+      });
+      setShowTeamDetailsDialog(true);
+    });
   };
   const handleCloseTeamDetails = () => setShowTeamDetailsDialog(false);
 
   const handleOpenTeamFinance = (team) => {
-
-    getTeam({id:team.ID}).then((res)=>{
-      console.log(res);
-      setTeam(res)
-      setShowTeamFinanceDialog(true)
-    })
-
+    getTeam({ ID: team.ID }).then((res) => {
+      setTeam(res?.TeamInfo[0]);
+      setShowTeamFinanceDialog(true);
+    });
   };
   const handleCloseTeamFinance = () => setShowTeamFinanceDialog(false);
 
   const handleSearch = (value) => {
-    setParams((p) => ({ ...p, searchpattern: value }))
+    setParams((p) => ({ ...p, searchpattern: value }));
   };
 
-  const { teams, loading, error, mutate } = useAllTeams({ ...params });
+  const handleDeleteClubTeam = (ID) => {
+    try {
+      deleteClubTeam({ ID }).then((res) => {
+        console.log(res);
+        if (res?.status === "success") {
+          mutate();
+          enqueueSnackbar("Team Deleted Succesfully", { variant: "success" });
+          setOpenDeleteDialogue(false);
+          setShowTeamDetailsDialog(false);
+        } else {
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-  let teamLocal = [{ "_id": "62de8df69fda862707152867", "academyName": "Team 1", "address": "Address", "phone": 8208793805, "email": "club2@pixonix.tech", "personName": "Person name", "logo": "/static/images/products/product_2.png", "banner": "../../../public/static/images/background/register.jpg", "accreditation": "accreditation", "facebook": "fb", "twitter": "tw", "instagram": "ins", "sportsList": ["Football", "Cricket", "Tennis"], "__v": 0 }, { "_id": "62de96aeba11e272e5e1db81", "academyName": "Team 2", "address": "Address", "phone": 8208793805, "email": "Federation3@pixonix.tech", "personName": "Person name", "logo": "/static/images/products/product_3.png", "banner": "../../../public/static/images/background/register.jpg", "accreditation": "accreditation", "facebook": "fb", "twitter": "tw", "instagram": "ins", "sportsList": ["Football", "Cricket", "Tennis"], "__v": 0 }, { "_id": "62de978fba11e272e5e1db93", "academyName": "Team 3", "address": "Address", "phone": 8208793805, "email": "Federation4@pixonix.tech", "personName": "Person name", "logo": "/static/images/products/product_4.png", "banner": "../../../public/static/images/background/register.jpg", "accreditation": "accreditation", "facebook": "fb", "twitter": "tw", "instagram": "ins", "sportsList": ["Cricket"], "__v": 0 }, { "_id": "62ea72328d25391153e4cfe7", "academyName": "Team 4", "address": "Address", "phone": 8208793805, "email": "Federation@pixonix.tech", "personName": "Person name", "logo": "/static/images/products/product_1.png", "banner": "../../../public/static/images/background/register.jpg", "accreditation": "accreditation", "facebook": "fb", "twitter": "tw", "instagram": "ins", "sportsList": [], "__v": 0 }]
+  const handleOpenDeleteDialogue = (team) => {
+    setTeam(team);
+    setOpenDeleteDialogue(true);
+  };
+
+  const handleCloseDeleteDialogue = () => {
+    setOpenDeleteDialogue(false);
+  };
+  const { clubTeamFilter, loggedInUserName } = useStorage();
+
+  useEffect(() => {
+    filterArrayByArrayIDs(teams, clubTeamFilter, loggedInUserName).then((filtered) => {
+      setFilteredClubTeams(filtered);
+    });
+  }, [teams]);
 
   return (
     <>
       <Head>
-        <title>
-          Team | PMS
-        </title>
+        <title>Team | PMS</title>
       </Head>
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          py: 8
+          py: 8,
         }}
       >
-        <AddTeamDialog
-          open={showAddTeamDialog}
-          handleClose={handleCloseAddTeam}
+        <AddTeamDialog open={showAddTeamDialog} handleClose={handleCloseAddTeam} mutate={mutate} />
+        <DeleteDialog
+          handleDelete={handleDeleteClubTeam}
+          name={team.Team}
+          ID={team.ID}
+          open={openDeleteDialogue}
+          handleClose={handleCloseDeleteDialogue}
         />
-        <TeamDetailsDialog team={team}
+        <TeamDetailsDialog
+          team={team}
+          teamMembers={teamMembers}
           mutate={mutate}
           open={showTeamDetailsDialog}
-          handleClose={handleCloseTeamDetails} />
-
+          handleClose={handleCloseTeamDetails}
+          handleOpenDeleteDialogue={handleOpenDeleteDialogue}
+        />
         <TeamFinanceDialog
           team={team}
           mutate={mutate}
@@ -89,24 +131,17 @@ const Team = () => {
             open={showAddTeamDialog}
           />
           <Box sx={{ pt: 3 }}>
-            <Grid
-              container
-              spacing={3}
-            >
-              {teams?.map((product, key) => (
-                <Grid
-                  item
-                  key={key}
-                  lg={4}
-                  md={6}
-                  xs={12}
-                >
-                  <TeamCard
-                    handleOpenTeamFinance={handleOpenTeamFinance}
-                    handleOpenTeamDetails={handleOpenTeamDetails}
-                    product={product} />
-                </Grid>
-              ))}
+            <Grid container spacing={3}>
+              {filteredClubTeams &&
+                filteredClubTeams?.map((product, key) => (
+                  <Grid item key={key} lg={4} md={6} xs={12}>
+                    <TeamCard
+                      handleOpenTeamFinance={handleOpenTeamFinance}
+                      handleOpenTeamDetails={handleOpenTeamDetails}
+                      product={product}
+                    />
+                  </Grid>
+                ))}
             </Grid>
           </Box>
           {/* <Box
@@ -126,13 +161,8 @@ const Team = () => {
       </Box>
     </>
   );
-}
+};
 
-
-Team.getLayout = (page) => (
-  <DashboardLayout>
-    {page}
-  </DashboardLayout>
-);
+Team.getLayout = (page) => <DashboardLayout>{page}</DashboardLayout>;
 
 export default Team;

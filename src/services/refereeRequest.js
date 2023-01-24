@@ -1,13 +1,35 @@
 import axios from "axios";
 import useStorage from "src/hooks/useStorage";
-import { MAIN_URL , MAIN_URL2 } from "./apiConfig";
+import {  MAIN_URL2 } from "./apiConfig";
+
+
+//ADD REFEREE DETAILS
+export const addReferee = async ( data) => {
+  const { token } = useStorage();
+  if ( !data || !token) {
+    return;
+  }
+  try {
+    const res = await axios.post(`${MAIN_URL2}/SaveReferee/`, data, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return res.data
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+
 
 
 //GET All REFEREE 
 export const getAllReferee = async ( params) => {
   const { token } = useStorage();
   try {
-    let res = await axios.get(`${MAIN_URL2}/getRefereeList/`, {
+    let res = await axios.get(`${MAIN_URL2}/getRefereebypattern/`, {
       params: params,
       headers: {
         Authorization: "Bearer " + token,
@@ -48,7 +70,7 @@ export const updateReferee = async (id, data) => {
     return;
   }
   try {
-    const res = await axios.put(`${MAIN_URL}/admin/${id}/update_admin/`, data, {
+    const res = await axios.put(`${MAIN_URL2}/admin/${id}/update_admin/`, data, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -83,7 +105,7 @@ export const deleteReferee = async (id) => {
     return;
   }
   try {
-    const res = await axios.delete(`${MAIN_URL}/admin/${id}/delete_admin/`, {
+    const res = await axios.delete(`${MAIN_URL2}/admin/${id}/delete_admin/`, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -98,7 +120,7 @@ export const deleteReferee = async (id) => {
 export const changeRefereePassword = async (id, data) => {
   const { token } = useStorage();
   try {
-    const res = await axios.post(`${MAIN_URL}/admin/${id}/reset_password/`, data, {
+    const res = await axios.post(`${MAIN_URL2}/admin/${id}/reset_password/`, data, {
       headers: {
         Authorization: "Bearer " + token,
       },

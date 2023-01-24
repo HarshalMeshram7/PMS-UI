@@ -1,9 +1,26 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Grid, TextField, Button, Card, CardContent } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  Button,
+  Typography,
+  Stack,
+  Chip,
+  List,
+  ListItem,
+  ListItemIcon,
+  Avatar,
+  Card,
+  CardContent,
+  ListItemText
+} from "@mui/material";
+import { getInitials } from "src/utils/get-initials";
+import StarBorder from "@mui/icons-material/StarBorder";
 
-export default function ClubFinance() {
+
+export default function ClubFinance({ clubFinance }) {
   const formik = useFormik({
     initialValues: {
       ClubSponsers: "",
@@ -29,6 +46,33 @@ export default function ClubFinance() {
         <Card>
           <CardContent>
             <Grid container spacing={3}>
+
+              <Grid item md={6} xs={12}>
+                <Typography>Sponsors</Typography>
+                <Stack direction="row" spacing={2}>
+                  {clubFinance?.Sponsors?.map((item) => (
+                    <Chip
+                      color="primary"
+                      variant="outlined"
+                      avatar={<Avatar>{getInitials(item)}</Avatar>}
+                      label={item}
+                    />
+                  ))}
+                </Stack>
+              </Grid>
+
+              <Grid item md={6} xs={12}>
+                <Typography>Total Donation</Typography>
+                <List component="nav">
+                  <ListItem>
+                    <ListItemIcon>
+                      <StarBorder />
+                    </ListItemIcon>
+                    <ListItemText primary={clubFinance?.Donations} />
+                  </ListItem>
+                </List>
+              </Grid>
+
               <Grid item md={6} xs={12}>
                 <TextField
                   error={Boolean(formik.touched.ClubSponsers && formik.errors.ClubSponsers)}

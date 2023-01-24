@@ -1,9 +1,26 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Grid, TextField, Button, Card, CardContent } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+  Stack,
+  Chip,
+  Avatar,
+} from "@mui/material";
 
-export default function AcademyFinance() {
+import StarBorder from "@mui/icons-material/StarBorder";
+import { getInitials } from "src/utils/get-initials";
+
+export default function AcademyFinance({ academyFinance }) {
   const formik = useFormik({
     initialValues: {
       AcademySponsers: "",
@@ -22,6 +39,7 @@ export default function AcademyFinance() {
       }
     },
   });
+  
 
   return (
     <>
@@ -29,7 +47,34 @@ export default function AcademyFinance() {
         <Card>
           <CardContent>
             <Grid container spacing={3}>
+
               <Grid item md={6} xs={12}>
+                <Typography>Sponsors</Typography>
+                <Stack direction="row" spacing={2}>
+                  {academyFinance?.Sponsors?.map((item) => (
+                    <Chip
+                      color="primary"
+                      variant="outlined"
+                      avatar={<Avatar>{getInitials(item)}</Avatar>}
+                      label={item}
+                    />
+                  ))}
+                </Stack>
+              </Grid>
+
+              <Grid item md={6} xs={12}>
+                <Typography>Total Donation</Typography>
+                <List component="nav">
+                  <ListItem>
+                    <ListItemIcon>
+                      <StarBorder />
+                    </ListItemIcon>
+                    <ListItemText primary={academyFinance?.Donations} />
+                  </ListItem>
+                </List>
+              </Grid>
+
+              {/* <Grid item md={6} xs={12}>
                 <TextField
                   error={Boolean(formik.touched.AcademySponsers && formik.errors.AcademySponsers)}
                   fullWidth
@@ -59,7 +104,7 @@ export default function AcademyFinance() {
                   value={formik.values.AcademyDonation}
                   variant="outlined"
                 />
-              </Grid>
+              </Grid> */}
 
               <Grid item md={6} xs={12}>
                 <TextField

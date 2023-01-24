@@ -1,13 +1,30 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Grid, TextField, Button, Card, CardContent } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Avatar,
+  Typography,
+  Stack,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListSubheader,
+} from "@mui/material";
+import { deepOrange, deepPurple } from "@mui/material/colors";
+import { getInitials } from "src/utils/get-initials";
+import StarBorder from "@mui/icons-material/StarBorder";
 
-export default function FederationFinance() {
+export default function FederationFinance({ federationFinance }) {
   const formik = useFormik({
     initialValues: {
       GrantFromMinistrySports: "",
-      FederationSponsors: "",
       FedrationDonation: "",
       FeesFromClub: "",
       MurchandiceIncome: "",
@@ -29,11 +46,41 @@ export default function FederationFinance() {
         <Card>
           <CardContent>
             <Grid container spacing={3}>
+               <Grid item md={6} xs={12}>
+                <Typography>Sponsors</Typography>
+                <Stack direction="row" spacing={2}>
+                  {federationFinance?.Sponsors?.map((item) => (
+                    <Chip
+                      color="primary"
+                      variant="outlined"
+                      avatar={<Avatar>{getInitials(item)}</Avatar>}
+                      label={item}
+                    />
+                  ))}
+                </Stack>
+              </Grid>
+
+              <Grid item md={6} xs={12}>
+                <Typography>Total Donation</Typography>
+                <List component="nav">
+                  <ListItem>
+                    <ListItemIcon>
+                      <StarBorder />
+                    </ListItemIcon>
+                    <ListItemText primary={federationFinance?.Donations} />
+                  </ListItem>
+                </List>
+              </Grid>
+
               <Grid item md={6} xs={12}>
                 <TextField
-                  error={Boolean(formik.touched.GrantFromMinistrySports && formik.errors.GrantFromMinistrySports)}
+                  error={Boolean(
+                    formik.touched.GrantFromMinistrySports && formik.errors.GrantFromMinistrySports
+                  )}
                   fullWidth
-                  helperText={formik.touched.GrantFromMinistrySports && formik.errors.GrantFromMinistrySports}
+                  helperText={
+                    formik.touched.GrantFromMinistrySports && formik.errors.GrantFromMinistrySports
+                  }
                   label="Grant From Ministry Of Sports"
                   margin="dense"
                   name="GrantFromMinistrySports"
@@ -41,38 +88,6 @@ export default function FederationFinance() {
                   onChange={formik.handleChange}
                   type="text"
                   value={formik.values.GrantFromMinistrySports}
-                  variant="outlined"
-                />
-              </Grid>
-
-              <Grid item md={6} xs={12}>
-                <TextField
-                  error={Boolean(formik.touched.FederationSponsors && formik.errors.FederationSponsors)}
-                  fullWidth
-                  helperText={formik.touched.FederationSponsors && formik.errors.FederationSponsors}
-                  label="Federation Sponsors"
-                  margin="dense"
-                  name="FederationSponsors"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="text"
-                  value={formik.values.FederationSponsors}
-                  variant="outlined"
-                />
-              </Grid>
-
-              <Grid item md={6} xs={12}>
-                <TextField
-                  error={Boolean(formik.touched.FedationDonation && formik.errors.FedrationDonation)}
-                  fullWidth
-                  helperText={formik.touched.FedrationDonation && formik.errors.FedrationDonation}
-                  label="Fedration Donation"
-                  margin="dense"
-                  name="FedrationDonation"
-                  onBlur={formik.handleBlur}
-                  onChange={formik.handleChange}
-                  type="number"
-                  value={formik.values.FedrationDonation}
                   variant="outlined"
                 />
               </Grid>
@@ -95,7 +110,9 @@ export default function FederationFinance() {
 
               <Grid item md={6} xs={12}>
                 <TextField
-                  error={Boolean(formik.touched.MurchandiceIncome && formik.errors.MurchandiceIncome)}
+                  error={Boolean(
+                    formik.touched.MurchandiceIncome && formik.errors.MurchandiceIncome
+                  )}
                   fullWidth
                   helperText={formik.touched.MurchandiceIncome && formik.errors.MurchandiceIncome}
                   label="Murchandice Income"
@@ -109,11 +126,9 @@ export default function FederationFinance() {
                 />
               </Grid>
 
-              <Grid item md={6} xs={12}>
-              </Grid>
+              <Grid item md={6} xs={12}></Grid>
 
-              <Grid item md={6} xs={12}>
-              </Grid>
+              <Grid item md={6} xs={12}></Grid>
 
               <Grid item md={12} xs={12} textAlign="center">
                 <Button type="submit" variant="outlined" color="primary">

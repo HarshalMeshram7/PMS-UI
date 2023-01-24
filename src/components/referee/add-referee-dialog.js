@@ -16,6 +16,7 @@ import {
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useFormik } from "formik";
+import { addReferee } from "src/services/refereeRequest";
 import * as Yup from "yup";
 import LoadingBox from "src/components/common/loading-box";
 
@@ -30,6 +31,7 @@ export const AddRefereeDialog = ({ open, handleClose }) => {
             LastName: "",
             Address: "",
             ContactNo: "",
+            Password: "",
             Email: "",
             // DateOfBirth: "1990-12-25",
             DateOfBirth: "",
@@ -47,11 +49,21 @@ export const AddRefereeDialog = ({ open, handleClose }) => {
 
                 console.log("**********");
                 console.log(data);
-                // await addAcademy(data);
-                handleClose();
-                enqueueSnackbar("Referee Registered Succesfully", { variant: "success" });
-
-                setLoading(false);
+                await addReferee(data).then((resp) => {
+                    if (resp.status === "success") {
+                        handleClose();
+                        enqueueSnackbar("Referee Added Succesfully", { variant: "success" });
+                        mutate();
+                        setLoading(false);
+                    }
+                    if (resp.status === "failed") {
+                        handleClose();
+                        enqueueSnackbar("Referee Not Added", { variant: "failed" });
+                        setLoading(false);
+                    }
+                })
+                
+                
             } catch (error) {
                 setLoading(false);
             }
@@ -210,6 +222,27 @@ export const AddRefereeDialog = ({ open, handleClose }) => {
                             />
                         </Grid>
 
+                        
+                        <Grid
+                            item
+                            md={6}
+                            xs={12}
+                        >
+                            <TextField
+                                error={Boolean(formik.touched.Password && formik.errors.Password)}
+                                fullWidth
+                                helperText={formik.touched.Password && formik.errors.Password}
+                                label="Password"
+                                margin="dense"
+                                name="Password"
+                                onBlur={formik.handleBlur}
+                                onChange={formik.handleChange}
+                                type="password"
+                                value={formik.values.Password}
+                                variant="outlined"
+                            />
+                        </Grid>
+
                         <Grid
                             item
                             md={6}
@@ -225,9 +258,9 @@ export const AddRefereeDialog = ({ open, handleClose }) => {
                                     label="Gender"
                                     onChange={formik.handleChange}
                                 >
-                                    <MenuItem value="Male">Male</MenuItem>
-                                    <MenuItem value="Female">Female</MenuItem>
-                                    <MenuItem value="Other">Other</MenuItem>
+                                    <MenuItem value="1">Male</MenuItem>
+                                    <MenuItem value="2">Female</MenuItem>
+                                    <MenuItem value="3">Other</MenuItem>
                                 </Select>
                             </FormControl>
                         </Grid>

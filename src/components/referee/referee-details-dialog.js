@@ -195,7 +195,8 @@ export const RefereeDetailsDialog = ({ open, handleClose, referees }) => {
                 fullWidth
                 helperText={formik.touched.DateOfBirth && formik.errors.DateOfBirth}
                 name="DateOfBirth"
-                label="Date of Birth"
+                label="Date of Birth"                
+                InputLabelProps={{ shrink: true }}
                 margin="dense"
                 onBlur={formik.handleBlur}
                 value={formik.values.DateOfBirth}

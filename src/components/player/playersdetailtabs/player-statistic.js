@@ -8,31 +8,11 @@ import {
 import { Divider, Typography } from "@material-ui/core";
 import { Male } from "@mui/icons-material";
 
-export default function PlayerStatisticTab() {
-    const formik = useFormik({
-        enableReinitialize: true,
-        initialValues: {
-            MatchesPlayed: "",
-            PointScore: "",
-            PenaltyScore: "",
-            Voilations: "",
-            Disqualification: "",
-
-        },
-        validationSchema: Yup.object({}),
-
-        onSubmit: async (data) => {
-            try {
-                console.log(data);
-            } catch (error) {
-                console.log(error);
-            }
-        },
-    });
+export default function PlayerStatisticTab( {formik} ) {
 
     return (
         <>
-            <form onSubmit={formik.handleSubmit}>
+            {/* <form onSubmit={formik.handleSubmit}> */}
                 <Card>
                     <CardContent>
 
@@ -47,16 +27,16 @@ export default function PlayerStatisticTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.MatchesPlayed && formik.errors.MatchesPlayed)}
+                                    error={Boolean(formik.touched.StaticMatchesPlayed && formik.errors.StaticMatchesPlayed)}
                                     fullWidth
-                                    helperText={formik.touched.MatchesPlayed && formik.errors.MatchesPlayed}
+                                    helperText={formik.touched.StaticMatchesPlayed && formik.errors.StaticMatchesPlayed}
                                     label="Matches Played"
                                     margin="dense"
-                                    name="MatchesPlayed"
+                                    name="StaticMatchesPlayed"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.MatchesPlayed}
+                                    value={formik.values.StaticMatchesPlayed}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -67,16 +47,16 @@ export default function PlayerStatisticTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.PointScore && formik.errors.PointScore)}
+                                    error={Boolean(formik.touched.StaticPointScore && formik.errors.StaticPointScore)}
                                     fullWidth
-                                    helperText={formik.touched.PointScore && formik.errors.PointScore}
+                                    helperText={formik.touched.StaticPointScore && formik.errors.StaticPointScore}
                                     label="Point Score"
                                     margin="dense"
-                                    name="PointScore"
+                                    name="StaticPointScore"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.PointScore}
+                                    value={formik.values.StaticPointScore}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -87,16 +67,16 @@ export default function PlayerStatisticTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.PenaltyScore && formik.errors.PenaltyScore)}
+                                    error={Boolean(formik.touched.StaticPenaltyScore && formik.errors.StaticPenaltyScore)}
                                     fullWidth
-                                    helperText={formik.touched.PenaltyScore && formik.errors.PenaltyScore}
+                                    helperText={formik.touched.StaticPenaltyScore && formik.errors.StaticPenaltyScore}
                                     label="Penalty Score"
                                     margin="dense"
-                                    name="PenaltyScore"
+                                    name="StaticPenaltyScore"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.PenaltyScore}
+                                    value={formik.values.StaticPenaltyScore}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -107,16 +87,16 @@ export default function PlayerStatisticTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.Voilations && formik.errors.Voilations)}
+                                    error={Boolean(formik.touched.StaticVoilations && formik.errors.StaticVoilations)}
                                     fullWidth
-                                    helperText={formik.touched.Voilations && formik.errors.Voilations}
+                                    helperText={formik.touched.StaticVoilations && formik.errors.StaticVoilations}
                                     label="Voilations"
                                     margin="dense"
-                                    name="Voilations"
+                                    name="StaticVoilations"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.Voilations}
+                                    value={formik.values.StaticVoilations}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -127,29 +107,29 @@ export default function PlayerStatisticTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.Disqualification && formik.errors.Disqualification)}
+                                    error={Boolean(formik.touched.StaticDisqualification && formik.errors.StaticDisqualification)}
                                     fullWidth
-                                    helperText={formik.touched.Disqualification && formik.errors.Disqualification}
+                                    helperText={formik.touched.StaticDisqualification && formik.errors.StaticDisqualification}
                                     label="Disqualification"
                                     margin="dense"
-                                    name="Disqualification"
+                                    name="StaticDisqualification"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.Disqualification}
+                                    value={formik.values.StaticDisqualification}
                                     variant="outlined"
                                 />
                             </Grid>
                         </Grid>
 
                         <Grid item md={12} xs={12} textAlign="center">
-                            <Button sx={{ marginTop: 2 }} type="submit" variant="outlined" color="primary">
+                            <Button sx={{ marginTop: 2 }} onClick={formik.handleSubmit} variant="outlined" color="primary">
                                 Save
                             </Button>
                         </Grid>
                     </CardContent>
                 </Card>
-            </form>
+            {/* </form> */}
         </>
     );
 }

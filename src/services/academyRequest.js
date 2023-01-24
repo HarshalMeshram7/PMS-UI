@@ -1,6 +1,6 @@
 import axios from "axios";
 import useStorage from "src/hooks/useStorage";
-import { MAIN_URL,MAIN_URL2 } from "./apiConfig";
+import {MAIN_URL2 } from "./apiConfig";
 
 // Add Academy
 export const addAcademy = async (data) => {
@@ -86,7 +86,7 @@ export const deleteAcademy = async (ID) => {
     }
     try {
 
-        const res = await axios.post(`${MAIN_URL2}/Deleteacademy/`,{academy:ID}, {
+        const res = await axios.post(`${MAIN_URL2}/Deleteacademy/`,{ID}, {
             headers: {
                 Authorization: "Bearer " + token,
             },
@@ -98,3 +98,26 @@ export const deleteAcademy = async (ID) => {
         throw error;
     }
 };
+
+
+
+// Get Academy Detailsgit 
+export const getAcademyFinanceById = async (params) => {
+    const { token } = useStorage();
+    if (!token) {
+        throw "No Token";
+    }
+    try {
+        const res = await axios.get(`${MAIN_URL2}/getacademyfinancebyid`, {
+            params: params,
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
+        return res?.data?.result;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+

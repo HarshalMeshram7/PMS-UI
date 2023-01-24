@@ -88,7 +88,7 @@ export default function PlayerProfileTab() {
                                 </FormControl>
                             </Grid>
 
-                            <Grid
+                            {/* <Grid
                                 item
                                 md={6}
                                 xs={12}
@@ -98,15 +98,13 @@ export default function PlayerProfileTab() {
 
                             <Grid item md={6} xs={12}>
                                 <FormControl component="fieldset" variant="standard">
-                                    {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
                                     <FormGroup>
                                         <FormControlLabel
                                             control={<Switch checked={sharematchhighlight} onChange={handleChange} name="sharematchhighlight" />}
-                                        // label="Share Match Highlight"
                                         />
                                     </FormGroup>
                                 </FormControl>
-                            </Grid>
+                            </Grid> */}
 
                             <Grid
                                 item
@@ -148,7 +146,7 @@ export default function PlayerProfileTab() {
                                 </FormControl>
                             </Grid>
 
-                            <Grid
+                            {/* <Grid
                                 item
                                 md={6}
                                 xs={12}
@@ -158,15 +156,14 @@ export default function PlayerProfileTab() {
 
                             <Grid item md={6} xs={12}>
                                 <FormControl component="fieldset" variant="standard">
-                                    {/* <FormLabel component="legend">Assign responsibility</FormLabel> */}
                                     <FormGroup>
                                         <FormControlLabel
                                             control={<Switch checked={playerstats} onChange={handleChange} name="playerstats" />}
-                                        // label="Player Stats "
+                                        
                                         />
                                     </FormGroup>
                                 </FormControl>
-                            </Grid>
+                            </Grid> */}
                         </Grid>
 
                         {/* <Grid item md={12} xs={12} textAlign="center">

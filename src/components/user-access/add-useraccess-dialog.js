@@ -18,131 +18,239 @@ import {
   Divider,
   Container,
   Autocomplete,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { addAcademy } from "src/services/academyRequest";
 import LoadingBox from "src/components/common/loading-box";
+import { addUser } from "src/services/userRequests";
 
-const userRole = [
+const gender = [
   {
-    value: "clubAdmin",
-    label: "Club Admin",
+    value: "1",
+    label: "Male",
   },
   {
-    value: "federationAdmin",
-    label: "Federation Admin",
+    value: "2",
+    label: "Female",
+  },
+  {
+    value: "0",
+    label: "Other",
   },
 ];
 
-const federationClubAccess = [
-  {
-    value: "club1",
-    label: "Club 1",
-  },
-  {
-    value: "club2",
-    label: "Club 2",
-  },
-  {
-    value: "federation1",
-    label: "Federation 1",
-  },
-  {
-    value: "federation2",
-    label: "Federation 2",
-  },
-];
-
-export const AddUserAccessDialog = ({ open, handleClose ,user }) => {
+export const AddUserAccessDialog = ({ open, handleClose, user, mutate, users }) => {
   const { enqueueSnackbar } = useSnackbar();
   const [loading, setLoading] = useState();
   const [access, setAccess] = useState([]);
+  const [finalAccessForTable, setFinalAccessForTable] = useState([]);
+  const [isUniqueUserName, setIsUniqueUserName] = useState(true);
+
+  const [_, forceUpdate] = useReducer((x) => x + 1, 0);
+
+  const [finalroles, setFinalroles] = useState({
+    userFed: [
+      //   {
+      //   userRole: "",
+      //   userAccess: [],
+      // }
+    ],
+    userClub: [
+      //   {
+      //   userRole: "",
+      //   userAccess: [],
+      // }
+    ],
+    userTeam: [
+      //   {
+      //   userRole: "",
+      //   userAccess: [],
+      // }
+    ],
+    userAcademy: [
+      //   {
+      //   userRole: "",
+      //   userAccess: [],
+      // }
+    ],
+  });
+
+  let userRoles = finalroles;
 
   const formik = useFormik({
     initialValues: {
       userName: "",
       password: "",
       cnfpassword: "",
-      fullName: "",
-      address: "",
+      firstName: "",
+      lastName: "",
+      organization: "",
       email: "",
       phone: "",
       userRole: [],
-      userAccess: []
-    
+      userAccess: [],
+      address: "",
+      gender: [],
+      DateOfBirth: "",
     },
 
     validationSchema: Yup.object({
       userName: Yup.string().max(100).required("User Name is required"),
       password: Yup.string().max(255).required("Password is required"),
       cnfpassword: Yup.string().oneOf([Yup.ref("password"), null], "Passwords must match"),
-      fullName: Yup.string().max(100).required("User Name is required"),
-      address: Yup.string(),
-      // .required('Required')
+      firstName: Yup.string().max(100).required("First Name is required"),
+      lastName: Yup.string().max(100).required("Last Name is required"),
+      organization: Yup.string(),
       email: Yup.string().email("Must be a valid Email").max(255).required("Email is required"),
       phone: Yup.string()
         .length(10)
         .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, "Phone number is not valid")
         .required("Phone number is required"),
-
-      userRole: Yup.string().max(100).required("Sport List is required"),
-      federationClubAccess: Yup.string().max(100).required("Federation / Club is required"),
     }),
 
     onSubmit: async (data) => {
       setLoading(true);
-
       try {
-        console.log("**********");
-        console.log(data);
-        // await addAcademy(data);
-        handleClose();
-        enqueueSnackbar("User Added Succesfully", { variant: "success" });
-
-        setLoading(false);
+        let finalData = { ...data, userRoles: finalroles, userRole: "", userAccess: "" };
+        await addUser(finalData).then((resp) => {
+          if (resp.status === "success") {
+            handleClose();
+            enqueueSnackbar("user Added Succesfully", { variant: "success" });
+            mutate();
+            setLoading(false);
+          }
+          if (resp.status === "failed") {
+            handleClose();
+            enqueueSnackbar("user Not Added", { variant: "failed" });
+            setLoading(false);
+          }
+        });
       } catch (error) {
+        console.log(error);
         setLoading(false);
       }
     },
   });
 
-  const handleRoleChange = (e , value) =>{
+  const handleRoleChange = (e, value) => {
+    let AccessID = e.target.value?.AccessID;
 
-    if(!e.target.value){
-        setAccess([]);
+    if (!e.target.value) {
+      setAccess([]);
     }
-    if(e.target.value === 1 ){
-        setAccess([{"ID":0,"name":"All Access"}]);
+    if (AccessID === 0) {
+      setAccess([{ ID: 0, name: "All Access" }]);
     }
-    if(e.target.value === 2 || e.target.value === 3){
-        setAccess(user?.federation_list);
+    if (AccessID === 1) {
+      setAccess(user?.federation_list);
     }
-    
-    if(e.target.value === 4 || e.target.value === 5){
-        setAccess(user?.club_list);
+    if (AccessID === 2) {
+      setAccess(user?.club_list);
     }
-    
-    if(e.target.value === 6 || e.target.value === 7){
-        setAccess(user?.team_list);
+    if (AccessID === 3) {
+      setAccess(user?.academy_list);
     }
-    
-    if(e.target.value === 8){
-        setAccess(user?.federation_list);
+    if (AccessID === 4) {
+      setAccess(user?.team_list);
     }
-    if(e.target.value === 9){
-        setAccess(user?.federation_list);
+    if (AccessID === 5) {
+      setAccess(user?.federation_list); // player
     }
-    if(e.target.value === 10){
-        setAccess(user?.federation_list);
+    if (AccessID === 6) {
+      setAccess(user?.federation_list); //report admin
     }
-    
+    if (AccessID === 7) {
+      setAccess(user?.federation_list); //controller
+    }
+  };
 
- }
+  const handleAddRole = async () => {
+    let AccessID = formik.values.userRole.AccessID,
+      ID = formik.values.userRole.ID,
+      Description = formik.values.userRole.Description;
 
+    // for UI
+    let newNameArray = [];
+    let newIDArray = [];
+    formik.values.userAccess?.map((item) => {
+      if (item.name == null || item.name == undefined) {
+      } else {
+        newNameArray.push(item.name);
+        newIDArray.push(item.ID);
+      }
+    });
+    let newValue = finalAccessForTable;
+    newValue.push({
+      userRole: Description,
+      userAccess: newNameArray,
+    });
+    setFinalAccessForTable(newValue);
+    forceUpdate();
 
+    // for final payload
+    if (AccessID == 1 || AccessID == 5 || AccessID == 6 || AccessID == 7) {
+      userRoles.userFed.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
+      // userRoles.userFed.userRole = ID;
+      // userRoles.userFed.userAccess = newIDArray;
+      setFinalroles(userRoles);
+    }
+    if (AccessID == 2) {
+      userRoles.userClub.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
+      // userRoles.userClub.userRole = ID;
+      // userRoles.userClub.userAccess = newIDArray;
+      setFinalroles(userRoles);
+    }
+    if (AccessID == 3) {
+      userRoles.userAcademy.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
+
+      // userRoles.userAcademy.userRole = ID;
+      // userRoles.userAcademy.userAccess = newIDArray;
+      setFinalroles(userRoles);
+    }
+    if (AccessID == 4) {
+      userRoles.userTeam.push({
+        userRole: ID,
+        userAccess: newIDArray,
+      });
+
+      // userRoles.userTeam.userRole = ID;
+      // userRoles.userTeam.userAccess = newIDArray;
+      setFinalroles(userRoles);
+    }
+    formik.values.userRole = [];
+    formik.values.userAccess = [];
+  };
+
+  const handleRoleRemove = (row, index) => {
+    let newValue = finalAccessForTable;
+    newValue.splice(index, 1);
+    setFinalAccessForTable(newValue);
+    forceUpdate();
+  };
+
+  const CheckUserName = (e) => {
+    if (users?.find((user) => user.UserName === e.target.value) === undefined) {
+      setIsUniqueUserName(true);
+    } else {
+      setIsUniqueUserName(false);
+    }
+  };
 
   useEffect(() => {
     if (!open) {
@@ -172,18 +280,82 @@ export const AddUserAccessDialog = ({ open, handleClose ,user }) => {
           <Grid container spacing={3}>
             <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.userName && formik.errors.userName)}
+                error={
+                  Boolean(formik.touched.userName && formik.errors.userName) || !isUniqueUserName
+                }
                 fullWidth
                 helperText={formik.touched.userName && formik.errors.userName}
                 label="User Name"
                 margin="dense"
                 name="userName"
                 onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  formik.handleChange(e);
+                  CheckUserName(e);
+                }}
                 type="text"
                 value={formik.values.userName}
                 variant="outlined"
               />
+              {!isUniqueUserName && (
+                <p
+                  className="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained css-1j5m5yj-MuiFormHelperText-root"
+                  id="mui-17-helper-text"
+                >
+                  UserName Already Exist
+                </p>
+              )}{" "}
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.email && formik.errors.email)}
+                fullWidth
+                helperText={formik.touched.email && formik.errors.email}
+                label="Email"
+                margin="dense"
+                name="email"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="email"
+                value={formik.values.email}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.address && formik.errors.address)}
+                fullWidth
+                helperText={formik.touched.address && formik.errors.address}
+                label="Address"
+                margin="dense"
+                name="address"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.address}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-helper-label">Gender</InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  value={formik.values.gender}
+                  name="gender"
+                  label="Gender"
+                  onChange={formik.handleChange}
+                >
+                  {gender?.map((option, key) => (
+                    <MenuItem key={key} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
             </Grid>
 
             <Grid item md={6} xs={12}>
@@ -220,48 +392,48 @@ export const AddUserAccessDialog = ({ open, handleClose ,user }) => {
 
             <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.fullName && formik.errors.fullName)}
+                error={Boolean(formik.touched.firstName && formik.errors.firstName)}
                 fullWidth
-                helperText={formik.touched.fullName && formik.errors.fullName}
-                label="Full Name"
+                helperText={formik.touched.firstName && formik.errors.firstName}
+                label="First Name"
                 margin="dense"
-                name="fullName"
+                name="firstName"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
                 type="text"
-                value={formik.values.fullName}
+                value={formik.values.firstName}
+                variant="outlined"
+              />
+            </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.lastName && formik.errors.lastName)}
+                fullWidth
+                helperText={formik.touched.lastName && formik.errors.lastName}
+                label="Last Name"
+                margin="dense"
+                name="lastName"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.lastName}
                 variant="outlined"
               />
             </Grid>
 
             <Grid item md={6} xs={12}>
               <TextField
-                error={Boolean(formik.touched.address && formik.errors.address)}
+                error={Boolean(formik.touched.DateOfBirth && formik.errors.DateOfBirth)}
                 fullWidth
-                helperText={formik.touched.address && formik.errors.address}
-                label="Address"
+                helperText={formik.touched.DateOfBirth && formik.errors.DateOfBirth}
+                label="Date Of Birth"
+                InputLabelProps={{ shrink: true }}
                 margin="dense"
-                name="address"
+                name="DateOfBirth"
                 onBlur={formik.handleBlur}
                 onChange={formik.handleChange}
-                type="address"
-                value={formik.values.address}
-                variant="outlined"
-              />
-            </Grid>
-
-            <Grid item md={6} xs={12}>
-              <TextField
-                error={Boolean(formik.touched.email && formik.errors.email)}
-                fullWidth
-                helperText={formik.touched.email && formik.errors.email}
-                label="Email"
-                margin="dense"
-                name="email"
-                onBlur={formik.handleBlur}
-                onChange={formik.handleChange}
-                type="email"
-                value={formik.values.email}
+                type="date"
+                value={formik.values.DateOfBirth}
                 variant="outlined"
               />
             </Grid>
@@ -288,13 +460,48 @@ export const AddUserAccessDialog = ({ open, handleClose ,user }) => {
 
         <DialogContent>
           <Grid container spacing={3}>
-            <Grid item md={6} xs={12}>
-              {/* <Autocomplete
-                                disablePortal
-                                id="combo-box-demo"
-                                options={userRole}
-                                renderInput={(params) => <TextField {...params} label="User Role" />}
-                            /> */}
+            <Grid item md={12} xs={12}>
+              {finalAccessForTable.length !== 0 && (
+                <Table aria-label="caption table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Roles</TableCell>
+                      <TableCell>Access</TableCell>
+                      <TableCell align="right">Action</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {finalAccessForTable?.map((row, rowkey) => {
+                      return (
+                        <TableRow key={rowkey}>
+                          <TableCell>{row.userRole}</TableCell>
+                          <TableCell>
+                            {row.userAccess?.map((item, key) => {
+                              return (
+                                <p style={{ display: "inline" }} key={key}>
+                                  {item},
+                                </p>
+                              );
+                            })}
+                          </TableCell>
+                          <TableCell
+                            style={{ cursor: "pointer" }}
+                            onClick={() => {
+                              handleRoleRemove(row, rowkey);
+                            }}
+                            align="right"
+                          >
+                            X
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              )}
+            </Grid>
+
+            <Grid item md={4} xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="userRole">User Role</InputLabel>
                 <Select
@@ -309,7 +516,7 @@ export const AddUserAccessDialog = ({ open, handleClose ,user }) => {
                   }}
                 >
                   {user?.userTypes_list?.map((item, key) => (
-                    <MenuItem key={key} value={item.ID}>
+                    <MenuItem key={key} value={item}>
                       {item.Description}
                     </MenuItem>
                   ))}
@@ -317,21 +524,7 @@ export const AddUserAccessDialog = ({ open, handleClose ,user }) => {
               </FormControl>
             </Grid>
 
-            <Grid item md={6} xs={12}>
-              {/* <Autocomplete
-                multiple
-                id="tags-outlined"
-                options={federationClubAccess}
-                getOptionLabel={(option) => option.label}
-                filterSelectedOptions
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Federation / Club Access"
-                    placeholder="Federation / Club Access"
-                  />
-                )}
-              /> */}
+            <Grid item md={4} xs={12}>
               <FormControl fullWidth>
                 <InputLabel id="userAccess">User Access</InputLabel>
                 <Select
@@ -346,12 +539,17 @@ export const AddUserAccessDialog = ({ open, handleClose ,user }) => {
                   }}
                 >
                   {access?.map((item, key) => (
-                    <MenuItem key={key} value={item.ID}>
+                    <MenuItem key={key} value={item}>
                       {item.name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid item md={4} xs={12}>
+              <Button onClick={handleAddRole} variant="contained">
+                Save Role
+              </Button>
             </Grid>
           </Grid>
         </DialogContent>

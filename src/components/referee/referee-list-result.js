@@ -19,7 +19,7 @@ import { getInitials } from '../../utils/get-initials';
 
 
 
-export const RefereeListResults = ({ staffAccess,handleOpenStaffRegistrationDetails, ...rest }) => {
+export const RefereeListResults = ({ referee, handleOpenRefereeDetails, ...rest }) => {
   const [selectedRefereeIds, setSelectedRefereeIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -30,7 +30,7 @@ export const RefereeListResults = ({ staffAccess,handleOpenStaffRegistrationDeta
 
 
     if (event.target.checked) {
-      newSelectedRefereeIds = staffAccess.map((customer) => customer.id);
+      newSelectedRefereeIds = referee?.map((customer) => customer.id);
     } else {
       newSelectedRefereeIds = [];
     }
@@ -65,6 +65,7 @@ export const RefereeListResults = ({ staffAccess,handleOpenStaffRegistrationDeta
   const handlePageChange = (event, newPage) => {
     setPage(newPage);
   };
+  // console.log(referee);
 
   return (
     <Card {...rest}>
@@ -85,7 +86,10 @@ export const RefereeListResults = ({ staffAccess,handleOpenStaffRegistrationDeta
                   />
                 </TableCell> */}
                 <TableCell>
-                Full name
+                First name
+                </TableCell>
+                <TableCell>
+                Last name
                 </TableCell>
                 <TableCell>
                 User name
@@ -114,20 +118,20 @@ export const RefereeListResults = ({ staffAccess,handleOpenStaffRegistrationDeta
               </TableRow>
             </TableHead>
             <TableBody>
-              {staffAccess?.slice(0, limit).map((staffs) => (
+              {referee?.slice(0, limit).map((referee) => (
                 <TableRow
                   style={{cursor:"pointer"}}
                   onClick={()=>{
-                    handleOpenStaffRegistrationDetails(staffs)
+                    handleOpenRefereeDetails(referee)
                   }}
                   hover
-                  key={staffs.ID}
-                  // selected={selectedRefereeIds.indexOf(staffs.ID) !== -1}
+                  key={referee.ID}
+                  // selected={selectedRefereeIds.indexOf(referee.ID) !== -1}
                 >
                   {/* <TableCell padding="checkbox">
                     <Checkbox
-                      checked={selectedRefereeIds.indexOf(staffs.id) !== -1}
-                      onChange={(event) => handleSelectOne(event, staffs.id)}
+                      checked={selectedRefereeIds.indexOf(referee.id) !== -1}
+                      onChange={(event) => handleSelectOne(event, referee.id)}
                       value="true"
                     />
                   </TableCell> */}
@@ -139,54 +143,57 @@ export const RefereeListResults = ({ staffAccess,handleOpenStaffRegistrationDeta
                       }}
                     >
                       <Avatar
-                        src={staffs.avatarUrl}
+                        src={referee.avatarUrl}
                         sx={{ mr: 2 }}
                       >
-                        {getInitials(staffs.FullName)}
+                        {getInitials(referee.FirstName)}
                       </Avatar>
                       <Typography
                         color="textPrimary"
                         variant="body1"
                       >
-                        {staffs.FullName}
+                        {referee.FirstName}
                       </Typography>
                     </Box>
                   </TableCell>
+                  <TableCell>
+                    {referee.LastName}
+                  </TableCell>
 
                   <TableCell>
-                    {staffs.UserName}
+                    {referee.UserName}
                   </TableCell>
 
                   {/* <TableCell>
-                    {staffs.password}
+                    {referee.password}
                   </TableCell> */}
                   
                   {/* <TableCell>
-                    {`${staffs.address.street}, ${staffs.address.city}`}
+                    {`${referee.address.street}, ${referee.address.city}`}
                   </TableCell> */}
                   
                   <TableCell>
-                    {staffs.EMail}
+                    {referee.EMail}
                   </TableCell>
 
                   <TableCell>
-                    {staffs.MobileNo}
+                    {referee.ContactNo}
                   </TableCell>
 
                   {/* <TableCell>
-                    {staffs.staffRole}
+                    {referee.staffRole}
                   </TableCell>
 
                   <TableCell>
-                    {staffs.staffAccess}
+                    {referee.staffAccess}
                   </TableCell>
 
                   <TableCell>
-                    {staffs.action}
+                    {referee.action}
                   </TableCell> */}
                   
                   {/* <TableCell>
-                    {format(staffs.createdAt, 'dd/MM/yyyy')}
+                    {format(referee.createdAt, 'dd/MM/yyyy')}
                   </TableCell> */}  
         
                 </TableRow>

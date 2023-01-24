@@ -1,4 +1,3 @@
-import useStorage from "src/hooks/useStorage";
 import { getAllStaff } from "src/services/staffRequest";
 import useSWR from "swr";
 import { swrConfigs } from "./swrConfigs";

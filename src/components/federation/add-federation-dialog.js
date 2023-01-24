@@ -125,7 +125,6 @@ export const AddFederationDialog = ({ open, handleClose, mutate }) => {
       })
 
 
-
   }
 
 
@@ -198,7 +197,7 @@ export const AddFederationDialog = ({ open, handleClose, mutate }) => {
           }
           if (resp.status === "failed") {
             handleClose();
-            enqueueSnackbar("Feferation Not Added", { variant: "failed" });
+            enqueueSnackbar("Federation Not Added", { variant: "failed" });
             setLoading(false);
           }
         });

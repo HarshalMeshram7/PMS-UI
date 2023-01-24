@@ -70,7 +70,7 @@ export const AddReportListDialog = ({ open, handleClose }) => {
                 console.log(data);
                 // await addAcademy(data);
                 handleClose();
-                enqueueSnackbar("Player Added Succesfully", { variant: "success" });
+                enqueueSnackbar("Report Added Succesfully", { variant: "success" });
                 setLoading(false);
 
             } catch (error) {

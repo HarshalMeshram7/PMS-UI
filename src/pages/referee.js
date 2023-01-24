@@ -12,7 +12,7 @@ import { useAllReferee } from "src/adapters/refereeAdapter";
 const RefereeRegistration = () => {
   const [showAddRefereeDialog, setShowAddRefereeDialog] = useState(false);
   const [showRefereeDetailsDialog, setShowRefereeDetailsDialog] = useState(false);
-  
+
   const [referee, setReferee] = useState({});
 
   const [params, setParams] = useState({});
@@ -22,13 +22,15 @@ const RefereeRegistration = () => {
 
   const handleOpenRefereeDetails = (referee) => {
     try {
-      getRefereeDetails({ id: referee.ID }).then((res) => {
-        if (res?.status === "SUCCESS") {
-          let Sendreferee = { ...res.result, fullName: referee.FullName }
-          setReferee(Sendreferee);
-          setShowRefereeDetailsDialog(true)
-        }
-      })
+      // getRefereeDetails({ id: referee.ID }).then((res) => {
+      //   if (res?.status === "SUCCESS") {
+      //     let Sendreferee = { ...res.result, fullName: referee.FullName }
+      // setReferee(Sendreferee);
+      // setShowRefereeDetailsDialog(true)
+      // }
+      // })
+      setReferee(referee);
+      setShowRefereeDetailsDialog(true)
     }
     catch (error) {
       console.log(error);
@@ -54,19 +56,19 @@ const RefereeRegistration = () => {
           open={showAddRefereeDialog}
           handleClose={handleCloseAddReferee}
         />
-        
+
         <RefereeDetailsDialog
           referees={referee}
           open={showRefereeDetailsDialog}
           handleClose={handleCloseRefereeDetails}
         />
-        
+
         <Container maxWidth={false}>
           <RefereeListToolbar
             handleOpenAddReferee={handleOpenAddReferee}
             open={showAddRefereeDialog}
           />
-          
+
           <Box sx={{ mt: 3 }}>
             <RefereeListResults referee={referees || []}
               handleOpenRefereeDetails={handleOpenRefereeDetails} />

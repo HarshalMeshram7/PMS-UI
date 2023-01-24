@@ -1,18 +1,20 @@
 import {
-    Button,
-    CircularProgress,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
-    TextField,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    Box,
-    Grid,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Box,
+  Grid,
+  Typography,
+  IconButton,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
@@ -20,459 +22,551 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { addAcademy } from "src/services/academyRequest";
 import LoadingBox from "src/components/common/loading-box";
+import DeleteIcon from "@mui/icons-material/Delete";
+import uploadFileToBlob, { deleteBlob, handlePriview, getFileName } from "src/utils/azureBlob";
+import { addPlayers } from "src/services/playersRequest";
 
 const sportsList = [
-    {
-        value: "football",
-        label: "Football"
-    },
-    {
-        value: "cricket",
-        label: "Cricket"
-    },
-    {
-        value: "tennis",
-        label: "Tennis"
-    }
+  {
+    value: "football",
+    label: "Football",
+  },
+  {
+    value: "cricket",
+    label: "Cricket",
+  },
+  {
+    value: "tennis",
+    label: "Tennis",
+  },
 ];
 
-export const AddPlayerDialog = ({ open, handleClose }) => {
-    const { enqueueSnackbar } = useSnackbar();
-    const [loading, setLoading] = useState();
+const Gender = [
+  {
+    value: "Male",
+    label: "Male"
+  },
+  {
+    value: "Female",
+    label: "Female"
+  },
+  {
+    value: "Other",
+    label: "Other"
+  }
+];
 
-    const formik = useFormik({
-        initialValues: {
-            FirstName: "",
-            LastName: "",
-            AcademyClub: "",
-            TypeOfPlayer: "",
-            Gender: "",
-            DateOfBirth: "",
-            Address: "",
-            Phone: "",
-            EducationQualification: "",
-            Documents: "",
-            Photo: "",
-            PlayerTeam: "",
-            Email: "",
-            BasePrice: "",
-            PlayingPosition: "",
-            TMSITMSApplicable: ""
-        },
-        validationSchema: Yup.object({
-            FirstName: Yup
-                .string()
-                .max(100)
-                .required("Player's First Name is required"),
-            LastName: Yup
-                .string()
-                .max(100)
-                .required("Player's Last Name is required"),
-            AcademyClub: Yup
-                .string()
-            // .required('Required')
-            ,
-            TypeOfPlayer: Yup
-                .string()
-            // .required('Required')
-            ,
-            Address: Yup
-                .string()
-            // .required('Required')
-            ,
+const TMSITMSApplicable = [
+  {
+    value: 1,
+    label: "Yes"
+  },
+  {
+    value: 0,
+    label: "No"
+  },
 
-            Phone: Yup.string()
-                .length(10)
-                .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, 'Phone number is not valid')
-                .required("Phone number is required"),
-            EducationQualification: Yup
-                .string()
-                .max(255)
-            // .required("Email is required")
-            ,
-            Documents: Yup
-                .string()
-                .max(255)
-            // .required("Email is required")
-            ,
-            Photo: Yup
-                .string()
-                .max(255)
-            // .required("Email is required")
-            ,
-            PlayerTeam: Yup
-                .string()
-                .max(255)
-            // .required("Email is required")
-            ,
-            Email: Yup
-                .string()
-                .email("Must be a valid Email")
-                .max(255)
-                .required("Email is required"),
+];
 
-            BasePrice: Yup
-                .string()
-                .max(100),
-            PlayingPosition: Yup
-                .string()
-                .max(100),
-            TMSITMSApplicable: Yup
-                .string()
-                .max(100),
 
-        }),
-        onSubmit: async (data) => {
-            setLoading(true);
+const TypeOfPlayerID = [
+  {
+    value: 1,
+    label: "Professional"
+  },
+  {
+    value: 2,
+    label: "Non-Professional"
+  },
+  {
+    value: 0,
+    label: "Loan-Player"
+  }
+];
 
-            try {
-                console.log("**********");
-                console.log(data);
-                // await addAcademy(data);
-                handleClose();
-                enqueueSnackbar("Player Added Succesfully", { variant: "success" });
-                setLoading(false);
 
-            } catch (error) {
-                setLoading(false);
-            }
-        },
+export const AddPlayerDialog = ({ open, handleClose, mutate }) => {
+  const { enqueueSnackbar } = useSnackbar();
+  const [loading, setLoading] = useState();
+
+  //   photo upload
+  const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [selectedPhotoName, setSelectedPhotoName] = useState("");
+
+  const [uploadedPhoto, setUploadedPhoto] = useState(false);
+  const [uploadedPhotoName, setUploadedPhotoName] = useState("");
+  //  Document banner
+  const [selectedDocuments, setSelectedDocuments] = useState(null);
+  const [selectedDocumentsName, setSelectedDocumentsName] = useState("");
+
+  const [uploadedDocuments, setUploadedDocuments] = useState(false);
+  const [uploadedDocumentsName, setUploadedDocumentsName] = useState("");
+
+  //   educational document
+  const [selectedEduDocument, setSelectedEduDocument] = useState(null);
+  const [selectedEduDocumentName, setSelectedEduDocumentName] = useState("");
+
+  const [uploadedEduDocument, setUploadedEduDocument] = useState(false);
+  const [uploadedEduDocumentName, setUploadedEduDocumentName] = useState("");
+
+  const onFileChnage = (e) => {
+    if (e.target.name == "photo") {
+      setUploadedPhoto(false);
+      setSelectedPhoto(e.target.files[0]);
+      setSelectedPhotoName(e.target.files[0].name);
+    }
+
+    if (e.target.name == "documents") {
+      setUploadedDocuments(false);
+      setSelectedDocuments(e.target.files[0]);
+      setSelectedDocumentsName(e.target.files[0].name);
+    }
+    if (e.target.name == "edudocuments") {
+      setUploadedEduDocument(false);
+      setSelectedEduDocument(e.target.files[0]);
+      setSelectedEduDocumentName(e.target.files[0].name);
+    }
+  };
+  const onFileUpload = async (file, id) => {
+    setLoading(true);
+
+    // *** UPLOAD TO AZURE STORAGE ***
+    const blobsInContainer = await uploadFileToBlob(file).then(() => {
+      if (id == 1) {
+        // prepare UI for results
+        setUploadedPhoto(true);
+        setUploadedPhotoName(selectedPhotoName);
+        //   reseting selected files
+        setSelectedPhoto(null);
+        setSelectedPhotoName("");
+      }
+
+      if (id == 2) {
+        // prepare UI for results
+        setUploadedDocuments(true);
+        setUploadedDocumentsName(selectedDocumentsName);
+        //   reseting selected files
+        setSelectedDocuments(null);
+        setSelectedDocumentsName("");
+      }
+      if (id == 3) {
+        // prepare UI for results
+        setUploadedEduDocument(true);
+        setUploadedEduDocumentName(selectedEduDocumentName);
+        //   reseting selected files
+        setSelectedEduDocument(null);
+        setSelectedEduDocumentName("");
+      }
     });
 
-    useEffect(() => {
-        if (!open) {
-            formik.resetForm();
-        }
-    }, [open]);
+    setLoading(false);
+  };
 
-    return (
-        <Dialog
-            open={open}
-            onClose={!loading && handleClose}
-            fullWidth
-            maxWidth="lg"
-            BackdropProps={{
-                style: { backgroundColor: "#121212dd" },
-            }}
-        >
-            {loading && <LoadingBox />}
-            <form onSubmit={formik.handleSubmit}>
-                <DialogTitle>Add New Playersss</DialogTitle>
-                <DialogContent>
-                    <DialogContentText sx={{ marginBottom: 2 }}>
-                        Enter the required basic details of the Player below.
-                    </DialogContentText>
+  const onDeleteFile = (fileName, id) => {
+    deleteBlob(fileName).then(() => {
+      if (id == 1) {
+        setSelectedPhoto(null);
+        setUploadedPhotoName("");
+        setUploadedPhoto(false);
+      }
 
-                    <Grid
-                        container
-                        spacing={3}
-                    >
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.FirstName && formik.errors.FirstName)}
-                                fullWidth
-                                helperText={formik.touched.FirstName && formik.errors.FirstName}
-                                label="First Name"
-                                margin="dense"
-                                name="FirstName"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.FirstName}
-                                variant="outlined"
-                            />
-                        </Grid>
-
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.LastName && formik.errors.LastName)}
-                                fullWidth
-                                helperText={formik.touched.LastName && formik.errors.LastName}
-                                label="Last Name"
-                                margin="dense"
-                                name="LastName"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.LastName}
-                                variant="outlined"
-                            />
-                        </Grid>
-
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.AcademyClub && formik.errors.AcademyClub)}
-                                fullWidth
-                                helperText={formik.touched.AcademyClub && formik.errors.AcademyClub}
-                                label="Academy / Club"
-                                margin="dense"
-                                name="AcademyClub"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.AcademyClub}
-                                variant="outlined"
-                            />
-                        </Grid>
+      if (id == 2) {
+        setSelectedDocuments(null);
+        setUploadedDocumentsName("");
+        setUploadedDocuments(false);
+      }
+      if (id == 3) {
+        setSelectedEduDocument(null);
+        setUploadedEduDocumentName("");
+        setUploadedEduDocument(false);
+      }
+    });
+  };
 
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.TypeOfPlayer && formik.errors.TypeOfPlayer)}
-                                fullWidth
-                                helperText={formik.touched.TypeOfPlayer && formik.errors.TypeOfPlayer}
-                                label="Type Of Player"
-                                margin="dense"
-                                name="TypeOfPlayer"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.TypeOfPlayer}
-                                variant="outlined"
-                            />
-                        </Grid>
+  const formik = useFormik({
+    initialValues: {
+      FirstName: "",
+      LastName: "",
+      Gender: "",
+      DateOfBirth: "",
+      Phone: "",
+      Email: "",
+      TypeOfPlayerID: "",
+      EducationQualification: "",
+      edudocuments: "",
+      photo: "",
+      BasePrice: "",
+      PlayingPosition: "",
+      documents: "",
 
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.Gender && formik.errors.Gender)}
-                                fullWidth
-                                helperText={formik.touched.Gender && formik.errors.Gender}
-                                label="Gender"
-                                margin="dense"
-                                name="Gender"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.Gender}
-                                variant="outlined"
-                            />
-                        </Grid>
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.DateOfBirth && formik.errors.DateOfBirth)}
-                                fullWidth
-                                helperText={formik.touched.DateOfBirth && formik.errors.DateOfBirth}
-                                label="Date Of Birth"
-                                InputLabelProps={{ shrink: true }}
-                                margin="dense"
-                                name="DateOfBirth"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="date"
-                                value={formik.values.DateOfBirth}
-                                variant="outlined"
-                            />
-                        </Grid>
+      TMSITMSApplicable: "",
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.Address && formik.errors.Address)}
-                                fullWidth
-                                helperText={formik.touched.Address && formik.errors.Address}
-                                label="Address"
-                                margin="dense"
-                                name="Address"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.Address}
-                                variant="outlined"
-                            />
-                        </Grid>
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.Phone && formik.errors.Phone)}
-                                fullWidth
-                                helperText={formik.touched.Phone && formik.errors.Phone}
-                                label="Phone Number"
-                                margin="dense"
-                                name="Phone"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="number"
-                                value={formik.values.Phone}
-                                variant="outlined"
-                            />
-                        </Grid>
+      Password: "",
+      RecoveryEMail: "",
+      LongDescription: "",
+      Facebook: "",
+      Twitter: "",
+      Linkedin: "",
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.EducationQualification && formik.errors.edu)}
-                                fullWidth
-                                helperText={formik.touched.EducationQualification && formik.errors.edu}
-                                label="Educational Qualification"
-                                margin="dense"
-                                name="EducationQualification"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.EducationQualification}
-                                variant="outlined"
-                            />
-                        </Grid>
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.Documents && formik.errors.Documents)}
-                                fullWidth
-                                helperText={formik.touched.Documents && formik.errors.Documents}
-                                label="Documents"
-                                margin="dense"
-                                InputLabelProps={{ shrink: true }}
-                                name="Documents"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="file"
-                                value={formik.values.Documents}
-                                variant="outlined"
-                            />
-                        </Grid>
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.PlayerTeam && formik.errors.PlayerTeam)}
-                                fullWidth
-                                helperText={formik.touched.PlayerTeam && formik.errors.PlayerTeam}
-                                label="Player Team"
-                                margin="dense"
-                                name="PlayerTeam"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.PlayerTeam}
-                                variant="outlined"
-                            />
-                        </Grid>
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.Photo && formik.errors.Photo)}
-                                fullWidth
-                                helperText={formik.touched.Photo && formik.errors.Photo}
-                                label="Photo"
-                                InputLabelProps={{ shrink: true }}
-                                margin="dense"
-                                name="Photo"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="file"
-                                value={formik.values.Photo}
-                                variant="outlined"
-                            />
-                        </Grid>
+      AcademyClub: "",
+      Address: "",
+      PlayerTeam: "",
+    },
+    validationSchema: Yup.object({
+      FirstName: Yup.string().max(100).required("Player's First Name is required"),
+      LastName: Yup.string().max(100).required("Player's Last Name is required"),
+      AcademyClub: Yup.string(),
+      // .required('Required')
+      // ,
+      // TypeOfPlayerID: Yup
+      //     .string()
+      // .required('Required')
+      Address: Yup.string(),
+      // .required('Required')
+      Phone: Yup.string()
+        .length(10)
+        .matches(/^(?:(?:\+|0{0,2})91(\s*[\-]\s*)?|[0]?)?[789]\d{9}$/, "Phone number is not valid")
+        .required("Phone number is required"),
+      EducationQualification: Yup.string().max(255),
+      // .required("Email is required")
+      // Documentss: Yup
+      //     .string()
+      //     .max(255)
+      // .required("Email is required")
+      // ,
+      // Photo: Yup
+      //     .string()
+      //     .max(255)
+      // .required("Email is required")
+      // ,
+      PlayerTeam: Yup.string().max(255),
+      // .required("Email is required")
+      Email: Yup.string().email("Must be a valid Email").max(255).required("Email is required"),
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.Email && formik.errors.Email)}
-                                fullWidth
-                                helperText={formik.touched.Email && formik.errors.Email}
-                                label="Email"
-                                margin="dense"
-                                name="Email"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="email"
-                                value={formik.values.Email}
-                                variant="outlined"
-                            />
-                        </Grid>
+      BasePrice: Yup.string().max(100),
+      PlayingPosition: Yup.string().max(100),
+      // TMSITMSApplicable: Yup.string().max(100),
+    }),
+    onSubmit: async (data) => {
+      setLoading(true);
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.BasePrice && formik.errors.BasePrice)}
-                                fullWidth
-                                helperText={formik.touched.BasePrice && formik.errors.BasePrice}
-                                label="Base Price"
-                                margin="dense"
-                                name="BasePrice"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="number"
-                                value={formik.values.BasePrice}
-                                variant="outlined"
-                            />
-                        </Grid>
+      try {
+        let finalData = {
+          ...data,
+          photo: handlePriview(uploadedPhotoName),
+          documents: handlePriview(uploadedDocumentsName),
+          edudocuments: handlePriview(uploadedEduDocumentName),
+        };
+        console.log(finalData);
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.PlayingPosition && formik.errors.PlayingPosition)}
-                                fullWidth
-                                helperText={formik.touched.PlayingPosition && formik.errors.PlayingPosition}
-                                label="Playing Position"
-                                margin="dense"
-                                name="PlayingPosition"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.PlayingPosition}
-                                variant="outlined"
-                            />
-                        </Grid>
+        await addPlayers(finalData);
+        handleClose();
+        enqueueSnackbar("Player Added Succesfully", { variant: "success" });
+        mutate();
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+    },
+  });
 
-                        {/* <Grid
+  useEffect(() => {
+    if (!open) {
+      formik.resetForm();
+    }
+  }, [open]);
+
+  return (
+    <Dialog
+      open={open}
+      onClose={!loading && handleClose}
+      fullWidth
+      maxWidth="lg"
+      BackdropProps={{
+        style: { backgroundColor: "#121212dd" },
+      }}
+    >
+      {loading && <LoadingBox />}
+      <form onSubmit={formik.handleSubmit}>
+        <DialogTitle>Add New Playersss</DialogTitle>
+        <DialogContent>
+          <DialogContentText sx={{ marginBottom: 2 }}>
+            Enter the required basic details of the Player below.
+          </DialogContentText>
+
+          <Grid container spacing={3}>
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.FirstName && formik.errors.FirstName)}
+                fullWidth
+                helperText={formik.touched.FirstName && formik.errors.FirstName}
+                label="First Name"
+                margin="dense"
+                name="FirstName"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.FirstName}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.LastName && formik.errors.LastName)}
+                fullWidth
+                helperText={formik.touched.LastName && formik.errors.LastName}
+                label="Last Name"
+                margin="dense"
+                name="LastName"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.LastName}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid
+              item
+              md={6}
+              xs={12}
+            >
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-helper-label">Gender</InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  value={formik.values.Gender}
+                  name="Gender"
+                  label="Gender"
+                  onChange={formik.handleChange}
+                >
+                  {Gender?.map((option, key) => (
+                    <MenuItem key={key}
+                      value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.DateOfBirth && formik.errors.DateOfBirth)}
+                fullWidth
+                helperText={formik.touched.DateOfBirth && formik.errors.DateOfBirth}
+                label="Date Of Birth"
+                InputLabelProps={{ shrink: true }}
+                margin="dense"
+                name="DateOfBirth"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="date"
+                value={formik.values.DateOfBirth}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Email && formik.errors.Email)}
+                fullWidth
+                helperText={formik.touched.Email && formik.errors.Email}
+                label="Email"
+                margin="dense"
+                name="Email"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="email"
+                value={formik.values.Email}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.RecoveryEMail && formik.errors.RecoveryEMail)}
+                fullWidth
+                helperText={formik.touched.RecoveryEMail && formik.errors.RecoveryEMail}
+                label="Recovery Email"
+                margin="dense"
+                name="RecoveryEMail"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.RecoveryEMail}
+                variant="outlined"
+              />
+            </Grid>
+
+            
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Phone && formik.errors.Phone)}
+                fullWidth
+                helperText={formik.touched.Phone && formik.errors.Phone}
+                label="Phone Number"
+                margin="dense"
+                name="Phone"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="number"
+                value={formik.values.Phone}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Password && formik.errors.Password)}
+                fullWidth
+                helperText={formik.touched.Password && formik.errors.Password}
+                label="Password"
+                margin="dense"
+                name="Password"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="password"
+                value={formik.values.Password}
+                variant="outlined"
+              />
+            </Grid>
+
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.AcademyClub && formik.errors.AcademyClub)}
+                fullWidth
+                helperText={formik.touched.AcademyClub && formik.errors.AcademyClub}
+                label="Academy / Club"
+                margin="dense"
+                name="AcademyClub"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.AcademyClub}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid
+              item
+              md={6}
+              xs={12}
+            >
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-helper-label">Type Of Player</InputLabel>
+                <Select
+                  labelId="TypeOfPlayerID"
+                  id="TypeOfPlayerID"
+                  value={formik.values.TypeOfPlayerID}
+                  name="TypeOfPlayerID"
+                  label="Type Of Player"
+                  onChange={formik.handleChange}
+                >
+                  {TypeOfPlayerID?.map((option, key) => (
+                    <MenuItem key={key}
+                      value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Address && formik.errors.Address)}
+                fullWidth
+                helperText={formik.touched.Address && formik.errors.Address}
+                label="Address"
+                margin="dense"
+                name="Address"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.Address}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.EducationQualification && formik.errors.EducationQualification)}
+                fullWidth
+                helperText={formik.touched.EducationQualification && formik.errors.EducationQualification}
+                label="Highest Educational Qualification"
+                margin="dense"
+                name="EducationQualification"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.EducationQualification}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.PlayerTeam && formik.errors.PlayerTeam)}
+                fullWidth
+                helperText={formik.touched.PlayerTeam && formik.errors.PlayerTeam}
+                label="Player Team"
+                margin="dense"
+                name="PlayerTeam"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.PlayerTeam}
+                variant="outlined"
+              />
+            </Grid>
+
+            
+           
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.BasePrice && formik.errors.BasePrice)}
+                fullWidth
+                helperText={formik.touched.BasePrice && formik.errors.BasePrice}
+                label="Base Price"
+                margin="dense"
+                name="BasePrice"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="number"
+                value={formik.values.BasePrice}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.PlayingPosition && formik.errors.PlayingPosition)}
+                fullWidth
+                helperText={formik.touched.PlayingPosition && formik.errors.PlayingPosition}
+                label="Playing Position"
+                margin="dense"
+                name="PlayingPosition"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.PlayingPosition}
+                variant="outlined"
+              />
+            </Grid>
+
+            {/* <Grid
                             item
                             md={6}
                             xs={12}
@@ -496,29 +590,288 @@ export const AddPlayerDialog = ({ open, handleClose }) => {
                                     ))}
                                 </Select>
                             </FormControl>
-                        </Grid> */}
+             </Grid> */}
 
-                        <Grid
-                            item
-                            md={6}
-                            xs={12}
-                        >
-                            <TextField
-                                error={Boolean(formik.touched.TMSITMSApplicable && formik.errors.TMSITMSApplicable)}
-                                fullWidth
-                                helperText={formik.touched.TMSITMSApplicable && formik.errors.TMSITMSApplicable}
-                                label=" TMS / ITMS Applicable"
-                                margin="dense"
-                                name="TMSITMSApplicable"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                type="text"
-                                value={formik.values.TMSITMSApplicable}
-                                variant="outlined"
-                            />
-                        </Grid>
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.LongDescription && formik.errors.LongDescription)}
+                fullWidth
+                helperText={formik.touched.LongDescription && formik.errors.LongDescription}
+                label="Long Description"
+                margin="dense"
+                name="LongDescription"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.LongDescription}
+                variant="outlined"
+              />
+            </Grid>
 
-                        {/* <Grid
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Facebook && formik.errors.Facebook)}
+                fullWidth
+                helperText={formik.touched.Facebook && formik.errors.Facebook}
+                label="Facebook"
+                margin="dense"
+                name="Facebook"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.Facebook}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Twitter && formik.errors.Twitter)}
+                fullWidth
+                helperText={formik.touched.Twitter && formik.errors.Twitter}
+                label="Twitter"
+                margin="dense"
+                name="Twitter"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.Twitter}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                error={Boolean(formik.touched.Linkedin && formik.errors.Linkedin)}
+                fullWidth
+                helperText={formik.touched.Linkedin && formik.errors.Linkedin}
+                label="LinkedIn"
+                margin="dense"
+                name="Linkedin"
+                onBlur={formik.handleBlur}
+                onChange={formik.handleChange}
+                type="text"
+                value={formik.values.Linkedin}
+                variant="outlined"
+              />
+            </Grid>
+
+            <Grid
+              item
+              md={6}
+              xs={12}
+            >
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-helper-label">TMSITMSApplicable</InputLabel>
+                <Select
+                  labelId="demo-simple-select-helper-label"
+                  id="demo-simple-select-helper"
+                  value={formik.values.TMSITMSApplicable}
+                  name="TMSITMSApplicable"
+                  label="TMSITMSApplicable"
+                  onChange={formik.handleChange}
+                >
+                  {TMSITMSApplicable?.map((option, key) => (
+                    <MenuItem key={key}
+                      value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+
+            <Grid item md={6} xs={12}>
+
+              <TextField
+                style={{ display: "none" }}
+                error={Boolean(formik.touched.edudocuments && formik.errors.edudocuments)}
+                fullWidth
+                helperText={formik.touched.edudocuments && formik.errors.edudocuments}
+                label="edudocuments"
+                id="edudocuments"
+                margin="dense"
+                name="edudocuments"
+                onChange={onFileChnage}
+                type="file"
+                value={formik.values.edudocuments}
+                variant="outlined"
+              />
+              <Button
+                onClick={() => {
+                  document.getElementById("edudocuments").click();
+                }}
+              >
+                Upload Documents
+              </Button>
+
+              <Button disabled>
+                <Typography>{selectedEduDocumentName}</Typography>
+              </Button>
+              {uploadedEduDocument ? (
+                <Button disabled variant="contained">
+                  Uploaded &#10004;{" "}
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  disabled={!selectedEduDocument}
+                  onClick={(e) => {
+                    onFileUpload(selectedEduDocument, 3);
+                  }}
+                >
+                  Upload
+                </Button>
+              )}
+              <br></br>
+              {uploadedEduDocument ? (
+                <>
+                  <Button target="blank" href={handlePriview(uploadedEduDocumentName)}>
+                    <Typography>{uploadedEduDocumentName}</Typography>
+                  </Button>
+                  <IconButton
+                    onClick={() => {
+                      onDeleteFile(uploadedEduDocumentName, 3);
+                    }}
+                    aria-label="delete"
+                    size="large"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </>
+              ) : (
+                ""
+              )}
+            </Grid>
+
+
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                style={{ display: "none" }}
+                error={Boolean(formik.touched.photo && formik.errors.photo)}
+                fullWidth
+                helperText={formik.touched.photo && formik.errors.photo}
+                label="Photo"
+                id="uploadphoto"
+                margin="dense"
+                name="photo"
+                onChange={onFileChnage}
+                type="file"
+                value={formik.values.photo}
+                variant="outlined"
+              />
+              <Button
+                onClick={() => {
+                  document.getElementById("uploadphoto").click();
+                }}
+              >
+                Upload Photo
+              </Button>
+              <Button disabled>
+                <Typography>{selectedPhotoName}</Typography>
+              </Button>
+              {uploadedPhoto ? (
+                <Button disabled variant="contained">
+                  Uploaded &#10004;{" "}
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  disabled={!selectedPhoto}
+                  onClick={(e) => {
+                    onFileUpload(selectedPhoto, 1);
+                  }}
+                >
+                  Upload
+                </Button>
+              )}
+              <br></br>
+              {uploadedPhoto ? (
+                <>
+                  <Button target="blank" href={handlePriview(uploadedPhotoName)}>
+                    <Typography>{uploadedPhotoName}</Typography>
+                  </Button>
+                  <IconButton
+                    onClick={() => {
+                      onDeleteFile(uploadedPhotoName, 1);
+                    }}
+                    aria-label="delete"
+                    size="large"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </>
+              ) : (
+                ""
+              )}
+            </Grid>
+
+            <Grid item md={6} xs={12}>
+              <TextField
+                style={{ display: "none" }}
+                error={Boolean(formik.touched.documents && formik.errors.documents)}
+                fullWidth
+                helperText={formik.touched.documents && formik.errors.documents}
+                label="Documents"
+                id="uploadDocuments"
+                margin="dense"
+                name="documents"
+                onBlur={formik.handleBlur}
+                onChange={onFileChnage}
+                type="file"
+                value={formik.values.documents}
+                variant="outlined"
+              />
+              <Button
+                onClick={() => {
+                  document.getElementById("uploadDocuments").click();
+                }}
+              >
+                Upload Documents
+              </Button>
+
+              <Button disabled>
+                <Typography>{selectedDocumentsName}</Typography>
+              </Button>
+              {uploadedDocuments ? (
+                <Button disabled variant="contained">
+                  Uploaded &#10004;{" "}
+                </Button>
+              ) : (
+                <Button
+                  variant="contained"
+                  disabled={!selectedDocuments}
+                  onClick={(e) => {
+                    onFileUpload(selectedDocuments, 2);
+                  }}
+                >
+                  Upload
+                </Button>
+              )}
+              <br></br>
+              {uploadedDocuments ? (
+                <>
+                  <Button target="blank" href={handlePriview(uploadedDocumentsName)}>
+                    <Typography>{uploadedDocumentsName}</Typography>
+                  </Button>
+                  <IconButton
+                    onClick={() => {
+                      onDeleteFile(uploadedDocumentsName, 2);
+                    }}
+                    aria-label="delete"
+                    size="large"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </>
+              ) : (
+                ""
+              )}
+            </Grid>
+
+            {/* <Grid
                             item
                             md={6}
                             xs={12}
@@ -540,7 +893,7 @@ export const AddPlayerDialog = ({ open, handleClose }) => {
                             <Button onClick={() => { document.getElementById("uploadLogo").click() }}>Upload Logo</Button>
                         </Grid> */}
 
-                        {/* <Grid
+            {/* <Grid
                             item
                             md={6}
                             xs={12}
@@ -561,14 +914,15 @@ export const AddPlayerDialog = ({ open, handleClose }) => {
                             />
                             <Button onClick={() => { document.getElementById("uploadBanner").click() }}>Upload Banner</Button>
                         </Grid> */}
-
-                    </Grid>
-                </DialogContent>
-                <DialogActions>
-                    <Button onClick={handleClose} >Cancel</Button>
-                    <Button type="submit" variant="contained">Add</Button>
-                </DialogActions>
-            </form>
-        </Dialog>
-    );
+          </Grid>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button type="submit" variant="contained">
+            Add
+          </Button>
+        </DialogActions>
+      </form>
+    </Dialog>
+  );
 };

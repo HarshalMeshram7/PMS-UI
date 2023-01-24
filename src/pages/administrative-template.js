@@ -1,29 +1,25 @@
 import Head from 'next/head';
 import { Box, Container } from '@mui/material';
-import { AddPlayerDialog } from 'src/components/player/add-player-dialog.js';
-import { PlayerListResults } from '../components/player/player-list-results.js';
-import { PlayerListToolbar } from '../components/player/player-list-toolbar.js';
 import { DashboardLayout } from '../components/dashboard-layout.js';
 import { useState } from 'react';
-import { PlayerDetailsDialog } from 'src/components/player/player-details-dialog.js';
-import { ContractListToolbar } from 'src/components/contract-management/contract-list-toolbar.js';
-import { ContractDetailsDialog } from 'src/components/contract-management/contract-details-dialog.js';
-import { AddContractDialog } from 'src/components/contract-management/add-contract-dialog.js';
-import { ContractListResults } from 'src/components/contract-management/contract-list-results.js';
 import { AdministrativeListToolbar } from 'src/components/administrative-template/administrative-list-toolbar.js';
 import { AddAdministrativeDialog } from 'src/components/administrative-template/add-administrative-dialog.js';
+import { AdministrativeDetailsDialog } from 'src/components/administrative-template/administrative-details-dialog.js';
+import { AdministrativeListResults } from 'src/components/administrative-template/administrative-list-result.js';
 
 
 const AdministrativeTemplate = () => {
-  const [showAddContractDialog, setShowAddContractDialog] = useState(false);
-  const [showContractDetailsDialog, setShowContractDetailsDialog] = useState(false);
-  const handleOpenAddContract = () => setShowAddContractDialog(true);
-  const handleCloseAddContract = () => setShowAddContractDialog(false);
-  const handleOpenContractDetails = () => setShowContractDetailsDialog(true);
+  const [showAddAdministrativeDialog, setShowAddAdministrativeDialog] = useState(false);
+  const [showAdministrativeDetailsDialog, setShowAdministrativeDetailsDialog] = useState(false);
+  const handleOpenAddAdministrative = () => setShowAddAdministrativeDialog(true);
+  const handleCloseAddAdministrative = () => setShowAddAdministrativeDialog(false);
+  const handleOpenAdministrativeDetails = () => setShowAdministrativeDetailsDialog(true);
 
-  const handleCloseContractDetails = () => setShowContractDetailsDialog(false);
+  
+  const handleCloseAdministrativeDetails = () => setShowAdministrativeDetailsDialog(false);
 
-  let contractlist =
+
+  let administrativelist =
     [
       {
         id: "1",
@@ -60,7 +56,7 @@ const AdministrativeTemplate = () => {
     <>
       <Head>
         <title>
-          Contract Management | PMS
+          Administrative Template | PMS
         </title>
       </Head>
       <Box
@@ -70,27 +66,26 @@ const AdministrativeTemplate = () => {
           py: 8
         }}
       >
-        <ContractDetailsDialog
-          open={showContractDetailsDialog}
-          handleClose={handleCloseContractDetails}
+        <AdministrativeDetailsDialog
+          open={showAdministrativeDetailsDialog}
+          handleClose={handleCloseAdministrativeDetails}
         />
-
         <AddAdministrativeDialog
-          open={showAddContractDialog}
-          handleClose={handleCloseAddContract}
+          open={showAddAdministrativeDialog}
+          handleClose={handleCloseAddAdministrative}
         />
         
         <Container maxWidth={false}>
           <AdministrativeListToolbar
-            handleOpenAddContract={handleOpenAddContract} 
-            open={showAddContractDialog}
+            handleOpenAddAdministrative={handleOpenAddAdministrative} 
+            open={showAddAdministrativeDialog}
           />
 
           <Box sx={{ mt: 3 }}>
-            <ContractListResults contracts={contractlist} handleOpenContractDetails={handleOpenContractDetails}
+            <AdministrativeListResults administrative={administrativelist} handleOpenAdministrativeDetails={handleOpenAdministrativeDetails}
             />
           </Box>
-
+          
         </Container>
       </Box>
     </>

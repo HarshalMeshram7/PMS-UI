@@ -1,6 +1,6 @@
 import axios from "axios";
 import useStorage from "src/hooks/useStorage";
-import { MAIN_URL , MAIN_URL2 } from "./apiConfig";
+import { MAIN_URL2 } from "./apiConfig";
 
 // Add Federation
 export const addFederation = async (data) => {
@@ -62,19 +62,38 @@ export const getAllFederations = async (params) => {
     }
 };
 // Get Federation Detailsgit 
-export const getFederation = async (params) => {
+export const getFederationDetailsByid = async (params) => {
     const { token } = useStorage();
     if (!token) {
         throw "No Token";
     }
     try {
-        const res = await axios.get(`${MAIN_URL2}/getfederation`, {
+        const res = await axios.get(`${MAIN_URL2}/getfederationdetailsbyid`, {
             params: params,
             headers: {
                 Authorization: "Bearer " + token,
             },
         });
         return res?.data?.result[0];
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+// Get Federation Detailsgit 
+export const getFederationFinanceById = async (params) => {
+    const { token } = useStorage();
+    if (!token) {
+        throw "No Token";
+    }
+    try {
+        const res = await axios.get(`${MAIN_URL2}/getfederationfinancebyid`, {
+            params: params,
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
+        return res?.data?.result;
     } catch (error) {
         console.log(error);
         throw error;
@@ -87,7 +106,6 @@ export const deleteFederation = async (data) => {
         throw "No Token";
     }
     try {
-
         const res = await axios.post(`${MAIN_URL2}/Deletefederation/`,data, {
             headers: {
                 Authorization: "Bearer " + token,

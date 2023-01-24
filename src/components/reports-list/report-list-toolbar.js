@@ -46,7 +46,7 @@ import {
           <Button
             color="primary"
             variant="contained"
-            onClick={ props.handleOpenAddPlayer }
+            onClick={ props.handleOpenAddReport }
           >
             Reports
           </Button>

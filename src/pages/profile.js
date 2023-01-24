@@ -3,8 +3,16 @@ import { Box, Container, Grid, Typography } from '@mui/material';
 import { UserProfile } from '../components/account/user-profile';
 import { UserProfileDetails } from '../components/account/user-profile-details';
 import { DashboardLayout } from '../components/dashboard-layout';
+import { useEffect } from 'react';
 
-const Profile = () => (
+const Profile = () =>{ 
+  // useEffect(()=>{
+  //   navigator.geolocation.getCurrentPosition(function(position) {
+  //     console.log("Latitude is :", position.coords.latitude);
+  //     console.log("Longitude is :", position.coords.longitude);
+  //   });
+  // },[])
+  return(
   <>
     <Head>
       <title>
@@ -49,7 +57,7 @@ const Profile = () => (
       </Container>
     </Box>
   </>
-);
+)};
 
 Profile.getLayout = (page) => (
   <DashboardLayout>

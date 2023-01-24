@@ -56,7 +56,7 @@ export const AddAdministrativeDialog = ({ open, handleClose }) => {
                 <DialogTitle>Add New Template</DialogTitle>
                 <DialogContent style={{ height: '600px' }}>
                     <DialogContentText sx={{ marginBottom: 2 }}>
-                        Enter the required basic details of the Contract below.
+                        Enter the required basic details of the Administrative Template below.
                     </DialogContentText>
 
                     <Grid

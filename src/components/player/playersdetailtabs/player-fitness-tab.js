@@ -8,34 +8,11 @@ import {
 import { Divider, Typography } from "@material-ui/core";
 import { Male } from "@mui/icons-material";
 
-export default function PlayerFitnessTab() {
-    const formik = useFormik({
-        enableReinitialize: true,
-        initialValues: {
-            PhysicalFitnessInfo: "",
-            LaboratoryInfo: "",
-            PastMedication: "",
-            CurrentMedication: "",
-            Injuries: "",
-            DietPlan: "",
-            TestDetails: "",
-            TestConductedDate: "",
-            TestResult: "",
-        },
-        validationSchema: Yup.object({}),
-
-        onSubmit: async (data) => {
-            try {
-                console.log(data);
-            } catch (error) {
-                console.log(error);
-            }
-        },
-    });
+export default function PlayerFitnessTab({ formik }) {
 
     return (
         <>
-            <form onSubmit={formik.handleSubmit}>
+            {/* <form onSubmit={formik.handleSubmit}> */}
                 <Card>
                     <CardContent>
 
@@ -50,16 +27,16 @@ export default function PlayerFitnessTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.PhysicalFitnessInfo && formik.errors.PhysicalFitnessInfo)}
+                                    error={Boolean(formik.touched.FitnessPhysicalFitnessInfo && formik.errors.FitnessPhysicalFitnessInfo)}
                                     fullWidth
-                                    helperText={formik.touched.PhysicalFitnessInfo && formik.errors.PhysicalFitnessInfo}
+                                    helperText={formik.touched.FitnessPhysicalFitnessInfo && formik.errors.FitnessPhysicalFitnessInfo}
                                     label="Physical Fitness Infomation"
                                     margin="dense"
-                                    name="PhysicalFitnessInfo"
+                                    name="FitnessPhysicalFitnessInfo"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.PhysicalFitnessInfo}
+                                    value={formik.values.FitnessPhysicalFitnessInfo}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -70,16 +47,16 @@ export default function PlayerFitnessTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.LaboratoryInfo && formik.errors.LaboratoryInfo)}
+                                    error={Boolean(formik.touched.FitnessLaboratoryInfo && formik.errors.FitnessLaboratoryInfo)}
                                     fullWidth
-                                    helperText={formik.touched.LaboratoryInfo && formik.errors.LaboratoryInfo}
+                                    helperText={formik.touched.FitnessLaboratoryInfo && formik.errors.FitnessLaboratoryInfo}
                                     label="Laboratory Information"
                                     margin="dense"
-                                    name="LaboratoryInfo"
+                                    name="FitnessLaboratoryInfo"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.LaboratoryInfo}
+                                    value={formik.values.FitnessLaboratoryInfo}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -90,16 +67,16 @@ export default function PlayerFitnessTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.PastMedication && formik.errors.PastMedication)}
+                                    error={Boolean(formik.touched.FitnessPastMedication && formik.errors.FitnessPastMedication)}
                                     fullWidth
-                                    helperText={formik.touched.PastMedication && formik.errors.PastMedication}
+                                    helperText={formik.touched.FitnessPastMedication && formik.errors.FitnessPastMedication}
                                     label="Past Medication"
                                     margin="dense"
-                                    name="PastMedication"
+                                    name="FitnessPastMedication"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.PastMedication}
+                                    value={formik.values.FitnessPastMedication}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -110,16 +87,16 @@ export default function PlayerFitnessTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.CurrentMedication && formik.errors.CurrentMedication)}
+                                    error={Boolean(formik.touched.FitnessCurrentMedication && formik.errors.FitnessCurrentMedication)}
                                     fullWidth
-                                    helperText={formik.touched.CurrentMedication && formik.errors.CurrentMedication}
-                                    label="Type Of Player"
+                                    helperText={formik.touched.FitnessCurrentMedication && formik.errors.FitnessCurrentMedication}
+                                    label="Current Medication"
                                     margin="dense"
-                                    name="CurrentMedication"
+                                    name="FitnessCurrentMedication"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.CurrentMedication}
+                                    value={formik.values.FitnessCurrentMedication}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -130,24 +107,25 @@ export default function PlayerFitnessTab() {
                                 xs={12}
                             >
                                 <FormControl fullWidth>
-                                    <InputLabel id="demo-simple-select-label">Injuries</InputLabel>
+                                    <InputLabel id="demo-simple-select-label">FitnessPlayersInjuryID</InputLabel>
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        label="Injuries"
-                                        error={Boolean(formik.touched.Injuries && formik.errors.Injuries)}
+                                        label="Player Injury"
+                                        error={Boolean(formik.touched.FitnessPlayersInjuryID && formik.errors.FitnessPlayersInjuryID)}
                                         fullWidth
-                                        helperText={formik.touched.Injuries && formik.errors.Injuries}
+                                        helperText={formik.touched.FitnessPlayersInjuryID && formik.errors.FitnessPlayersInjuryID}
                                         margin="dense"
-                                        name="Injuries"
+                                        name="FitnessPlayersInjuryID"
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
-                                        value={formik.values.Injuries}
+                                        value={formik.values.FitnessPlayersInjuryID}
                                         variant="outlined"
                                     >
-                                        <MenuItem value="Knee Injury">Knee Injury</MenuItem>
-                                        <MenuItem value="Elbow Injury">Elbow Injury</MenuItem>
-                                        <MenuItem value="other">Other</MenuItem>
+                                        <MenuItem value="1">No Injury</MenuItem>
+                                        <MenuItem value="2">Knee Injury</MenuItem>
+                                        <MenuItem value="3">Elbow Injury</MenuItem>
+                                        <MenuItem value="4">Other</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -162,20 +140,20 @@ export default function PlayerFitnessTab() {
                                     <Select
                                         labelId="demo-simple-select-label"
                                         id="demo-simple-select"
-                                        label="DietPlan"
-                                        error={Boolean(formik.touched.DietPlan && formik.errors.DietPlan)}
+                                        label="Diet Plan"
+                                        error={Boolean(formik.touched.FitnessDietPlan && formik.errors.FitnessDietPlan)}
                                         fullWidth
-                                        helperText={formik.touched.DietPlan && formik.errors.DietPlan}
+                                        helperText={formik.touched.FitnessDietPlan && formik.errors.FitnessDietPlan}
                                         margin="dense"
-                                        name="DietPlan"
+                                        name="FitnessDietPlan"
                                         onBlur={formik.handleBlur}
                                         onChange={formik.handleChange}
-                                        value={formik.values.DietPlan}
+                                        value={formik.values.FitnessDietPlan}
                                         variant="outlined"
                                     >
-                                        <MenuItem value="Breakfast">Breakfast</MenuItem>
-                                        <MenuItem value="Lunch">Lunch</MenuItem>
-                                        <MenuItem value="Dinner">Dinner</MenuItem>
+                                        <MenuItem value="1">Breakfast</MenuItem>
+                                        <MenuItem value="2">Lunch</MenuItem>
+                                        <MenuItem value="3">Dinner</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -197,16 +175,16 @@ export default function PlayerFitnessTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.TestDetails && formik.errors.TestDetails)}
+                                    error={Boolean(formik.touched.FitnessTestDetails && formik.errors.FitnessTestDetails)}
                                     fullWidth
-                                    helperText={formik.touched.TestDetails && formik.errors.TestDetails}
+                                    helperText={formik.touched.FitnessTestDetails && formik.errors.FitnessTestDetails}
                                     label="Test Details"
                                     margin="dense"
-                                    name="TestDetails"
+                                    name="FitnessTestDetails"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.TestDetails}
+                                    value={formik.values.FitnessTestDetails}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -217,17 +195,17 @@ export default function PlayerFitnessTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.TestConductedDate && formik.errors.TestConductedDate)}
+                                    error={Boolean(formik.touched.FitnessTestConductedDate && formik.errors.FitnessTestConductedDate)}
                                     fullWidth
-                                    helperText={formik.touched.TestConductedDate && formik.errors.TestConductedDate}
+                                    helperText={formik.touched.FitnessTestConductedDate && formik.errors.FitnessTestConductedDate}
                                     label="Test Conducted Date"
                                     margin="dense"
-                                    name="TestConductedDate"
+                                    name="FitnessTestConductedDate"
                                     onBlur={formik.handleBlur}
                                     InputLabelProps={{ shrink: true }}
                                     onChange={formik.handleChange}
                                     type="date"
-                                    value={formik.values.TestConductedDate}
+                                    value={formik.values.FitnessTestConductedDate}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -238,29 +216,29 @@ export default function PlayerFitnessTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.TestResult && formik.errors.TestResult)}
+                                    error={Boolean(formik.touched.FitnessTestResult && formik.errors.FitnessTestResult)}
                                     fullWidth
-                                    helperText={formik.touched.TestResult && formik.errors.TestResult}
+                                    helperText={formik.touched.FitnessTestResult && formik.errors.FitnessTestResult}
                                     label="Test Result"
                                     margin="dense"
-                                    name="TestResult"
+                                    name="FitnessTestResult"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.TestResult}
+                                    value={formik.values.FitnessTestResult}
                                     variant="outlined"
                                 />
                             </Grid>
 
                         </Grid>
                         <Grid item md={12} xs={12} textAlign="center">
-                            <Button sx={{ marginTop: 2 }} type="submit" variant="outlined" color="primary">
+                            <Button sx={{ marginTop: 2 }} onClick={formik.handleSubmit} variant="outlined" color="primary">
                                 Save
                             </Button>
                         </Grid>
                     </CardContent>
                 </Card>
-            </form>
+            {/* </form> */}
         </>
     );
 }

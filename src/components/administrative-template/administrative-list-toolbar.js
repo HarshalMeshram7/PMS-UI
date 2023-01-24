@@ -46,7 +46,7 @@ import {
           <Button
             color="primary"
             variant="contained"
-            onClick={ props.handleOpenAddContract }
+            onClick={ props.handleOpenAddAdministrative }
           >
             Create Template
           </Button>

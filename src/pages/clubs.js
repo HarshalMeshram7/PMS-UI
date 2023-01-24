@@ -6,25 +6,28 @@ import { DashboardLayout } from '../components/dashboard-layout';
 import { AddClubDialog } from 'src/components/club/add-club-dialog';
 import { useState, useEffect } from 'react';
 import { ClubDetailsDialog } from 'src/components/club/club-details-dialog';
-import { useAllAcademies } from 'src/adapters/academyAdapter';
 import { useAllClubs } from 'src/adapters/clubAdapter';
 import { ClubFinanceDialog } from 'src/components/club/club-finance-dialog';
-import { getClub } from 'src/services/clubRequest';
+import { getClub, getClubFinanceById } from 'src/services/clubRequest';
+import useStorage from 'src/hooks/useStorage';
+import { filterArrayByArrayIDs } from 'src/utils/commonFunctions';
 
 const Clubs = () => {
     const [showAddClubDialog, setShowAddClubDialog] = useState(false);
     const [showClubDetailsDialog, setShowClubDetailsDialog] = useState(false);
     const [showClubFinanceDialog, setShowClubFinanceDialog] = useState(false);
+    const [clubFinance, setClubFinance] = useState({});
+
     const [club, setClub] = useState([])
-    const [params, setParams] = useState({searchpattern:""})
+    const [filteredClubs, setFilteredClubs] = useState([])
+    const [params, setParams] = useState({ searchpattern: "" })
 
     const handleOpenAddClub = () => setShowAddClubDialog(true);
     const handleCloseAddClub = () => setShowAddClubDialog(false);
 
     const handleOpenClubDetails = (club) => {
-        
-        getClub({id:club.ID}).then((res)=>{
-            console.log(res);
+
+        getClub({ id: club.ID }).then((res) => {
             setClub(res)
             setShowClubDetailsDialog(true)
         })
@@ -33,36 +36,38 @@ const Clubs = () => {
     const handleCloseClubDetails = () => setShowClubDetailsDialog(false);
 
     const handleOpenClubFinance = (club) => {
-        
-        getClub({id:club.ID}).then((res)=>{
-            setClub(club)
+
+
+        try {
+            getClub({ id: club.ID }).then((res) => {
+                setClub(club)
+            })
+            getClubFinanceById({ id: club.ID }).then((res) => {
+                setClubFinance(res)
+            })
             setShowClubFinanceDialog(true)
-        })
-        
-        
+        } catch (error) {
+            console.log(error);
+        }
     };
+
     const handleCloseClubFinance = () => setShowClubFinanceDialog(false);
 
     const handleSearch = (value) => {
         setParams((p) => ({ ...p, searchpattern: value }))
     };
 
-    // const { academies, loading, error, mutate } = useAllAcademies({ ...params });
     const { clubs, loading, error, mutate } = useAllClubs({ ...params });
 
-    let clubsLocal = [{ "_id": "62de8df69fda862707152867", 
-    "Club": "club2", 
-    "Address": "Address", 
-    "Phone": 8208793805, 
-    "Email": "club2@pixonix.tech", 
-    "ContactPersonName": "Person name", 
-    "Logo": "/static/images/products/product_2.png", 
-    "Banner": "../../../public/static/images/background/register.jpg", 
-    "Accreditation": "accreditation", 
-    "Facebook": "fb", 
-    "Twitter": "tw", 
-    "Instagram": "ins", 
-    "sportsList": ["Football", "Cricket", "Tennis"], "__v": 0 } ]
+    const {clubFilter ,loggedInUserName} = useStorage()
+  
+  useEffect(() => {
+    filterArrayByArrayIDs(clubs, clubFilter,loggedInUserName).then((filtered) => {
+      setFilteredClubs(filtered);
+    });
+  }, [clubs]);
+
+
 
     return (
         <>
@@ -83,12 +88,14 @@ const Clubs = () => {
                     open={showAddClubDialog}
                     handleClose={handleCloseAddClub}
                 />
-                <ClubDetailsDialog club={club}
+                <ClubDetailsDialog
+                    club={club}
                     mutate={mutate}
                     open={showClubDetailsDialog}
                     handleClose={handleCloseClubDetails} />
 
                 <ClubFinanceDialog
+                    clubFinance={clubFinance}
                     club={club}
                     mutate={mutate}
                     open={showClubFinanceDialog}
@@ -106,7 +113,7 @@ const Clubs = () => {
                             container
                             spacing={3}
                         >
-                            {clubs?.map((product,key) => (
+                            {filteredClubs && filteredClubs?.map((product, key) => (
                                 <Grid
                                     item
                                     key={key}

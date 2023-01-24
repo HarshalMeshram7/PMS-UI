@@ -8,30 +8,12 @@ import {
 import { Divider, Typography } from "@material-ui/core";
 import { Male } from "@mui/icons-material";
 
-export default function PlayerTrainingManagementTab() {
-    const formik = useFormik({
-        enableReinitialize: true,
-        initialValues: {
-            PlanManagement: "",
-            GoalSetting: "",         
-        },
-
-        validationSchema: Yup.object({
-
-        }),
-
-        onSubmit: async (data) => {
-            try {
-                console.log(data);
-            } catch (error) {
-                console.log(error);
-            }
-        },
-    });
+export default function PlayerTrainingManagementTab( {formik} ) {
+    
 
     return (
         <>
-            <form onSubmit={formik.handleSubmit}>
+            {/* <form onSubmit={formik.handleSubmit}> */}
                 <Card>
                     <CardContent>
 
@@ -46,16 +28,16 @@ export default function PlayerTrainingManagementTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.PlanManagement && formik.errors.PlanManagement)}
+                                    error={Boolean(formik.touched.ManagementPlan && formik.errors.ManagementPlan)}
                                     fullWidth
-                                    helperText={formik.touched.PlanManagement && formik.errors.PlanManagement}
+                                    helperText={formik.touched.ManagementPlan && formik.errors.ManagementPlan}
                                     label="Plan Management"
                                     margin="dense"
-                                    name="PlanManagement"
+                                    name="ManagementPlan"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.PlanManagement}
+                                    value={formik.values.ManagementPlan}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -66,16 +48,16 @@ export default function PlayerTrainingManagementTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.GoalSetting && formik.errors.GoalSetting)}
+                                    error={Boolean(formik.touched.ManagementGoalSetting && formik.errors.ManagementGoalSetting)}
                                     fullWidth
-                                    helperText={formik.touched.GoalSetting && formik.errors.GoalSetting}
+                                    helperText={formik.touched.ManagementGoalSetting && formik.errors.ManagementGoalSetting}
                                     label="Goal Setting"
                                     margin="dense"
-                                    name="GoalSetting"
+                                    name="ManagementGoalSetting"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.GoalSetting}
+                                    value={formik.values.ManagementGoalSetting}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -83,13 +65,13 @@ export default function PlayerTrainingManagementTab() {
                         </Grid>
 
                         <Grid item md={12} xs={12} textAlign="center">
-                            <Button sx={{ marginTop: 2 }} type="submit" variant="outlined" color="primary">
+                            <Button sx={{ marginTop: 2 }} onClick={formik.handleSubmit} variant="outlined" color="primary">
                                 Save
                             </Button>
                         </Grid>
                     </CardContent>
                 </Card>
-            </form>
+            {/* </form> */}
         </>
     );
 }

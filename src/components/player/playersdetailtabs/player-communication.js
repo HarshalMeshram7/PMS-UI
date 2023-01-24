@@ -8,31 +8,12 @@ import {
 import { Divider, Typography } from "@material-ui/core";
 import { Male } from "@mui/icons-material";
 
-export default function PlayerCommunicationTab() {
-    const formik = useFormik({
-        enableReinitialize: true,
-        initialValues: {
-            Coaches: "",
-            TeamMember: "",
-            GroupMessaging: "",
-            LiveChat: "",
-            NotificationRemainder: "",
-
-        },
-        validationSchema: Yup.object({}),
-
-        onSubmit: async (data) => {
-            try {
-                console.log(data);
-            } catch (error) {
-                console.log(error);
-            }
-        },
-    });
+export default function PlayerCommunicationTab( {formik} ) {
+    
 
     return (
         <>
-            <form onSubmit={formik.handleSubmit}>
+            {/* <form onSubmit={formik.handleSubmit}> */}
                 <Card>
                     <CardContent>
 
@@ -47,16 +28,16 @@ export default function PlayerCommunicationTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.Coaches && formik.errors.Coaches)}
+                                    error={Boolean(formik.touched.CommunicationCoaches && formik.errors.CommunicationCoaches)}
                                     fullWidth
-                                    helperText={formik.touched.Coaches && formik.errors.Coaches}
+                                    helperText={formik.touched.CommunicationCoaches && formik.errors.CommunicationCoaches}
                                     label="Coaches"
                                     margin="dense"
-                                    name="Coaches"
+                                    name="CommunicationCoaches"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.Coaches}
+                                    value={formik.values.CommunicationCoaches}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -67,16 +48,16 @@ export default function PlayerCommunicationTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.TeamMember && formik.errors.TeamMember)}
+                                    error={Boolean(formik.touched.CommunicationTeamMember && formik.errors.CommunicationTeamMember)}
                                     fullWidth
-                                    helperText={formik.touched.TeamMember && formik.errors.TeamMember}
+                                    helperText={formik.touched.CommunicationTeamMember && formik.errors.CommunicationTeamMember}
                                     label="Team Member"
                                     margin="dense"
-                                    name="TeamMember"
+                                    name="CommunicationTeamMember"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.TeamMember}
+                                    value={formik.values.CommunicationTeamMember}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -87,16 +68,16 @@ export default function PlayerCommunicationTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.GroupMessaging && formik.errors.GroupMessaging)}
+                                    error={Boolean(formik.touched.CommunicationGroupMessaging && formik.errors.CommunicationGroupMessaging)}
                                     fullWidth
-                                    helperText={formik.touched.GroupMessaging && formik.errors.GroupMessaging}
+                                    helperText={formik.touched.CommunicationGroupMessaging && formik.errors.CommunicationGroupMessaging}
                                     label="Group Messaging"
                                     margin="dense"
-                                    name="GroupMessaging"
+                                    name="CommunicationGroupMessaging"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.GroupMessaging}
+                                    value={formik.values.CommunicationGroupMessaging}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -107,16 +88,16 @@ export default function PlayerCommunicationTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.LiveChat && formik.errors.LiveChat)}
+                                    error={Boolean(formik.touched.CommunicationLiveChat && formik.errors.CommunicationLiveChat)}
                                     fullWidth
-                                    helperText={formik.touched.LiveChat && formik.errors.LiveChat}
+                                    helperText={formik.touched.CommunicationLiveChat && formik.errors.CommunicationLiveChat}
                                     label="Live Chat"
                                     margin="dense"
-                                    name="LiveChat"
+                                    name="CommunicationLiveChat"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.LiveChat}
+                                    value={formik.values.CommunicationLiveChat}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -127,29 +108,29 @@ export default function PlayerCommunicationTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.NotificationRemainder && formik.errors.NotificationRemainder)}
+                                    error={Boolean(formik.touched.CommunicationNotificationRemainder && formik.errors.CommunicationNotificationRemainder)}
                                     fullWidth
-                                    helperText={formik.touched.NotificationRemainder && formik.errors.NotificationRemainder}
+                                    helperText={formik.touched.CommunicationNotificationRemainder && formik.errors.CommunicationNotificationRemainder}
                                     label="Notification Remainder"
                                     margin="dense"
-                                    name="NotificationRemainder"
+                                    name="CommunicationNotificationRemainder"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.NotificationRemainder}
+                                    value={formik.values.CommunicationNotificationRemainder}
                                     variant="outlined"
                                 />
                             </Grid>
                         </Grid>
 
                         <Grid item md={12} xs={12} textAlign="center">
-                            <Button sx={{ marginTop: 2 }} type="submit" variant="outlined" color="primary">
+                            <Button sx={{ marginTop: 2 }} onClick={formik.handleSubmit} variant="outlined" color="primary">
                                 Save
                             </Button>
                         </Grid>
                     </CardContent>
                 </Card>
-            </form>
+            {/* </form> */}
         </>
     );
 }

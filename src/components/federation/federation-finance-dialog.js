@@ -19,7 +19,7 @@ import FederationEcommerse from "./federationfinance-component/federation-ecomme
 import FederationOrganization from "./federationfinance-component/federation-organization";
 
 
-export const FederationFinanceDialog = ({ open, handleClose, federation, mutate }) => {
+export const FederationFinanceDialog = ({ open, handleClose,federationFinance, federation, mutate }) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const [loading, setLoading] = useState();
@@ -74,7 +74,7 @@ export const FederationFinanceDialog = ({ open, handleClose, federation, mutate 
                     </Box>
                 </Grid>
                 <Container maxWidth="md">
-                    {value == "0" && <FederationFinance/>}
+                    {value == "0" && <FederationFinance federationFinance={federationFinance}/>}
                     {value == "1" && <FederationEcommerse/>}
                     {value == "2" && <FederationOrganization/>}
                 </Container>

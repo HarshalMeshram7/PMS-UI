@@ -8,28 +8,11 @@ import {
 import { Divider, Typography } from "@material-ui/core";
 import { Male } from "@mui/icons-material";
 
-export default function PlayerTrainingModuleTab() {
-    const formik = useFormik({
-        initialValues: {
-            ShortTermTraining: "",
-            LongTermTraining: "",
-            SpecialTraining: "",
-           
-        },
-        validationSchema: Yup.object({}),
-
-        onSubmit: async (data) => {
-            try {
-                console.log(data);
-            } catch (error) {
-                console.log(error);
-            }
-        },
-    });
+export default function PlayerTrainingModuleTab( {formik} ) {
 
     return (
         <>
-            <form onSubmit={formik.handleSubmit}>
+            {/* <form onSubmit={formik.handleSubmit}> */}
                 <Card>
                     <CardContent>
 
@@ -44,16 +27,16 @@ export default function PlayerTrainingModuleTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.ShortTermTraining && formik.errors.ShortTermTraining)}
+                                    error={Boolean(formik.touched.TrainingShortTerm && formik.errors.TrainingShortTerm)}
                                     fullWidth
-                                    helperText={formik.touched.ShortTermTraining && formik.errors.ShortTermTraining}
+                                    helperText={formik.touched.TrainingShortTerm && formik.errors.TrainingShortTerm}
                                     label="Short Term Training"
                                     margin="dense"
-                                    name="ShortTermTraining"
+                                    name="TrainingShortTerm"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.ShortTermTraining}
+                                    value={formik.values.TrainingShortTerm}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -64,16 +47,16 @@ export default function PlayerTrainingModuleTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.LongTermTraining && formik.errors.LongTermTraining)}
+                                    error={Boolean(formik.touched.TrainingLongTerm && formik.errors.TrainingLongTerm)}
                                     fullWidth
-                                    helperText={formik.touched.LongTermTraining && formik.errors.LongTermTraining}
+                                    helperText={formik.touched.TrainingLongTerm && formik.errors.TrainingLongTerm}
                                     label="Long Term Training"
                                     margin="dense"
-                                    name="LongTermTraining"
+                                    name="TrainingLongTerm"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.LongTermTraining}
+                                    value={formik.values.TrainingLongTerm}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -84,16 +67,16 @@ export default function PlayerTrainingModuleTab() {
                                 xs={12}
                             >
                                 <TextField
-                                    error={Boolean(formik.touched.SpecialTraining && formik.errors.SpecialTraining)}
+                                    error={Boolean(formik.touched.TrainingSpecial && formik.errors.TrainingSpecial)}
                                     fullWidth
-                                    helperText={formik.touched.SpecialTraining && formik.errors.SpecialTraining}
+                                    helperText={formik.touched.TrainingSpecial && formik.errors.TrainingSpecial}
                                     label="Special Training"
                                     margin="dense"
-                                    name="SpecialTraining"
+                                    name="TrainingSpecial"
                                     onBlur={formik.handleBlur}
                                     onChange={formik.handleChange}
                                     type="text"
-                                    value={formik.values.SpecialTraining}
+                                    value={formik.values.TrainingSpecial}
                                     variant="outlined"
                                 />
                             </Grid>
@@ -101,13 +84,13 @@ export default function PlayerTrainingModuleTab() {
                         </Grid>
 
                         <Grid item md={12} xs={12} textAlign="center">
-                            <Button sx={{ marginTop: 2 }} type="submit" variant="outlined" color="primary">
+                            <Button sx={{ marginTop: 2 }} onClick={formik.handleSubmit} variant="outlined" color="primary">
                                 Save
                             </Button>
                         </Grid>
                     </CardContent>
                 </Card>
-            </form>
+            {/* </form> */}
         </>
     );
 }

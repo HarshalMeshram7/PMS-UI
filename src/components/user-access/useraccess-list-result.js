@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import PropTypes from 'prop-types';
-import { format } from 'date-fns';
+import { useState } from "react";
+import PerfectScrollbar from "react-perfect-scrollbar";
+import PropTypes from "prop-types";
+import { format } from "date-fns";
 import {
   Avatar,
   Box,
+  Button,
   Card,
   Checkbox,
   Table,
@@ -13,13 +14,11 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
-} from '@mui/material';
-import { getInitials } from '../../utils/get-initials';
+  Typography,
+} from "@mui/material";
+import { getInitials } from "../../utils/get-initials";
 
-
-
-export const UserAccessListResults = ({ userAccess,handleOpenUserAccessDetails, ...rest }) => {
+export const UserAccessListResults = ({ userAccess, handleOpenUserAccessDetails,handleOpenDeleteDialogue, ...rest }) => {
   const [selectedUserAccessIds, setSelectedUserAccessIds] = useState([]);
   const [limit, setLimit] = useState(10);
   const [page, setPage] = useState(0);
@@ -45,7 +44,9 @@ export const UserAccessListResults = ({ userAccess,handleOpenUserAccessDetails, 
     } else if (selectedIndex === 0) {
       newSelectedUserAccessIds = newSelectedUserAccessIds.concat(selectedUserAccessIds.slice(1));
     } else if (selectedIndex === selectedUserAccessIds.length - 1) {
-      newSelectedUserAccessIds = newSelectedUserAccessIds.concat(selectedUserAccessIds.slice(0, -1));
+      newSelectedUserAccessIds = newSelectedUserAccessIds.concat(
+        selectedUserAccessIds.slice(0, -1)
+      );
     } else if (selectedIndex > 0) {
       newSelectedUserAccessIds = newSelectedUserAccessIds.concat(
         selectedUserAccessIds.slice(0, selectedIndex),
@@ -82,24 +83,17 @@ export const UserAccessListResults = ({ userAccess,handleOpenUserAccessDetails, 
                     onChange={handleSelectAll}
                   />
                 </TableCell> */}
-                <TableCell>
-                Full name
-                </TableCell>
-                <TableCell>
-                User name
-                </TableCell>
+                <TableCell>Full name</TableCell>
+                <TableCell>User name</TableCell>
                 {/* <TableCell>
                 Password
                 </TableCell> */}
                 {/* <TableCell>
                   Address
                 </TableCell> */}
-                <TableCell>
-                Email
-                </TableCell>
-                <TableCell>
-                  Mobile No
-                </TableCell>
+                <TableCell>Email</TableCell>
+                <TableCell>Mobile No</TableCell>
+                <TableCell>Action</TableCell>
                 {/* <TableCell>
                   UserRole
                 </TableCell>
@@ -114,10 +108,10 @@ export const UserAccessListResults = ({ userAccess,handleOpenUserAccessDetails, 
             <TableBody>
               {userAccess?.slice(0, limit).map((users) => (
                 <TableRow
-                  style={{cursor:"pointer"}}
-                  onClick={()=>{
-                    handleOpenUserAccessDetails(users)
-                  }}
+                  // style={{cursor:"pointer"}}
+                  // onClick={()=>{
+                  //   handleOpenUserAccessDetails(users)
+                  // }}
                   hover
                   key={users.ID}
                   // selected={selectedUserAccessIds.indexOf(users.ID) !== -1}
@@ -129,46 +123,69 @@ export const UserAccessListResults = ({ userAccess,handleOpenUserAccessDetails, 
                       value="true"
                     />
                   </TableCell> */}
-                  <TableCell>
+                  <TableCell
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleOpenUserAccessDetails(users);
+                    }}
+                  >
                     <Box
                       sx={{
-                        alignItems: 'center',
-                        display: 'flex'
+                        alignItems: "center",
+                        display: "flex",
                       }}
                     >
-                      <Avatar
-                        src={users.avatarUrl}
-                        sx={{ mr: 2 }}
-                      >
+                      <Avatar src={users.avatarUrl} sx={{ mr: 2 }}>
                         {getInitials(users.FullName)}
                       </Avatar>
-                      <Typography
-                        color="textPrimary"
-                        variant="body1"
-                      >
+                      <Typography color="textPrimary" variant="body1">
                         {users.FullName}
                       </Typography>
                     </Box>
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleOpenUserAccessDetails(users);
+                    }}
+                  >
                     {users.UserName}
                   </TableCell>
 
                   {/* <TableCell>
                     {users.password}
                   </TableCell> */}
-                  
+
                   {/* <TableCell>
                     {`${users.address.street}, ${users.address.city}`}
                   </TableCell> */}
-                  
-                  <TableCell>
+
+                  <TableCell
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleOpenUserAccessDetails(users);
+                    }}
+                  >
                     {users.EMail}
                   </TableCell>
 
-                  <TableCell>
+                  <TableCell
+                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      handleOpenUserAccessDetails(users);
+                    }}
+                  >
                     {users.MobileNo}
+                  </TableCell>
+                  <TableCell>
+              {(users.UserName !== "SuperAdmin") && <Button
+                      onClick={() => {
+                        handleOpenDeleteDialogue(users);
+                      }}
+                    >
+                      X
+                    </Button>}
                   </TableCell>
 
                   {/* <TableCell>
@@ -182,11 +199,10 @@ export const UserAccessListResults = ({ userAccess,handleOpenUserAccessDetails, 
                   <TableCell>
                     {users.action}
                   </TableCell> */}
-                  
+
                   {/* <TableCell>
                     {format(users.createdAt, 'dd/MM/yyyy')}
-                  </TableCell> */}  
-        
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>
@@ -207,5 +223,5 @@ export const UserAccessListResults = ({ userAccess,handleOpenUserAccessDetails, 
 };
 
 UserAccessListResults.propTypes = {
-  userAccess: PropTypes.array.isRequired
+  userAccess: PropTypes.array.isRequired,
 };

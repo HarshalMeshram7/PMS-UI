@@ -14,6 +14,7 @@ import {
     FormControl,
     InputLabel,
     Select,
+    IconButton,
     MenuItem,
     CardActions,
     Avatar
@@ -28,6 +29,9 @@ import { useSnackbar } from "notistack";
 import { deleteAcademy, updateAcademy } from "src/services/academyRequest.js";
 import banner from '../../../public/static/images/background/register.jpg';
 import Academy from "src/pages/academy.js";
+import DeleteIcon from "@mui/icons-material/Delete";
+import uploadFileToBlob, { deleteBlob, handlePriview, getFileName } from "src/utils/azureBlob";
+
 
 const clubID = [
     {
@@ -70,6 +74,115 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
         timezone: 'GTM-7'
     };
     const [loading, setLoading] = useState();
+
+    //   logo upload
+    const [selectedLogo, setSelectedLogo] = useState(null);
+    const [selectedLogoName, setSelectedLogoName] = useState("");
+
+    const [uploadedLogo, setUploadedLogo] = useState(false);
+    const [uploadedLogoName, setUploadedLogoName] = useState("");
+    //  banner banner
+    const [selectedBanner, setSelectedBanner] = useState(null);
+    const [selectedBannerName, setSelectedBannerName] = useState("");
+
+    const [uploadedBanner, setUploadedBanner] = useState(false);
+    const [uploadedBannerName, setUploadedBannerName] = useState("");
+
+    useEffect(() => {
+        if (academy?.Logo !== "") {
+            if (academy?.Logo !== null) {
+                if (academy?.Logo !== undefined) {
+                    setUploadedLogoName(getFileName(academy?.Logo));
+                    setUploadedLogo(true);
+                } else {
+                    setUploadedLogoName("");
+                    setUploadedLogo(false);
+                }
+            } else {
+                setUploadedLogoName("");
+                setUploadedLogo(false);
+            }
+        } else {
+            setUploadedLogoName("");
+            setUploadedLogo(false);
+        }
+
+        if (academy?.Banner !== "" || academy?.Banner !== undefined) {
+            if (academy?.Banner !== null) {
+                if (academy?.Banner !== undefined) {
+                    setUploadedBannerName(getFileName(academy?.Banner));
+                    setUploadedBanner(true);
+                } else {
+                    setUploadedBannerName("");
+                    setUploadedBanner(false);
+                }
+            } else {
+                setUploadedBannerName("");
+                setUploadedBanner(false);
+            }
+        } else {
+            setUploadedBannerName("");
+            setUploadedBanner(false);
+        }
+    }, [academy]);
+
+    const onFileChnage = (e) => {
+        if (e.target.name == "logo") {
+            setUploadedLogo(false);
+            setSelectedLogo(e.target.files[0]);
+            setSelectedLogoName(e.target.files[0].name);
+        }
+
+        if (e.target.name == "banner") {
+            setUploadedBanner(false);
+            setSelectedBanner(e.target.files[0]);
+            setSelectedBannerName(e.target.files[0].name);
+        }
+    };
+    const onFileUpload = async (file, id) => {
+        setLoading(true);
+
+        // *** UPLOAD TO AZURE STORAGE ***
+        const blobsInContainer = await uploadFileToBlob(file).then(() => {
+            if (id == 1) {
+                // prepare UI for results
+                setUploadedLogo(true);
+                setUploadedLogoName(selectedLogoName);
+                //   reseting selected files
+                setSelectedLogo(null);
+                setSelectedLogoName("");
+            }
+
+            if (id == 2) {
+                // prepare UI for results
+                setUploadedBanner(true);
+                setUploadedBannerName(selectedBannerName);
+                //   reseting selected files
+                setSelectedBanner(null);
+                setSelectedBannerName("");
+            }
+        });
+
+        setLoading(false);
+    };
+
+    const onDeleteFile = (fileName, id) => {
+        deleteBlob(fileName).then(() => {
+            if (id == 1) {
+                setSelectedLogo(null);
+                setUploadedLogoName("");
+                setUploadedLogo(false);
+            }
+
+            if (id == 2) {
+                setSelectedBanner(null);
+                setUploadedBannerName("");
+                setUploadedBanner(false);
+            }
+        });
+    };
+
+
     console.log(academy);
     const formik = useFormik({
         enableReinitialize: true,
@@ -115,7 +228,7 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
                 .max(35, "Not more than 35 characters")
                 .required("Recovery Email is required"),
 
-                recoveryEMail: Yup.string()
+            recoveryEMail: Yup.string()
                 .email("Must be a valid Email")
                 .max(35, "Not more than 35 characters")
                 .required("Recovery Email is required"),
@@ -130,10 +243,15 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
         onSubmit: async (data) => {
             setLoading(true);
             try {
-                console.log(data);
-                await updateAcademy(data);
+                let finalData = {
+                    ...data,
+                    logo: handlePriview(uploadedLogoName),
+                    banner: handlePriview(uploadedBannerName),
+                };
+                await updateAcademy(finalData);
                 handleClose();
                 enqueueSnackbar("Academy Updated Succesfully", { variant: "success" });
+
                 mutate();
                 setLoading(false);
             } catch (error) {
@@ -192,7 +310,7 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
                             width: "100%",
                             height: "200px",
                             marginBottom: "-100px",
-                            background: `url(${academy?.banner})center center`,
+                            background: `url(${academy?.Banner})center center`,
                         }}></div>
 
                         <Container maxWidth="lg">
@@ -271,15 +389,54 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
                                                         id="uploadAcademyLogo"
                                                         margin="dense"
                                                         name="logo"
-                                                        onBlur={formik.handleBlur}
-                                                        onChange={formik.handleChange}
+                                                        // onBlur={formik.handleBlur}
+                                                        onChange={onFileChnage}
                                                         type="file"
                                                         value={formik.values.logo}
                                                         variant="outlined"
                                                     />
                                                     <Button onClick={() => { document.getElementById("uploadAcademyLogo").click() }}>Upload Logo</Button>
+
+                                                    <Button disabled>
+                                                        <Typography>{selectedLogoName}</Typography>
+                                                    </Button>
+                                                    {uploadedLogo ? (
+                                                        <Button disabled variant="contained">
+                                                            Uploaded &#10004;{" "}
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            variant="contained"
+                                                            disabled={!selectedLogo}
+                                                            onClick={(e) => {
+                                                                onFileUpload(selectedLogo, 1);
+                                                            }}
+                                                        >
+                                                            Upload
+                                                        </Button>
+                                                    )}
+                                                    {uploadedLogo ? (
+                                                        <>
+                                                            <Button target="blank" href={handlePriview(uploadedLogoName)}>
+                                                                <Typography>{uploadedLogoName}</Typography>
+                                                            </Button>
+                                                            <IconButton
+                                                                onClick={() => {
+                                                                    onDeleteFile(uploadedLogoName, 1);
+                                                                }}
+                                                                aria-label="delete"
+                                                                size="small"
+                                                            >
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </>
+                                                    ) : (
+                                                        ""
+                                                    )}
+
                                                 </CardActions>
                                             </Grid>
+
                                             <Grid
                                                 item
                                                 lg={6}
@@ -295,13 +452,55 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
                                                         id="uploadAcademyBanner"
                                                         margin="dense"
                                                         name="banner"
-                                                        onBlur={formik.handleBlur}
-                                                        onChange={formik.handleChange}
+                                                        // onBlur={formik.handleBlur}
+                                                        onChange={onFileChnage}
                                                         type="file"
                                                         value={formik.values.banner}
                                                         variant="outlined"
                                                     />
                                                     <Button onClick={() => { document.getElementById("uploadAcademyBanner").click() }}>Upload Banner</Button>
+
+                                                    <Button disabled>
+                                                        <Typography>{selectedBannerName}</Typography>
+                                                    </Button>
+                                                    {uploadedBanner ? (
+                                                        <Button disabled variant="contained">
+                                                            Uploaded &#10004;{" "}
+                                                        </Button>
+                                                    ) : (
+                                                        <Button
+                                                            variant="contained"
+                                                            disabled={!selectedBanner}
+                                                            onClick={(e) => {
+                                                                onFileUpload(selectedBanner, 2);
+                                                            }}
+                                                        >
+                                                            Upload
+                                                        </Button>
+                                                    )}
+                                                    <br></br>
+                                                    {uploadedBanner ? (
+                                                        <>
+                                                            <Button target="blank" href={handlePriview(uploadedBannerName)}>
+                                                                <Typography>{uploadedBannerName}</Typography>
+                                                            </Button>
+                                                            <IconButton
+                                                                onClick={() => {
+                                                                    onDeleteFile(uploadedBannerName, 2);
+                                                                }}
+                                                                aria-label="delete"
+                                                                size="small"
+                                                            >
+                                                                <DeleteIcon />
+                                                            </IconButton>
+                                                        </>
+                                                    ) : (
+                                                        ""
+                                                    )}
+
+
+
+
                                                 </CardActions>
                                             </Grid>
                                         </Grid>
@@ -614,7 +813,7 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
                                                     </FormControl> */}
                                                 </Grid>
 
-                                                <Grid
+                                                {/* <Grid
                                                     item
                                                     md={6}
                                                     xs={12}
@@ -634,9 +833,9 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
                                                         variant="outlined"
                                                     />
                                                     <Button onClick={() => { document.getElementById("uploadLogo").click() }}>Upload Logo</Button>
-                                                </Grid>
+                                                </Grid> */}
 
-                                                <Grid
+                                                {/* <Grid
                                                     item
                                                     md={6}
                                                     xs={12}
@@ -656,7 +855,7 @@ export const AcademyDetailsDialog = ({ open, handleClose, academy, mutate }) => 
                                                         variant="outlined"
                                                     />
                                                     <Button onClick={() => { document.getElementById("uploadBanner").click() }}>Upload Banner</Button>
-                                                </Grid>
+                                                </Grid> */}
 
                                             </Grid>
                                         </CardContent>

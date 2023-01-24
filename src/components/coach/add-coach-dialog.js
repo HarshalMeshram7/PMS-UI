@@ -21,15 +21,15 @@ import LoadingBox from "src/components/common/loading-box";
 
 const Gender = [
     {
-        value: "Male",
+        value: "1",
         label: "Male"
     },
     {
-        value: "Female",
+        value: "2",
         label: "Female"
     },
     {
-        value: "Other",
+        value: "0",
         label: "Other"
     }
 ];
@@ -241,7 +241,7 @@ export const AddCoachDialog = ({ open, handleClose }) => {
                                 >
                                     {Gender?.map((option , key) => (
                                         <MenuItem key={key}
-                                            value={option.label}>
+                                            value={option.value}>
                                             {option.label}
                                         </MenuItem>
                                     ))}

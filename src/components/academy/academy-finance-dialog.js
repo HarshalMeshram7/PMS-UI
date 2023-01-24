@@ -26,7 +26,7 @@ import AcademyOrganization from "./academyfinance-component/academy-organization
 import AcademyStatistic from "./academyfinance-component/academy-statistic";
 
 
-export const AcademyFinanceDialog = ({ open, handleClose, academy, mutate }) => {
+export const AcademyFinanceDialog = ({ open, handleClose, academyFinance, academy, mutate }) => {
     const { enqueueSnackbar } = useSnackbar();
     
     const [loading, setLoading] = useState();
@@ -96,7 +96,7 @@ export const AcademyFinanceDialog = ({ open, handleClose, academy, mutate }) => 
                     </Box>
                 </Grid>
                 <Container maxWidth="md">
-                    {value == "0" && <AcademyFinance/>}
+                    {value == "0" && <AcademyFinance academyFinance={academyFinance} />}
                     {value == "1" && <AcademyEcommerce/>}
                     {value == "2" && <AcademyEarning/>}
                     {value == "3" && <AcademyExpenses/>}
