@@ -9,7 +9,7 @@ export const addClub = async (data) => {
         throw "No Token";
     }
     try {
-        const res = await axios.post(`${MAIN_URL}/api/club/addClub/`, data, {
+        const res = await axios.post(`${MAIN_URL2}/Saveclub`, data, {
             headers: {
                 Authorization: "Bearer " + token,
             },
@@ -59,14 +59,32 @@ export const getClub = async (params) => {
     }
 };
 
-export const deleteClub = async (email) => {
+export const deleteClub = async (ID) => {
     const { token } = useStorage();
     if (!token) {
         throw "No Token";
     }
     try {
 
-        const res = await axios.post(`${MAIN_URL}/api/club/deleteclub/`,{email:email}, {
+        const res = await axios.post(`${MAIN_URL}/deleteclub/`,{club:ID}, {
+            headers: {
+                Authorization: "Bearer " + token,
+            },
+        });
+        return res.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+// Update Club
+export const updateClub = async (data) => {
+    const { token } = useStorage();
+    if (!token) {
+        throw "No Token";
+    }
+    try {
+        const res = await axios.post(`${MAIN_URL2}/Updateclub`, data, {
             headers: {
                 Authorization: "Bearer " + token,
             },
