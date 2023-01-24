@@ -299,7 +299,7 @@ export const AddUserAccessDialog = ({ open, handleClose, user, mutate, users }) 
               />
               {!isUniqueUserName && (
                 <p
-                  class="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained css-1j5m5yj-MuiFormHelperText-root"
+                  className="MuiFormHelperText-root Mui-error MuiFormHelperText-sizeMedium MuiFormHelperText-contained css-1j5m5yj-MuiFormHelperText-root"
                   id="mui-17-helper-text"
                 >
                   UserName Already Exist
